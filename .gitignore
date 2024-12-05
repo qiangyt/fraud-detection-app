@@ -26,3 +26,5 @@ replay_pid*
 /.vscode
 /work/
 /target/
+/private/
+/.vscode/
