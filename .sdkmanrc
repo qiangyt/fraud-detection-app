@@ -1,0 +1,4 @@
+# Java Development Kit (JDK) version
+java=17.0.13-tem
+maven=3.9.7
+springboot=3.3.3
