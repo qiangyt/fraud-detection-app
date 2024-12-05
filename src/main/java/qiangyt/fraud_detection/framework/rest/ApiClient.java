@@ -18,14 +18,13 @@
 package qiangyt.fraud_detection.framework.rest;
 
 import jakarta.annotation.PostConstruct;
-import qiangyt.fraud_detection.framework.json.Jackson;
-
 import java.util.function.Consumer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClient.RequestBodySpec;
+import qiangyt.fraud_detection.framework.json.Jackson;
 
 @lombok.Getter
 @lombok.Setter

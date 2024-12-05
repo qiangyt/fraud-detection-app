@@ -24,8 +24,6 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import qiangyt.fraud_detection.framework.misc.StringHelper;
-
 public class TestStringHelper_joinCollection {
 
     private List<String> singleElementList;

@@ -20,10 +20,9 @@ package qiangyt.fraud_detection.framework.json.modules;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import jakarta.annotation.Nonnull;
+import java.io.File;
 import qiangyt.fraud_detection.framework.json.JacksonDeserializer;
 import qiangyt.fraud_detection.framework.json.JacksonSerializer;
-
-import java.io.File;
 
 public class FileModule {
 

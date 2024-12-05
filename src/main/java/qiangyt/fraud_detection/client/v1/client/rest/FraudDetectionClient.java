@@ -18,20 +18,18 @@
 package qiangyt.fraud_detection.client.v1.client.rest;
 
 import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import qiangyt.fraud_detection.framework.json.Jackson;
 import qiangyt.fraud_detection.framework.rest.ApiClient;
 import qiangyt.fraud_detection.framework.rest.ApiClientErrorHandler;
 import qiangyt.fraud_detection.sdk.api.TransactionAPI;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
 @lombok.Getter
 @lombok.Setter
 @Component
-public class FraudDetectionClient
-        implements TransactionAPI {
+public class FraudDetectionClient implements TransactionAPI {
 
     @Autowired TransactionClient tenantClient;
 
@@ -79,12 +77,9 @@ public class FraudDetectionClient
 
         setInited(true);
     }
-    
+
     @Override
     public void deleteTenant(Long tenantId) {
         getTenantClient().deleteTenant(tenantId);
     }
-    
-
-
 }

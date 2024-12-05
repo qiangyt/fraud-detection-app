@@ -20,29 +20,38 @@ package qiangyt.fraud_detection.app.transaction;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import qiangyt.fraud_detection.sdk.model.Transaction;
 
 @Primary
 @lombok.Getter
 @lombok.Setter
 @RestController
-@RequestMapping(path = "/rest/v1/tenant/", produces = APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/rest/transaction/", produces = APPLICATION_JSON_VALUE)
 @Tag(name = "tenant", description = "the tenant API")
 public class TransactionRestController { // implements TenantAPI {
 
     @Autowired TransactionService tenantService;
 
-    
+    @Autowired SQSService sqsService;
+
     // @Override
     @DeleteMapping("id/{tenantId}")
     public void deleteTenant(@PathVariable Long tenantId) {
-        //getCheckedAPI().deleteTenant(tenantId);
+        // getCheckedAPI().deleteTenant(tenantId);
     }
-    
+
+    @PostMapping("/send")
+    public ResponseEntity<String> sendTransaction(@RequestBody Transaction transaction) {
+        sqsService.sendTransactionToQueue(transaction);
+        return ResponseEntity.ok("Transaction sent to SQS");
+    }
 }

@@ -15,13 +15,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package qiangyt.fraud_detection.sdk.api;
+package qiangyt.fraud_detection.app;
 
-import jakarta.validation.constraints.NotNull;
-import org.springframework.validation.annotation.Validated;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import qiangyt.fraud_detection.app.transaction.SQSService;
+import qiangyt.fraud_detection.sdk.model.Transaction;
 
-@Validated
-public interface TransactionAPI {
+@SpringBootTest
+public class FraudDetectionServiceTest {
 
-    void deleteTenant(@NotNull Long tenantId);
+    @MockBean private SQSService sqsService;
+
+    @Test
+    public void testSendMessage() {
+        sqsService.sendTransactionToQueue(new Transaction());
+        // Assert that message was sent (use Mockito.verify if needed)
+    }
+
+    @Test
+    public void testReceiveMessage() {
+        // Simulate receiving a message from SQS and test the processing logic
+    }
 }

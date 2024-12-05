@@ -21,7 +21,4 @@ import org.springframework.stereotype.Service;
 
 @lombok.Getter
 @Service
-public class TransactionService {
-
-    
-}
+public class TransactionService {}

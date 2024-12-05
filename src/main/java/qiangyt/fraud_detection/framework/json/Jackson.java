@@ -30,6 +30,8 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.List;
 import lombok.Getter;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import qiangyt.fraud_detection.framework.json.modules.BigDecimalModule;
 import qiangyt.fraud_detection.framework.json.modules.DateModule;
 import qiangyt.fraud_detection.framework.json.modules.FileModule;
@@ -38,9 +40,6 @@ import qiangyt.fraud_detection.framework.json.modules.OffsetDateTimeModule;
 import qiangyt.fraud_detection.framework.json.modules.UriModule;
 import qiangyt.fraud_detection.framework.json.modules.UrlModule;
 import qiangyt.fraud_detection.framework.misc.StringHelper;
-
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
 @Getter
 // @ThreadSafe

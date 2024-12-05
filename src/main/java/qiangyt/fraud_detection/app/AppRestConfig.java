@@ -18,7 +18,6 @@
 package qiangyt.fraud_detection.app;
 
 import org.springframework.context.annotation.Configuration;
-
 import qiangyt.fraud_detection.framework.rest.RestConfig;
 
 @lombok.Getter

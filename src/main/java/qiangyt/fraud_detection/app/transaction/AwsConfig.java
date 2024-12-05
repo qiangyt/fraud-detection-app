@@ -15,13 +15,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package qiangyt.fraud_detection.sdk.api;
+package qiangyt.fraud_detection.app.transaction;
 
-import jakarta.validation.constraints.NotNull;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.sqs.SqsClient;
 
-@Validated
-public interface TransactionAPI {
+@Configuration
+public class AwsConfig {
 
-    void deleteTenant(@NotNull Long tenantId);
+    @Value("${cloud.aws.region.static}")
+    private String region;
+
+    @Bean
+    public SqsClient sqsClient() {
+        return SqsClient.builder().region(Region.of(region)).build();
+    }
 }

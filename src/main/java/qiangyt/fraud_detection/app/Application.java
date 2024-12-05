@@ -19,12 +19,11 @@ package qiangyt.fraud_detection.app;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
-import qiangyt.fraud_detection.framework.misc.ManifestFile;
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import qiangyt.fraud_detection.framework.misc.ManifestFile;
 
 @SpringBootApplication(scanBasePackages = "qiangyt.fraud_detection")
 @Import({AppRestConfig.class})

@@ -18,7 +18,6 @@
 package qiangyt.fraud_detection.client.v1.client.rest;
 
 import org.springframework.stereotype.Component;
-
 import qiangyt.fraud_detection.framework.rest.ApiClient;
 import qiangyt.fraud_detection.sdk.api.TransactionAPI;
 
@@ -33,5 +32,4 @@ public class TransactionClient extends ApiClient implements TransactionAPI {
     public void deleteTenant(Long tenantId) {
         delete("id/{tenantId}", tenantId).retrieve();
     }
-    
 }

@@ -22,9 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
 import qiangyt.fraud_detection.framework.errs.Internal;
-import qiangyt.fraud_detection.framework.misc.ClassHelper;
 
 public class ClassHelperTest {
 

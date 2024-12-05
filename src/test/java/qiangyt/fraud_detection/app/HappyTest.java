@@ -15,13 +15,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package qiangyt.fraud_detection.sdk.api;
+package qiangyt.fraud_detection.app;
 
-import jakarta.validation.constraints.NotNull;
-import org.springframework.validation.annotation.Validated;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Validated
-public interface TransactionAPI {
+import org.junit.jupiter.api.Test;
+import qiangyt.fraud_detection.app.transaction.FraudDetector;
+import qiangyt.fraud_detection.sdk.model.Transaction;
 
-    void deleteTenant(@NotNull Long tenantId);
+public class HappyTest {
+
+    @Test
+    public void testFraudulentTransaction() {
+        Transaction transaction =
+                new Transaction(); // "txn1", "account123", 20000, "2024-12-05", "credit");
+        FraudDetector fraudDetector = new FraudDetector();
+        assertTrue(fraudDetector.isFraudulent(transaction));
+    }
 }

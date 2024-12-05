@@ -16,7 +16,21 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-app:
+aws:
+  sqs:
+    queue-url: https://sqs.us-east-1.amazonaws.com/123456789012/my-queue
+
+# AWS Region
+cloud:
+  aws:
+    region:
+      static: us-east-1
+    credentials:
+      access-key: <access-key-id>
+      secret-key: <secret-access-key>
+
+
+#app:
 
 management:
   endpoints:

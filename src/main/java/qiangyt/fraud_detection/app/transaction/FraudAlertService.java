@@ -15,13 +15,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package qiangyt.fraud_detection.sdk.api;
+package qiangyt.fraud_detection.app.transaction;
 
-import jakarta.validation.constraints.NotNull;
-import org.springframework.validation.annotation.Validated;
+import qiangyt.fraud_detection.sdk.model.Transaction;
 
-@Validated
-public interface TransactionAPI {
+/**
+ * The service will log fraudulent transactions and send an alert to a monitoring system (e.g., AWS
+ * CloudWatch).
+ */
+@lombok.extern.slf4j.Slf4j
+public class FraudAlertService {
 
-    void deleteTenant(@NotNull Long tenantId);
+    public void alertFraudulentTransaction(Transaction transaction) {
+        log.error("Fraudulent Transaction Detected: " + transaction.getTransactionId());
+    }
 }

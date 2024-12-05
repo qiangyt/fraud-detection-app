@@ -15,13 +15,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package qiangyt.fraud_detection.sdk.api;
+package qiangyt.fraud_detection.sdk.model;
 
-import jakarta.validation.constraints.NotNull;
-import org.springframework.validation.annotation.Validated;
-
-@Validated
-public interface TransactionAPI {
-
-    void deleteTenant(@NotNull Long tenantId);
+@lombok.Getter
+@lombok.Setter
+@lombok.experimental.SuperBuilder
+@lombok.NoArgsConstructor
+public class Transaction {
+    private String transactionId;
+    private String accountId;
+    private double amount;
+    private String timestamp;
+    private String transactionType;
 }

@@ -18,7 +18,6 @@
 package qiangyt.fraud_detection.framework.errs;
 
 import java.time.Instant;
-
 import qiangyt.fraud_detection.framework.json.JacksonHelper;
 
 @lombok.Getter

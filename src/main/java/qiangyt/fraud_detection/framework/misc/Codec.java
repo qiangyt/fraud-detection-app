@@ -26,10 +26,9 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 import lombok.extern.slf4j.Slf4j;
-import qiangyt.fraud_detection.framework.errs.Internal;
-
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.web.multipart.MultipartFile;
+import qiangyt.fraud_detection.framework.errs.Internal;
 
 /** Encoding and Decoding Tools */
 @Slf4j

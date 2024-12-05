@@ -18,10 +18,6 @@
 package qiangyt.fraud_detection.framework.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import qiangyt.fraud_detection.framework.errs.ErrorAdvice;
-import qiangyt.fraud_detection.framework.json.Jackson;
-
 import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +29,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import qiangyt.fraud_detection.framework.errs.ErrorAdvice;
+import qiangyt.fraud_detection.framework.json.Jackson;
 
 @lombok.Getter
 @lombok.Setter
@@ -69,5 +67,4 @@ public class RestConfig implements WebMvcConfigurer {
         s.registerCorsConfiguration("/**", c);
         return new CorsFilter(s);
     }
-
 }

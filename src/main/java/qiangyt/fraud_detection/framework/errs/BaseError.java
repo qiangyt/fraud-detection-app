@@ -48,8 +48,7 @@ public abstract class BaseError extends RuntimeException {
      * @param params Error message parameters
      * @see String#format
      */
-    public BaseError(
-            HttpStatus status, ErrorCode code, String messageFormat, Object... params) {
+    public BaseError(HttpStatus status, ErrorCode code, String messageFormat, Object... params) {
         super(String.format(messageFormat, params));
 
         this.status = status;

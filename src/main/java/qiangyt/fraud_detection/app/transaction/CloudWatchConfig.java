@@ -15,13 +15,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package qiangyt.fraud_detection.sdk.api;
+package qiangyt.fraud_detection.app.transaction;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.cloudwatchlogs.CloudWatchLogsClient;
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 
-import jakarta.validation.constraints.NotNull;
-import org.springframework.validation.annotation.Validated;
+@Configuration
+public class CloudWatchConfig {
 
-@Validated
-public interface TransactionAPI {
-
-    void deleteTenant(@NotNull Long tenantId);
+    @Bean
+    public CloudWatchLogsClient cloudWatchLogsClient() {
+        return CloudWatchLogsClient.builder()
+                .region(Region.of("us-east-1"))
+                .credentialsProvider(DefaultCredentialsProvider.create())
+                .build();
+    }
 }

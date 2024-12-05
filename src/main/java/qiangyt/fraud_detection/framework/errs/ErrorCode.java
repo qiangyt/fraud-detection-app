@@ -19,7 +19,7 @@ package qiangyt.fraud_detection.framework.errs;
 
 public enum ErrorCode {
     NONE,
-    
+
     PATH_NOT_FOUND,
 
     // ALREADY_EXISTS,
