@@ -15,13 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package qiangyt.fraud_detection.modules.tenant.service;
+package qiangyt.fraud_detection.app.transaction;
 
 import org.springframework.stereotype.Service;
 
 @lombok.Getter
 @Service
-public class TenantService {
+public class TransactionService {
 
     
 }

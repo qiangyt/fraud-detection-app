@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package qiangyt.fraud_detection.modules.shared;
+package qiangyt.fraud_detection.app;
 
 import org.springframework.context.annotation.Configuration;
 
@@ -24,4 +24,4 @@ import qiangyt.fraud_detection.framework.rest.RestConfig;
 @lombok.Getter
 @lombok.Setter
 @Configuration
-public class ApcRestConfig extends RestConfig {}
+public class AppRestConfig extends RestConfig {}

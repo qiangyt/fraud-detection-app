@@ -15,12 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package qiangyt.fraud_detection.modules.tenant.rest.v1;
+package qiangyt.fraud_detection.app.transaction;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
-import qiangyt.fraud_detection.modules.tenant.service.TenantService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -35,9 +34,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(path = "/rest/v1/tenant/", produces = APPLICATION_JSON_VALUE)
 @Tag(name = "tenant", description = "the tenant API")
-public class TenantRestController { // implements TenantAPI {
+public class TransactionRestController { // implements TenantAPI {
 
-    @Autowired TenantService tenantService;
+    @Autowired TransactionService tenantService;
 
     
     // @Override

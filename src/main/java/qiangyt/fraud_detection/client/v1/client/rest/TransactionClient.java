@@ -20,12 +20,12 @@ package qiangyt.fraud_detection.client.v1.client.rest;
 import org.springframework.stereotype.Component;
 
 import qiangyt.fraud_detection.framework.rest.ApiClient;
-import qiangyt.fraud_detection.sdk.api.TenantAPI;
+import qiangyt.fraud_detection.sdk.api.TransactionAPI;
 
 @Component
-public class TenantClient extends ApiClient implements TenantAPI {
+public class TransactionClient extends ApiClient implements TransactionAPI {
 
-    public TenantClient() {
+    public TransactionClient() {
         super("rest/v1/tenant/");
     }
 

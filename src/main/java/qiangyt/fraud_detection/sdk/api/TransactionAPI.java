@@ -21,7 +21,7 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
 
 @Validated
-public interface TenantAPI {
+public interface TransactionAPI {
 
     void deleteTenant(@NotNull Long tenantId);
 

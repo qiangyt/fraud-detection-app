@@ -21,7 +21,7 @@ import jakarta.annotation.PostConstruct;
 import qiangyt.fraud_detection.framework.json.Jackson;
 import qiangyt.fraud_detection.framework.rest.ApiClient;
 import qiangyt.fraud_detection.framework.rest.ApiClientErrorHandler;
-import qiangyt.fraud_detection.sdk.api.TenantAPI;
+import qiangyt.fraud_detection.sdk.api.TransactionAPI;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,9 +31,9 @@ import org.springframework.stereotype.Component;
 @lombok.Setter
 @Component
 public class FraudDetectionClient
-        implements TenantAPI {
+        implements TransactionAPI {
 
-    @Autowired TenantClient tenantClient;
+    @Autowired TransactionClient tenantClient;
 
     @Autowired ApiClientErrorHandler clientErrorHandler;
 
@@ -71,7 +71,7 @@ public class FraudDetectionClient
 
         var tc = getTenantClient();
         if (tc == null) {
-            tc = new TenantClient();
+            tc = new TransactionClient();
             prepareClient(tc);
             setTenantClient(tc);
         }

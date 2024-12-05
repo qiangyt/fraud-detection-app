@@ -15,12 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package qiangyt.fraud_detection.modules;
+package qiangyt.fraud_detection.app;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import qiangyt.fraud_detection.framework.misc.ManifestFile;
-import qiangyt.fraud_detection.modules.shared.ApcRestConfig;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -28,14 +27,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
 @SpringBootApplication(scanBasePackages = "qiangyt.fraud_detection")
-@Import({ApcRestConfig.class})
-public class ApcApplication {
+@Import({AppRestConfig.class})
+public class Application {
 
     public static void main(String[] args) throws Exception {
         for (var dep : ManifestFile.parseClassPath().entrySet()) {
             System.out.printf("%s: %s\n", dep.getKey(), dep.getValue());
         }
-        SpringApplication.run(ApcApplication.class, args);
+        SpringApplication.run(Application.class, args);
     }
 
     @Bean
