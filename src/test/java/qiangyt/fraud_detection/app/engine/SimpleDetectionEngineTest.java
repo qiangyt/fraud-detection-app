@@ -22,7 +22,6 @@ import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -30,14 +29,14 @@ import org.mockito.MockitoAnnotations;
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 import qiangyt.fraud_detection.sdk.FraudCategory;
 
-@Disabled
+
 public class SimpleDetectionEngineTest {
 
-    @InjectMocks private SimpleDetectionEngine detectionEngine;
+    @InjectMocks SimpleDetectionEngine detectionEngine;
 
-    @Mock private DetectionRule rule1;
+    @Mock DetectionRule rule1;
 
-    @Mock private DetectionRule rule2;
+    @Mock DetectionRule rule2;
 
     @BeforeEach
     public void setUp() {
@@ -49,40 +48,40 @@ public class SimpleDetectionEngineTest {
 
     @Test
     public void testDetect_NoFraud() {
-        DetectionReqEntity entity = new DetectionReqEntity();
+        var entity = new DetectionReqEntity();
         entity.setAmount(BigDecimal.valueOf(5000));
         entity.setAccountId("account789");
 
         when(rule1.apply(entity)).thenReturn(FraudCategory.NONE);
         when(rule2.apply(entity)).thenReturn(FraudCategory.NONE);
 
-        FraudCategory result = detectionEngine.detect(entity);
+        var result = detectionEngine.detect(entity);
         assertEquals(FraudCategory.NONE, result);
     }
 
     @Test
     public void testDetect_FirstRuleFraud() {
-        DetectionReqEntity entity = new DetectionReqEntity();
+        var entity = new DetectionReqEntity();
         entity.setAmount(BigDecimal.valueOf(15000));
         entity.setAccountId("account789");
 
         when(rule1.apply(entity)).thenReturn(FraudCategory.BIG_AMOUNT);
         when(rule2.apply(entity)).thenReturn(FraudCategory.NONE);
 
-        FraudCategory result = detectionEngine.detect(entity);
+        var result = detectionEngine.detect(entity);
         assertEquals(FraudCategory.BIG_AMOUNT, result);
     }
 
     @Test
     public void testDetect_SecondRuleFraud() {
-        DetectionReqEntity entity = new DetectionReqEntity();
+        var entity = new DetectionReqEntity();
         entity.setAmount(BigDecimal.valueOf(5000));
         entity.setAccountId("account123");
 
         when(rule1.apply(entity)).thenReturn(FraudCategory.NONE);
         when(rule2.apply(entity)).thenReturn(FraudCategory.SUSPICIOUS_ACCOUNT);
 
-        FraudCategory result = detectionEngine.detect(entity);
+        var result = detectionEngine.detect(entity);
         assertEquals(FraudCategory.SUSPICIOUS_ACCOUNT, result);
     }
 }
