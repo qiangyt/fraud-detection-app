@@ -15,33 +15,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package qiangyt.fraud_detection;
+package qiangyt.fraud_detection.sdk;
 
-import org.junit.jupiter.api.Test;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.validation.annotation.Validated;
 
-import qiangyt.fraud_detection.client.v1.client.rest.AppClient;
-import qiangyt.fraud_detection.framework.json.JacksonHelper;
+@Validated
+public interface DetectionApi {
 
-public class HelloIT {
+    @NotNull
+    DetectionReqEntity submit(@NotNull DetectionReq req);
 
-    public static final String BASE_URL = "http://localhost:8080";
-
-    private static final AppClient client;
-    static {
-        client = new AppClient(BASE_URL);
-        client.init();
-    }
-
-
-    @Test
-    public void test() {
-        
-
-    }
-
-    static int i = 0;
-
-    void dump(String hint, Object obj) {
-        System.out.printf("\n%02d. %s:\n%s\n", ++i, hint, JacksonHelper.pretty(obj));
-    }
+    // for test only
+    @NotNull
+    DetectionResult detect(@NotNull DetectionReqEntity entity);
 }

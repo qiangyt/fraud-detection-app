@@ -17,18 +17,11 @@
 #
 
 aws:
+  region: ${AWS_REGION}
+  access-key-id: ${AWS_ACCESS_KEY_ID}
+  access-key-secret: ${AWS_ACCESS_KEY_SECRET}
   sqs:
-    queue-url: https://sqs.us-east-1.amazonaws.com/123456789012/my-queue
-
-# AWS Region
-cloud:
-  aws:
-    region:
-      static: us-east-1
-    credentials:
-      access-key: <access-key-id>
-      secret-key: <secret-access-key>
-
+    queue-url: ${AWS_SQS_QUEUE_URL}
 
 #app:
 

@@ -15,33 +15,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package qiangyt.fraud_detection;
+package qiangyt.fraud_detection.sdk;
 
-import org.junit.jupiter.api.Test;
+public enum FraudCategory {
+    NONE(false, "none"),
+    BIG_AMOUNT(true, "the transaction amount exceeds a threshold"),
+    SUSPICIOUS_ACCOUNT(true, "the transaction originates from a suspicious account");
 
-import qiangyt.fraud_detection.client.v1.client.rest.AppClient;
-import qiangyt.fraud_detection.framework.json.JacksonHelper;
+    public final boolean yes;
+    public final String message;
 
-public class HelloIT {
-
-    public static final String BASE_URL = "http://localhost:8080";
-
-    private static final AppClient client;
-    static {
-        client = new AppClient(BASE_URL);
-        client.init();
-    }
-
-
-    @Test
-    public void test() {
-        
-
-    }
-
-    static int i = 0;
-
-    void dump(String hint, Object obj) {
-        System.out.printf("\n%02d. %s:\n%s\n", ++i, hint, JacksonHelper.pretty(obj));
+    private FraudCategory(boolean yes, String message) {
+        this.yes = yes;
+        this.message = message;
     }
 }

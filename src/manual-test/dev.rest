@@ -1,4 +1,18 @@
 ###
+POST http://localhost:8080/rest/detection
+Content-Type: application/json
+    
+{
+    "accountId": "hsbc_dev_account_1",
+    "amount": 100,
+    "memo": "test"
+}
+
+###
+GET http://localhost:8080/rest/detection
+    
+
+###
 GET http://localhost:8080/v3/api-docs
 Accept-Encoding: identity
 
