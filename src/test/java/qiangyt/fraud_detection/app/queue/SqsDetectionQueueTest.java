@@ -21,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
@@ -33,16 +32,15 @@ import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 
-@Disabled
 public class SqsDetectionQueueTest {
 
-    @Mock private SqsProps props;
+    @Mock SqsProps props;
 
-    @Mock private SqsClient client;
+    @Mock SqsClient client;
 
-    @Mock private Jackson jackson;
+    @Mock Jackson jackson;
 
-    @InjectMocks private SqsDetectionQueue sqsDetectionQueue;
+    @InjectMocks SqsDetectionQueue sqsDetectionQueue;
 
     @BeforeEach
     public void setUp() {
@@ -52,7 +50,7 @@ public class SqsDetectionQueueTest {
     @Test
     public void testSend() {
         String queueUrl = "http://example.com/queue";
-        DetectionReqEntity req = new DetectionReqEntity();
+        var req = new DetectionReqEntity();
         String messageBody = "{\"key\":\"value\"}";
 
         when(props.getQueueUrl()).thenReturn(queueUrl);
@@ -60,8 +58,7 @@ public class SqsDetectionQueueTest {
 
         sqsDetectionQueue.send(req);
 
-        ArgumentCaptor<SendMessageRequest> captor =
-                ArgumentCaptor.forClass(SendMessageRequest.class);
+        var captor = ArgumentCaptor.forClass(SendMessageRequest.class);
         verify(client).sendMessage(captor.capture());
 
         SendMessageRequest capturedRequest = captor.getValue();
