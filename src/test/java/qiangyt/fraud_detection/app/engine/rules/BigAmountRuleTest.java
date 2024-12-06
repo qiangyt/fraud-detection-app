@@ -25,7 +25,6 @@ import org.junit.jupiter.api.Test;
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 import qiangyt.fraud_detection.sdk.FraudCategory;
 
-
 public class BigAmountRuleTest {
 
     private BigAmountRule bigAmountRule;

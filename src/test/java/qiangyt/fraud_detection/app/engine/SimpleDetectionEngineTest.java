@@ -29,7 +29,6 @@ import org.mockito.MockitoAnnotations;
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 import qiangyt.fraud_detection.sdk.FraudCategory;
 
-
 public class SimpleDetectionEngineTest {
 
     @InjectMocks SimpleDetectionEngine detectionEngine;
