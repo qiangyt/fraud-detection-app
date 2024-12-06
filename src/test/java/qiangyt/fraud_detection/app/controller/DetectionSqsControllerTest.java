@@ -39,11 +39,11 @@ import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
 @Disabled
 public class DetectionSqsControllerTest {
 
-    @Mock private SqsClient sqsClient;
+    @Mock SqsClient sqsClient;
 
-    @Mock private DetectionApi detectionApi;
+    @Mock DetectionApi detectionApi;
 
-    @InjectMocks private DetectionSqsController detectionSqsController;
+    @InjectMocks DetectionSqsController detectionSqsController;
 
     @BeforeEach
     public void setUp() {
@@ -53,7 +53,7 @@ public class DetectionSqsControllerTest {
     @Test
     void testPoll() {
         // Mock the behavior of SqsClient and DetectionApi
-        Message message = Message.builder().body("{\"id\":\"123\"}").build();
+        var message = Message.builder().body("{\"id\":\"123\"}").build();
         when(sqsClient.receiveMessage((ReceiveMessageRequest) any()))
                 .thenReturn(ReceiveMessageResponse.builder().messages(message).build());
         when(detectionApi.detect(any())).thenReturn(null);
