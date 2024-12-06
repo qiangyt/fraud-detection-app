@@ -21,12 +21,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.math.BigDecimal;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 import qiangyt.fraud_detection.sdk.FraudCategory;
 
-@Disabled
+
 public class BigAmountRuleTest {
 
     private BigAmountRule bigAmountRule;
@@ -38,19 +37,19 @@ public class BigAmountRuleTest {
 
     @Test
     public void testApply_NoFraud() {
-        DetectionReqEntity entity = new DetectionReqEntity();
+        var entity = new DetectionReqEntity();
         entity.setAmount(BigDecimal.valueOf(5000));
 
-        FraudCategory result = bigAmountRule.apply(entity);
+        var result = bigAmountRule.apply(entity);
         assertEquals(FraudCategory.NONE, result);
     }
 
     @Test
     public void testApply_BigAmountFraud() {
-        DetectionReqEntity entity = new DetectionReqEntity();
+        var entity = new DetectionReqEntity();
         entity.setAmount(BigDecimal.valueOf(15000));
 
-        FraudCategory result = bigAmountRule.apply(entity);
+        var result = bigAmountRule.apply(entity);
         assertEquals(FraudCategory.BIG_AMOUNT, result);
     }
 }
