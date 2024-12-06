@@ -22,7 +22,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -31,17 +30,15 @@ import qiangyt.fraud_detection.app.engine.DetectionEngine;
 import qiangyt.fraud_detection.app.queue.DetectionQueue;
 import qiangyt.fraud_detection.sdk.DetectionReq;
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
-import qiangyt.fraud_detection.sdk.DetectionResult;
 import qiangyt.fraud_detection.sdk.FraudCategory;
 
-@Disabled
 public class DetectionServiceTest {
 
-    @Mock private DetectionQueue queue;
+    @Mock DetectionQueue queue;
 
-    @Mock private DetectionEngine engine;
+    @Mock DetectionEngine engine;
 
-    @InjectMocks private DetectionService service;
+    @InjectMocks DetectionService service;
 
     @BeforeEach
     public void setUp() {
@@ -50,23 +47,30 @@ public class DetectionServiceTest {
 
     @Test
     public void testSubmit() {
-        DetectionReq req = new DetectionReq();
-        DetectionReqEntity entity = new DetectionReqEntity();
-        when(req.toEntity()).thenReturn(entity);
+
+        var entity = new DetectionReqEntity();
+        var req =
+                new DetectionReq() {
+                    @Override
+                    public DetectionReqEntity toEntity() {
+                        return entity;
+                    }
+                };
+
         when(queue.send(any(DetectionReqEntity.class))).thenReturn(entity);
 
-        DetectionReqEntity result = service.submit(req);
+        var result = service.submit(req);
 
         assertEquals(entity, result);
     }
 
     @Test
     public void testDetect() {
-        DetectionReqEntity entity = new DetectionReqEntity();
-        FraudCategory category = FraudCategory.BIG_AMOUNT;
+        var entity = new DetectionReqEntity();
+        var category = FraudCategory.BIG_AMOUNT;
         when(engine.detect(any(DetectionReqEntity.class))).thenReturn(category);
 
-        DetectionResult result = service.detect(entity);
+        var result = service.detect(entity);
 
         assertEquals(category, result.getCategory());
         assertEquals(entity, result.getEntity());
