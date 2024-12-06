@@ -64,9 +64,9 @@ public class DetectionSqsController {
 
                             while (this.polling.get() && !Thread.currentThread().isInterrupted()) {
                                 try {
-                                    //if (log.isDebugEnabled()) {
-                                        log.info("SQS detection queue polling: new polling");
-                                    //}
+                                    // if (log.isDebugEnabled()) {
+                                    log.info("SQS detection queue polling: new polling");
+                                    // }
                                     poll();
                                 } catch (Exception ex) {
                                     log.error("Error in polling", ex);

@@ -18,43 +18,26 @@
 package qiangyt.fraud_detection.app.engine;
 
 import jakarta.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import qiangyt.fraud_detection.app.engine.rules.BigAmountRule;
-import qiangyt.fraud_detection.app.engine.rules.SuspiciousAccountRule;
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 import qiangyt.fraud_detection.sdk.FraudCategory;
 
-/*
- * A simple rule-based detection system
- */
-@lombok.Getter
-@lombok.Setter
 @Service
-public class SimpleDetectionEngine implements DetectionEngine {
-
-    final List<DetectionRule> rules = new ArrayList<>();
-
-    @Autowired BigAmountRule bigAmountRule;
-
-    @Autowired SuspiciousAccountRule suspiciousAccountRule;
+public class DroolsRuleEngine implements DetectionEngine, DetectionRule {
 
     @PostConstruct
     void init() {
-        getRules().add(getBigAmountRule());
-        getRules().add(getSuspiciousAccountRule());
+        // initialize the drools engine and loads the rules
+    }
+
+    @Override
+    public FraudCategory apply(DetectionReqEntity entity) {
+        // TODO: apply drools rules
+        return FraudCategory.NONE;
     }
 
     @Override
     public FraudCategory detect(DetectionReqEntity entity) {
-        for (DetectionRule rule : getRules()) {
-            FraudCategory result = rule.apply(entity);
-            if (result != FraudCategory.NONE) {
-                return result;
-            }
-        }
-        return FraudCategory.NONE;
+        return apply(entity);
     }
 }
