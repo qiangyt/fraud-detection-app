@@ -29,7 +29,7 @@ import software.amazon.awssdk.services.sqs.model.*;
 @lombok.Setter
 @lombok.extern.slf4j.Slf4j
 @Service
-public class SqsDetectionQueue implements DetectionQueue {
+public class SqsDetectionQueue implements DetectionRequestQueue {
 
     @Autowired SqsProps props;
 
@@ -43,10 +43,10 @@ public class SqsDetectionQueue implements DetectionQueue {
         var msg = getJackson().str(req);
 
         var sqsReq = SendMessageRequest.builder().queueUrl(qurl).messageBody(msg).build();
-        client.sendMessage(sqsReq);
+        getClient().sendMessage(sqsReq);
 
         if (log.isDebugEnabled()) {
-            log.debug("Message sent to SQS: " + msg);
+            log.debug("message sent to SQS: " + getJackson().str(sqsReq));
         }
 
         return req;

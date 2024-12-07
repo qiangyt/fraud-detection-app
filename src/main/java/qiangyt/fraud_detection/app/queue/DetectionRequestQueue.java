@@ -19,7 +19,7 @@ package qiangyt.fraud_detection.app.queue;
 
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 
-public interface DetectionQueue {
+public interface DetectionRequestQueue {
 
     DetectionReqEntity send(DetectionReqEntity req);
 }

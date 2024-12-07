@@ -33,6 +33,7 @@ import qiangyt.fraud_detection.sdk.FraudCategory;
 @lombok.Getter
 @lombok.Setter
 @Service
+@lombok.extern.slf4j.Slf4j
 public class SimpleDetectionEngine implements DetectionEngine {
 
     final List<DetectionRule> rules = new ArrayList<>();

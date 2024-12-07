@@ -19,16 +19,15 @@ package qiangyt.fraud_detection.app.controller;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import qiangyt.fraud_detection.app.config.SqsPollingProps;
+import qiangyt.fraud_detection.app.service.DetectionService;
 import qiangyt.fraud_detection.framework.aws.sqs.SqsProps;
 import qiangyt.fraud_detection.framework.json.Jackson;
-import qiangyt.fraud_detection.sdk.DetectionApi;
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
-import qiangyt.fraud_detection.sdk.DetectionResult;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.*;
 
@@ -44,25 +43,25 @@ public class DetectionSqsController {
 
     @Autowired Jackson jackson;
 
-    @Autowired DetectionApi service;
+    @Autowired DetectionService service;
 
-    Thread pollingThread;
+    @Autowired ExecutorService sqsPollingThreadPool;
 
-    AtomicBoolean polling = new AtomicBoolean();
+    @lombok.Getter(lombok.AccessLevel.PRIVATE)
+    final AtomicBoolean polling = new AtomicBoolean();
+
+    @Autowired SqsPollingProps pollingProps;
 
     @PostConstruct
-    public void start() {
-        if (this.pollingThread != null) {
-            throw new IllegalStateException("SQS detection queue polling thread ALREADY started");
-        }
-
-        this.pollingThread =
-                new Thread(
+    void start() {
+        getSqsPollingThreadPool()
+                .submit(
                         () -> {
-                            this.polling.set(true);
-                            log.info("SQS detection queue polling: ready");
+                            getPolling().set(true);
 
-                            while (this.polling.get() && !Thread.currentThread().isInterrupted()) {
+                            log.info("SQS detection queue polling: started");
+
+                            while (getPolling().get() && !Thread.currentThread().isInterrupted()) {
                                 try {
                                     // if (log.isDebugEnabled()) {
                                     log.info("SQS detection queue polling: new polling");
@@ -73,79 +72,48 @@ public class DetectionSqsController {
                                 }
                             }
 
-                            log.info("SQS detection queue polling: end");
+                            log.info("SQS detection queue polling: stopped");
                         });
-
-        this.pollingThread.start();
     }
 
     @PreDestroy
-    public synchronized void stop() {
-        if (this.pollingThread == null) {
-            log.warn("SQS detection queue polling thread NOT started");
-            return;
-        }
+    void stop() {
+        log.info("Stopping SQS detection queue polling");
+        getPolling().set(false);
 
-        var th = this.pollingThread;
-        this.pollingThread = null;
-
-        log.info("Stops SQS detection queue polling: begin");
-        this.polling.set(false);
-        log.info("Stops SQS detection queue polling: waiting");
-        try {
-            th.join(5 * 1000); // TODO: have it configurable
-        } catch (InterruptedException e) {
-            // Thread.currentThread().interrupt();
-        }
-
-        if (th.isAlive()) {
-            log.info("Stops SQS detection queue polling: force to stop it");
-            th.interrupt();
-            try {
-                th.join();
-            } catch (InterruptedException e) {
-                // Thread.currentThread().interrupt();
-            }
-            log.info("Stops SQS detection queue polling: forced stopped");
-        }
-
-        log.info("Stops SQS detection queue polling: stopped");
+        getSqsPollingThreadPool().shutdown();
     }
 
-    // we don't use scheduled job, instead, we use a thread to poll the queue continuously and
+    // we don't use scheduled job, instead, we use a thread to poll the queue
+    // continuously and
     // depends on Sqs's long polling feature
     // @Scheduled(fixedRate = 5000) // 5 seconds polling interval
-    public synchronized List<DetectionResult> poll() {
+    void poll() {
         var qurl = getProps().getQueueUrl();
-        var serv = getService();
+        var s = getService();
+        var j = getJackson();
 
         var sqsReq =
                 ReceiveMessageRequest.builder()
                         .queueUrl(qurl)
-                        .maxNumberOfMessages(10) // Fetch 10 message at a time
-                        .waitTimeSeconds(20) // Long polling
+                        .maxNumberOfMessages(getPollingProps().getBatchSize())
+                        .waitTimeSeconds(getPollingProps().getTimeout()) // Long polling
                         .build();
-
-        var results = new ArrayList<DetectionResult>();
 
         for (var msg : client.receiveMessage(sqsReq).messages()) {
             String body = msg.body();
+            // if (log.isDebugEnabled())
             log.info("Received message: " + body);
 
-            var entity = getJackson().from(body, DetectionReqEntity.class);
-            var result = serv.detect(entity);
-            results.add(result);
+            var entity = j.from(body, DetectionReqEntity.class);
+            s.detectAsync(entity);
 
-            // Delete the message after processing it
-            var sqsDeleteReq =
+            // Delete the message ;
+            client.deleteMessage(
                     DeleteMessageRequest.builder()
                             .queueUrl(qurl)
                             .receiptHandle(msg.receiptHandle())
-                            .build();
-            client.deleteMessage(sqsDeleteReq);
-            log.info("Deleted message from queue: " + msg.messageId());
+                            .build());
         }
-
-        return results;
     }
 }

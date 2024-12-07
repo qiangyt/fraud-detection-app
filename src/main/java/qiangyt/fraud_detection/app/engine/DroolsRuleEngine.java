@@ -22,7 +22,10 @@ import org.springframework.stereotype.Service;
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 import qiangyt.fraud_detection.sdk.FraudCategory;
 
+@lombok.Getter
+@lombok.Setter
 @Service
+@lombok.extern.slf4j.Slf4j
 public class DroolsRuleEngine implements DetectionEngine, DetectionRule {
 
     @PostConstruct
