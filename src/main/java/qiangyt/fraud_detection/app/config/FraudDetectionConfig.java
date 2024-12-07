@@ -21,7 +21,6 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -31,8 +30,6 @@ import qiangyt.fraud_detection.framework.aws.AwsProps;
 import qiangyt.fraud_detection.framework.aws.sqs.SqsConfig;
 import qiangyt.fraud_detection.framework.rest.RestConfig;
 
-@lombok.Getter
-@lombok.Setter
 @Configuration
 @EnableAsync
 @Import({
@@ -45,32 +42,28 @@ import qiangyt.fraud_detection.framework.rest.RestConfig;
 })
 public class FraudDetectionConfig {
 
-    @Autowired DetectionTaskProps detectionTaskProps;
-
-    @Autowired SqsPollingProps pollingProps;
-
     @Bean
     public OpenAPI openApiInfo() {
         return new OpenAPI().info(new Info().title("Fraud Detection API").version("1.0"));
     }
 
     @Bean
-    public ThreadPoolTaskExecutor detectionTaskExecutor() {
+    public ThreadPoolTaskExecutor detectionTaskExecutor(DetectionTaskProps props) {
         int cpuCoreCount = Runtime.getRuntime().availableProcessors();
 
         var p = new ThreadPoolTaskExecutor();
         p.setCorePoolSize(cpuCoreCount);
         p.setMaxPoolSize(cpuCoreCount);
-        p.setQueueCapacity(getDetectionTaskProps().getQueueCapacity());
+        p.setQueueCapacity(props.getQueueCapacity());
         p.setThreadNamePrefix("detectionTask-");
         p.setWaitForTasksToCompleteOnShutdown(true);
-        p.setAwaitTerminationSeconds(getDetectionTaskProps().getAwaitTerminationSeconds());
+        p.setAwaitTerminationSeconds(props.getAwaitTerminationSeconds());
 
         return p;
     }
 
     @Bean
-    public ExecutorService sqsPollingThreadPool() {
-        return Executors.newFixedThreadPool(getPollingProps().getThreadPoolSize());
+    public ExecutorService sqsPollingThreadPool(SqsPollingProps props) {
+        return Executors.newFixedThreadPool(props.getThreadPoolSize());
     }
 }
