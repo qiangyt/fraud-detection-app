@@ -17,11 +17,15 @@
  */
 package qiangyt.fraud_detection.app.service;
 
+import jakarta.annotation.PreDestroy;
 import jakarta.validation.constraints.NotNull;
+import java.util.concurrent.CompletableFuture;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import qiangyt.fraud_detection.app.engine.DetectionEngine;
-import qiangyt.fraud_detection.app.queue.DetectionQueue;
+import qiangyt.fraud_detection.app.queue.DetectionRequestQueue;
+import qiangyt.fraud_detection.framework.json.Jackson;
 import qiangyt.fraud_detection.sdk.DetectionApi;
 import qiangyt.fraud_detection.sdk.DetectionReq;
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
@@ -33,18 +37,48 @@ import qiangyt.fraud_detection.sdk.DetectionResult;
 @lombok.extern.slf4j.Slf4j
 public class DetectionService implements DetectionApi {
 
-    @Autowired DetectionQueue queue;
+    @Autowired DetectionRequestQueue requestQueue;
 
     @Autowired DetectionEngine engine;
 
-    @Override
-    public DetectionReqEntity submit(DetectionReq req) {
-        var entity = req.toEntity();
-        return getQueue().send(entity);
+    @Autowired ThreadPoolTaskExecutor detectionTaskExecutor;
+
+    @Autowired Jackson jackson;
+
+    @PreDestroy
+    public void shutdown() {
+        log.info("Shut down task executor: begin");
+        getDetectionTaskExecutor().shutdown();
+        log.info("Shut down task executor: done");
     }
 
     @Override
-    public @NotNull DetectionResult detect(@NotNull DetectionReqEntity entity) {
+    public @NotNull DetectionReqEntity submit(@NotNull DetectionReq req) {
+        var entity = req.toEntity();
+        return getRequestQueue().send(entity);
+    }
+
+    public @NotNull CompletableFuture<DetectionResult> detectAsync(
+            @NotNull DetectionReqEntity entity) {
+        // uses dedicated task pool to execute engine
+        var result =
+                CompletableFuture.supplyAsync(() -> detect(entity), getDetectionTaskExecutor());
+
+        // use default pool to log and send alert
+        return result.thenApplyAsync(
+                (prevResult) -> {
+                    if (prevResult.getCategory().yes) {
+                        log.warn("fraud detected: " + jackson.str(prevResult));
+
+                        // TODO: async alert
+                    }
+                    return prevResult;
+                });
+    }
+
+    @Override
+    public DetectionResult detect(DetectionReqEntity entity) {
+        // uses dedicated task pool to execute engine
         var category = getEngine().detect(entity);
         return DetectionResult.from(entity, category);
     }

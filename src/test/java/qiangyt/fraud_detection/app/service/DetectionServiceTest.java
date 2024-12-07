@@ -27,14 +27,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import qiangyt.fraud_detection.app.engine.DetectionEngine;
-import qiangyt.fraud_detection.app.queue.DetectionQueue;
+import qiangyt.fraud_detection.app.queue.DetectionRequestQueue;
 import qiangyt.fraud_detection.sdk.DetectionReq;
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 import qiangyt.fraud_detection.sdk.FraudCategory;
 
 public class DetectionServiceTest {
 
-    @Mock DetectionQueue queue;
+    @Mock DetectionRequestQueue queue;
 
     @Mock DetectionEngine engine;
 
