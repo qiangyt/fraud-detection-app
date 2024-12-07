@@ -20,6 +20,7 @@ package qiangyt.fraud_detection.app.controller;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -29,7 +30,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import qiangyt.fraud_detection.app.service.DetectionService;
-import qiangyt.fraud_detection.sdk.DetectionApi;
 import qiangyt.fraud_detection.sdk.DetectionReq;
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 import qiangyt.fraud_detection.sdk.DetectionResult;
@@ -40,18 +40,18 @@ import qiangyt.fraud_detection.sdk.DetectionResult;
 @RestController
 @RequestMapping(path = "/rest/detection", produces = APPLICATION_JSON_VALUE)
 @Tag(name = "detection", description = "the detection RESTful API")
-public class DetectionRestController implements DetectionApi {
+public class DetectionRestController {
 
     @Autowired DetectionService service;
 
     @PostMapping()
-    public DetectionReqEntity submit(@RequestBody DetectionReq req) {
+    public DetectionReqEntity submit(@Valid @RequestBody DetectionReq req) {
         return getService().submit(req);
     }
 
     // for test only
     @GetMapping()
-    public DetectionResult detect(@NotNull DetectionReqEntity entity) {
+    public DetectionResult detect(@Valid @NotNull DetectionReqEntity entity) {
         return getService().detect(entity);
     }
 }

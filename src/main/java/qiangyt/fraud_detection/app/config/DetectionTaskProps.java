@@ -17,19 +17,14 @@
  */
 package qiangyt.fraud_detection.app.config;
 
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Info;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import qiangyt.fraud_detection.framework.rest.RestConfig;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @lombok.Getter
 @lombok.Setter
-@Configuration
-public class AppRestConfig extends RestConfig {
+@ConfigurationProperties(prefix = "app.detection-task")
+public class DetectionTaskProps {
 
-    @Bean
-    public OpenAPI openApiInfo() {
-        return new OpenAPI().info(new Info().title("Fraud Detection API").version("1.0"));
-    }
+    int queueCapacity = 500;
+
+    int AwaitTerminationSeconds = 60;
 }

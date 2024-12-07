@@ -20,15 +20,11 @@ package qiangyt.fraud_detection.app;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
-// import org.springframework.scheduling.annotation.EnableScheduling;
-import qiangyt.fraud_detection.app.config.AppRestConfig;
-import qiangyt.fraud_detection.framework.aws.AwsProps;
-import qiangyt.fraud_detection.framework.aws.sqs.SqsConfig;
+import qiangyt.fraud_detection.app.config.FraudDetectionConfig;
 import qiangyt.fraud_detection.framework.misc.ManifestFile;
 
 @SpringBootApplication(scanBasePackages = "qiangyt.fraud_detection")
-// @EnableScheduling
-@Import({AppRestConfig.class, AwsProps.class, SqsConfig.class})
+@Import(FraudDetectionConfig.class)
 public class FraudDetectionApp {
 
     public static void main(String[] args) throws Exception {

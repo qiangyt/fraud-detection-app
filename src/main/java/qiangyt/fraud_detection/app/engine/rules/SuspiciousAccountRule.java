@@ -17,8 +17,9 @@
  */
 package qiangyt.fraud_detection.app.engine.rules;
 
-import java.util.Set;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import qiangyt.fraud_detection.app.config.RuleProps;
 import qiangyt.fraud_detection.app.engine.DetectionRule;
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 import qiangyt.fraud_detection.sdk.FraudCategory;
@@ -26,11 +27,11 @@ import qiangyt.fraud_detection.sdk.FraudCategory;
 @Service
 public class SuspiciousAccountRule implements DetectionRule {
 
-    static final Set<String> SUSPICIOUS_ACCOUNTS = Set.of("account123", "account456");
+    @lombok.Getter @lombok.Setter @Autowired RuleProps props;
 
     @Override
     public FraudCategory apply(DetectionReqEntity entity) {
-        if (SUSPICIOUS_ACCOUNTS.contains(entity.getAccountId())) {
+        if (getProps().getSuspicousAccounts().contains(entity.getAccountId())) {
             return FraudCategory.SUSPICIOUS_ACCOUNT;
         }
         return FraudCategory.NONE;

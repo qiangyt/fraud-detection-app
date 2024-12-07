@@ -15,27 +15,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package qiangyt.fraud_detection.app.engine.rules;
+package qiangyt.fraud_detection.app.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import qiangyt.fraud_detection.app.config.RuleProps;
-import qiangyt.fraud_detection.app.engine.DetectionRule;
-import qiangyt.fraud_detection.sdk.DetectionReqEntity;
-import qiangyt.fraud_detection.sdk.FraudCategory;
+import java.math.BigDecimal;
+import java.util.Set;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @lombok.Getter
 @lombok.Setter
-@Service
-public class BigAmountRule implements DetectionRule {
+@ConfigurationProperties(prefix = "app.rules")
+public class RuleProps {
 
-    @Autowired RuleProps props;
+    BigDecimal maxTransactionAmount = BigDecimal.valueOf(99999);
 
-    @Override
-    public FraudCategory apply(DetectionReqEntity entity) {
-        if (entity.getAmount().compareTo(getProps().getMaxTransactionAmount()) >= 0) {
-            return FraudCategory.BIG_AMOUNT;
-        }
-        return FraudCategory.NONE;
-    }
+    Set<String> suspicousAccounts = Set.of("cgrant", "fbiden");
 }

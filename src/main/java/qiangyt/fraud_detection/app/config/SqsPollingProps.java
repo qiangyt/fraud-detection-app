@@ -17,9 +17,18 @@
  */
 package qiangyt.fraud_detection.app.config;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@lombok.Getter
-@lombok.Setter
-@ConfigurationProperties("app")
-public class AppProps {}
+@Setter
+@Getter
+@ConfigurationProperties(prefix = "app.sqs.polling")
+public class SqsPollingProps {
+
+    int threadPoolSize = 1;
+
+    int batchSize = 10;
+
+    int timeout = 20;
+}
