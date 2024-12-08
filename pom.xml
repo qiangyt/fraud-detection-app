@@ -155,7 +155,6 @@
             <artifactId>ec2</artifactId>
             <version>${aws.sdk.version}</version>
         </dependency>
-        </dependency>
 
         <!-- Spring Cloud AWS (Optional, but helps with integration) -->
         <!-- https://mvnrepository.com/artifact/io.awspring.cloud/spring-cloud-starter-aws -->
