@@ -31,7 +31,7 @@
         <jacoco.skip>false</jacoco.skip>
         <maven.test.failure.ignore>true</maven.test.failure.ignore>
 
-        <springdoc.version>2.6.0</springdoc.version>
+        <springdoc.version>2.7.0</springdoc.version>
         <aws.sdk.version>2.29.29</aws.sdk.version>
     </properties>
     <dependencyManagement>
