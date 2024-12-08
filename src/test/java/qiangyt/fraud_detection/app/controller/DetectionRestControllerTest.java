@@ -20,7 +20,6 @@ package qiangyt.fraud_detection.app.controller;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import java.math.BigDecimal;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -45,10 +44,9 @@ public class DetectionRestControllerTest extends AbstractRestTest {
 
     @MockBean Jackson jackson;
 
-    @Disabled
     @Test
     void test_submit() {
-        var req = DetectionReq.builder().accountId("a").amount(new BigDecimal(3)).build();
+        var req = DetectionReq.builder().accountId("a").amount(3).build();
         var entity = req.toEntity();
 
         when(this.service.submit(any())).thenReturn(entity);

@@ -19,10 +19,8 @@ package qiangyt.fraud_detection.app.engine.rules;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.math.BigDecimal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import qiangyt.fraud_detection.app.config.RuleProps;
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 import qiangyt.fraud_detection.sdk.FraudCategory;
@@ -34,7 +32,7 @@ public class BigAmountRuleTest {
     @BeforeEach
     public void setUp() {
         var props = new RuleProps();
-        props.setMaxTransactionAmount(new BigDecimal(100));
+        props.setMaxTransactionAmount(100);
 
         bigAmountRule = new BigAmountRule();
         bigAmountRule.setProps(props);
@@ -43,7 +41,7 @@ public class BigAmountRuleTest {
     @Test
     public void testApply_NoFraud() {
         var entity = new DetectionReqEntity();
-        entity.setAmount(BigDecimal.valueOf(50));
+        entity.setAmount(50);
 
         var result = bigAmountRule.apply(entity);
         assertEquals(FraudCategory.NONE, result);
@@ -52,7 +50,7 @@ public class BigAmountRuleTest {
     @Test
     public void testApply_BigAmountFraud() {
         var entity = new DetectionReqEntity();
-        entity.setAmount(BigDecimal.valueOf(150));
+        entity.setAmount(150);
 
         var result = bigAmountRule.apply(entity);
         assertEquals(FraudCategory.BIG_AMOUNT, result);

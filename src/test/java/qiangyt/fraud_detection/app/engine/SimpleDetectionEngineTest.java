@@ -20,7 +20,6 @@ package qiangyt.fraud_detection.app.engine;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-import java.math.BigDecimal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -48,7 +47,7 @@ public class SimpleDetectionEngineTest {
     @Test
     public void testDetect_NoFraud() {
         var entity = new DetectionReqEntity();
-        entity.setAmount(BigDecimal.valueOf(5000));
+        entity.setAmount(5000);
         entity.setAccountId("account789");
 
         when(rule1.apply(entity)).thenReturn(FraudCategory.NONE);
@@ -61,7 +60,7 @@ public class SimpleDetectionEngineTest {
     @Test
     public void testDetect_FirstRuleFraud() {
         var entity = new DetectionReqEntity();
-        entity.setAmount(BigDecimal.valueOf(15000));
+        entity.setAmount(15000);
         entity.setAccountId("account789");
 
         when(rule1.apply(entity)).thenReturn(FraudCategory.BIG_AMOUNT);
@@ -74,7 +73,7 @@ public class SimpleDetectionEngineTest {
     @Test
     public void testDetect_SecondRuleFraud() {
         var entity = new DetectionReqEntity();
-        entity.setAmount(BigDecimal.valueOf(5000));
+        entity.setAmount(5000);
         entity.setAccountId("account123");
 
         when(rule1.apply(entity)).thenReturn(FraudCategory.NONE);

@@ -17,7 +17,6 @@
  */
 package qiangyt.fraud_detection.app.config;
 
-import java.math.BigDecimal;
 import java.util.Set;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -26,7 +25,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "app.rules")
 public class RuleProps {
 
-    BigDecimal maxTransactionAmount = BigDecimal.valueOf(99999);
+    int maxTransactionAmount = 100000;
 
     Set<String> suspicousAccounts = Set.of("cgrant", "fbiden");
 }

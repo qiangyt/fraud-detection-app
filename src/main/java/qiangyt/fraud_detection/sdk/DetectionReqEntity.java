@@ -17,7 +17,6 @@
  */
 package qiangyt.fraud_detection.sdk;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 @lombok.Getter
@@ -28,7 +27,7 @@ public class DetectionReqEntity {
 
     String accountId;
 
-    BigDecimal amount;
+    int amount;
 
     String memo;
 

@@ -33,7 +33,7 @@ public class BigAmountRule implements DetectionRule {
 
     @Override
     public FraudCategory apply(DetectionReqEntity entity) {
-        if (entity.getAmount().compareTo(getProps().getMaxTransactionAmount()) >= 0) {
+        if (entity.getAmount() >= getProps().getMaxTransactionAmount()) {
             return FraudCategory.BIG_AMOUNT;
         }
         return FraudCategory.NONE;

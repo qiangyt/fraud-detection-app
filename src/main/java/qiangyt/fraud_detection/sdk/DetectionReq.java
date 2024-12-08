@@ -19,7 +19,6 @@ package qiangyt.fraud_detection.sdk;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import java.math.BigDecimal;
 import java.util.Date;
 import qiangyt.fraud_detection.framework.misc.UuidHelper;
 
@@ -31,7 +30,7 @@ public class DetectionReq {
 
     @NotBlank private String accountId;
 
-    @NotNull private BigDecimal amount;
+    @NotNull private int amount;
 
     private String memo;
 
