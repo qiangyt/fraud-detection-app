@@ -66,7 +66,7 @@ public class DetectionSqsControllerTest {
         var msg = Message.builder().body("{\"id\":\"123\"}").build();
         when(client.receiveMessage(any(ReceiveMessageRequest.class)))
                 .thenReturn(ReceiveMessageResponse.builder().messages(msg).build());
-        when(service.detectAsync(any())).thenReturn(null);
+        when(service.detectThenAlert(any())).thenReturn(null);
 
         target.pollOne();
 
@@ -81,7 +81,7 @@ public class DetectionSqsControllerTest {
 
         target.pollOne();
 
-        verify(service, never()).detectAsync(any());
+        verify(service, never()).detectThenAlert(any());
     }
 
     @Test

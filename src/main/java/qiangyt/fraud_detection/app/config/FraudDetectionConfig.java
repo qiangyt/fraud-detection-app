@@ -27,6 +27,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import qiangyt.fraud_detection.framework.aws.AwsProps;
+import qiangyt.fraud_detection.framework.aws.cloudwatch.CloudWatchConfig;
 import qiangyt.fraud_detection.framework.aws.sqs.SqsConfig;
 import qiangyt.fraud_detection.framework.rest.RestConfig;
 
@@ -38,6 +39,7 @@ import qiangyt.fraud_detection.framework.rest.RestConfig;
     SqsPollingProps.class,
     AwsProps.class,
     SqsConfig.class,
+    CloudWatchConfig.class,
     RestConfig.class
 })
 public class FraudDetectionConfig {

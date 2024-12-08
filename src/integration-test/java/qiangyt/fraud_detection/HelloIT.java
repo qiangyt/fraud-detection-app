@@ -38,7 +38,7 @@ public class HelloIT {
     public void test() {
         var req = DetectionReq.builder()
                     .accountId("integration-test-account-1")
-                    .amount(999)
+                    .amount(99999999)
                     .memo("N/A")
                     .build();
         var entity = client.submit(req);

@@ -23,6 +23,7 @@ import java.util.concurrent.CompletableFuture;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
+import qiangyt.fraud_detection.app.alert.Alertor;
 import qiangyt.fraud_detection.app.engine.DetectionEngine;
 import qiangyt.fraud_detection.app.queue.DetectionRequestQueue;
 import qiangyt.fraud_detection.framework.json.Jackson;
@@ -45,6 +46,8 @@ public class DetectionService implements DetectionApi {
 
     @Autowired Jackson jackson;
 
+    @Autowired Alertor alertor;
+
     @PreDestroy
     public void shutdown() {
         log.info("Shut down task executor: begin");
@@ -58,7 +61,7 @@ public class DetectionService implements DetectionApi {
         return getRequestQueue().send(entity);
     }
 
-    public @NotNull CompletableFuture<DetectionResult> detectAsync(
+    public @NotNull CompletableFuture<DetectionResult> detectThenAlert(
             @NotNull DetectionReqEntity entity) {
         // uses dedicated task pool to execute engine
         var result =
@@ -70,7 +73,8 @@ public class DetectionService implements DetectionApi {
                     if (prevResult.getCategory().yes) {
                         log.warn("fraud detected: " + jackson.str(prevResult));
 
-                        // TODO: async alert
+                        // TODO: async alert log
+                        getAlertor().send(prevResult);
                     }
                     return prevResult;
                 });

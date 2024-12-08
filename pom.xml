@@ -136,6 +136,13 @@
             <version>3.0.0</version>
         </dependency>
 
+        <!-- <dependency>
+            <groupId>net.pennix</groupId>
+            <artifactId>logback-cloudwatch-appender</artifactId>
+            <version>1.0.3</version>
+            <scope>runtime</scope>
+        </dependency>-->
+
         <!-- AWS SDK for SQS -->
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
@@ -144,15 +151,15 @@
         </dependency>
 
         <!-- AWS SDK for CloudWatch Logs -->
-        <dependency>
+        <!--<dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>cloudwatchlogs</artifactId>
             <version>${aws.sdk.version}</version>
-        </dependency>
+        </dependency>-->
 
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
-            <artifactId>ec2</artifactId>
+            <artifactId>cloudwatch</artifactId>
             <version>${aws.sdk.version}</version>
         </dependency>
 

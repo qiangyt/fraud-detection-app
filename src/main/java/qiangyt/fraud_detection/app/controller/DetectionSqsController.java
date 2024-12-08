@@ -106,7 +106,7 @@ public class DetectionSqsController {
             log.info("Received message: " + body);
 
             var entity = j.from(body, DetectionReqEntity.class);
-            s.detectAsync(entity);
+            s.detectThenAlert(entity);
 
             // Delete the message ;
             client.deleteMessage(
