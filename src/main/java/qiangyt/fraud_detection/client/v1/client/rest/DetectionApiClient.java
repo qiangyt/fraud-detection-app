@@ -33,11 +33,11 @@ public class DetectionApiClient extends ApiClient implements DetectionApi {
 
     @Override
     public DetectionReqEntity submit(DetectionReq req) {
-        return post("", req).retrieve().body(DetectionReqEntity.class);
+        return post("").body(req).retrieve().body(DetectionReqEntity.class);
     }
 
     @Override
     public DetectionResult detect(DetectionReqEntity entity) {
-        return get("", entity).retrieve().body(DetectionResult.class);
+        return get("").body(entity).retrieve().body(DetectionResult.class);
     }
 }

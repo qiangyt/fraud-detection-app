@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 
 import qiangyt.fraud_detection.client.v1.client.rest.AppClient;
 import qiangyt.fraud_detection.framework.json.JacksonHelper;
+import qiangyt.fraud_detection.sdk.DetectionReq;
 
 public class HelloIT {
 
@@ -35,8 +36,13 @@ public class HelloIT {
 
     @Test
     public void test() {
-        
-
+        var req = DetectionReq.builder()
+                    .accountId("integration-test-account-1")
+                    .amount(999)
+                    .memo("N/A")
+                    .build();
+        var entity = client.submit(req);
+        dump("entity: ", entity);
     }
 
     static int i = 0;
