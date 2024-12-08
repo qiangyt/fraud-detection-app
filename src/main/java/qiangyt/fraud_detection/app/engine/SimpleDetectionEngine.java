@@ -21,6 +21,7 @@ import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import qiangyt.fraud_detection.app.engine.rules.BigAmountRule;
 import qiangyt.fraud_detection.app.engine.rules.SuspiciousAccountRule;
@@ -32,6 +33,7 @@ import qiangyt.fraud_detection.sdk.FraudCategory;
  */
 @lombok.Getter
 @lombok.Setter
+@Primary
 @Service
 @lombok.extern.slf4j.Slf4j
 public class SimpleDetectionEngine implements DetectionEngine {

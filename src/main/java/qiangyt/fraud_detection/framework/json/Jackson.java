@@ -32,7 +32,6 @@ import java.util.List;
 import lombok.Getter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.stereotype.Component;
 import qiangyt.fraud_detection.framework.json.modules.BigDecimalModule;
 import qiangyt.fraud_detection.framework.json.modules.DateModule;
 import qiangyt.fraud_detection.framework.json.modules.FileModule;
@@ -44,7 +43,6 @@ import qiangyt.fraud_detection.framework.misc.StringHelper;
 
 @Getter
 // @ThreadSafe
-@Component
 public class Jackson {
 
     @Nonnull public static final Jackson DEFAULT = new Jackson(buildDefaultMapper(false));
