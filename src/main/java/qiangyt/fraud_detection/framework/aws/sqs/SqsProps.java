@@ -22,6 +22,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @lombok.Getter
 @lombok.Setter
 @ConfigurationProperties("aws.sqs")
+@lombok.experimental.SuperBuilder
+@lombok.NoArgsConstructor
 public class SqsProps {
 
     private String queueUrl;

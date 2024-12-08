@@ -17,74 +17,82 @@
  */
 package qiangyt.fraud_detection.app.controller;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.concurrent.ExecutorService;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import qiangyt.fraud_detection.sdk.DetectionApi;
+import qiangyt.fraud_detection.app.config.SqsPollingProps;
+import qiangyt.fraud_detection.app.service.DetectionService;
+import qiangyt.fraud_detection.framework.aws.sqs.SqsProps;
+import qiangyt.fraud_detection.framework.json.Jackson;
 import software.amazon.awssdk.services.sqs.SqsClient;
+import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
 import software.amazon.awssdk.services.sqs.model.Message;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
 
-@Disabled
 public class DetectionSqsControllerTest {
 
-    @Mock SqsClient sqsClient;
+    @Mock SqsProps props;
 
-    @Mock DetectionApi detectionApi;
+    @Mock SqsClient client;
 
-    @InjectMocks DetectionSqsController detectionSqsController;
+    @Mock SqsPollingProps pollingProps;
+
+    @Mock DetectionService service;
+
+    @InjectMocks DetectionSqsController target;
+
+    @Mock ExecutorService sqsPollingThreadPool;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
+
+        target.setJackson(Jackson.DEFAULT);
     }
 
     @Test
-    void testPoll() {
+    void testPollOne() {
         // Mock the behavior of SqsClient and DetectionApi
-        var message = Message.builder().body("{\"id\":\"123\"}").build();
-        when(sqsClient.receiveMessage((ReceiveMessageRequest) any()))
-                .thenReturn(ReceiveMessageResponse.builder().messages(message).build());
-        when(detectionApi.detect(any())).thenReturn(null);
+        var msg = Message.builder().body("{\"id\":\"123\"}").build();
+        when(client.receiveMessage(any(ReceiveMessageRequest.class)))
+                .thenReturn(ReceiveMessageResponse.builder().messages(msg).build());
+        when(service.detectAsync(any())).thenReturn(null);
 
-        detectionSqsController.poll();
+        target.pollOne();
 
-        verify(detectionApi, times(1)).detect(any());
+        verify(client, times(1)).deleteMessage(any(DeleteMessageRequest.class));
     }
 
     @Test
-    void testPoll_noMessages() {
+    void testPollOne_noMessages() {
         // Mock the behavior of SqsClient to return no messages
-        when(sqsClient.receiveMessage((ReceiveMessageRequest) any()))
+        when(client.receiveMessage((ReceiveMessageRequest) any()))
                 .thenReturn(ReceiveMessageResponse.builder().build());
 
-        detectionSqsController.poll();
+        target.pollOne();
 
-        verify(detectionApi, never()).detect(any());
+        verify(service, never()).detectAsync(any());
     }
 
     @Test
     void testStart() {
-        detectionSqsController.start();
-        // Verify that the start method was called
-        // verify(sqsClient, times(1)).start();
+        target.start();
+        verify(sqsPollingThreadPool, times(1)).submit(any(Runnable.class));
     }
 
     @Test
     void testStop() {
-        detectionSqsController.stop();
-        // Verify that the stop method was called
-        // verify(sqsClient, times(1)).stop();
+        target.stop();
+        verify(sqsPollingThreadPool, times(1)).shutdown();
     }
 }

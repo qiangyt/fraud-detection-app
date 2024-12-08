@@ -54,26 +54,7 @@ public class DetectionSqsController {
 
     @PostConstruct
     void start() {
-        getSqsPollingThreadPool()
-                .submit(
-                        () -> {
-                            getPolling().set(true);
-
-                            log.info("SQS detection queue polling: started");
-
-                            while (getPolling().get() && !Thread.currentThread().isInterrupted()) {
-                                try {
-                                    // if (log.isDebugEnabled()) {
-                                    log.info("SQS detection queue polling: new polling");
-                                    // }
-                                    poll();
-                                } catch (Exception ex) {
-                                    log.error("Error in polling", ex);
-                                }
-                            }
-
-                            log.info("SQS detection queue polling: stopped");
-                        });
+        getSqsPollingThreadPool().submit(this::poll);
     }
 
     @PreDestroy
@@ -84,11 +65,30 @@ public class DetectionSqsController {
         getSqsPollingThreadPool().shutdown();
     }
 
+    void poll() {
+        getPolling().set(true);
+
+        log.info("SQS detection queue polling: started");
+
+        while (getPolling().get() && !Thread.currentThread().isInterrupted()) {
+            try {
+                // if (log.isDebugEnabled()) {
+                log.info("SQS detection queue polling: new polling");
+                // }
+                pollOne();
+            } catch (Exception ex) {
+                log.error("Error in polling", ex);
+            }
+        }
+
+        log.info("SQS detection queue polling: stopped");
+    }
+
     // we don't use scheduled job, instead, we use a thread to poll the queue
     // continuously and
     // depends on Sqs's long polling feature
     // @Scheduled(fixedRate = 5000) // 5 seconds polling interval
-    void poll() {
+    void pollOne() {
         var qurl = getProps().getQueueUrl();
         var s = getService();
         var j = getJackson();
