@@ -17,28 +17,44 @@
  */
 package qiangyt.fraud_detection.app.controller;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import qiangyt.fraud_detection.app.service.DetectionService;
+import qiangyt.fraud_detection.framework.json.Jackson;
 import qiangyt.fraud_detection.framework.misc.UuidHelper;
 import qiangyt.fraud_detection.framework.test.AbstractRestTest;
+import qiangyt.fraud_detection.sdk.DetectionReq;
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 import qiangyt.fraud_detection.sdk.DetectionResult;
 
 /**
  * @author
  */
-@Disabled
-@ContextConfiguration(classes = DetectionRestController.class)
+@ContextConfiguration(classes = {DetectionRestController.class})
 @WebMvcTest(DetectionRestController.class)
 public class DetectionRestControllerTest extends AbstractRestTest {
 
     @MockBean DetectionService service;
+
+    @MockBean Jackson jackson;
+
+    @Disabled
+    @Test
+    void test_submit() {
+        var req = DetectionReq.builder().accountId("a").amount(new BigDecimal(3)).build();
+        var entity = req.toEntity();
+
+        when(this.service.submit(any())).thenReturn(entity);
+
+        postThenExpectOk(req, entity, "/rest/detection");
+    }
 
     @Test
     void test_detect() {
@@ -46,8 +62,8 @@ public class DetectionRestControllerTest extends AbstractRestTest {
         var entity = DetectionReqEntity.builder().id(id).build();
         var result = DetectionResult.builder().entity(entity).build();
 
-        when(this.service.detect(entity)).thenReturn(result);
+        when(this.service.detect(any())).thenReturn(result);
 
-        getThenExpectOk(result, "/rest/detection");
+        getThenExpectOk(entity, result, "/rest/detection");
     }
 }

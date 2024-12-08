@@ -30,7 +30,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import qiangyt.fraud_detection.framework.json.JacksonHelper;
+import qiangyt.fraud_detection.framework.json.Jackson;
 import qiangyt.fraud_detection.framework.rest.RestConfig;
 
 /**
@@ -51,6 +51,10 @@ public class AbstractRestTest {
 
     @Autowired protected MockMvc mockMvc;
 
+    public Jackson getJackson() {
+        return Jackson.DEFAULT;
+    }
+
     /**
      * Verify that the API did not encounter an error and that the returned response body (JSON
      * only) matches the expected value.
@@ -64,7 +68,7 @@ public class AbstractRestTest {
             if (expectedResponseContent == null) {
                 return ra; // TBD: should we turn to return HTTP 204 (No Content)?
             }
-            return ra.andExpect(content().string(JacksonHelper.to(expectedResponseContent)));
+            return ra.andExpect(content().string(getJackson().str(expectedResponseContent)));
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -73,16 +77,19 @@ public class AbstractRestTest {
     /**
      * Create a GET request.
      *
+     * @param requestContent - POST body (will be serialized into JSON)
      * @param urlTemplate - URL template (can use "{parameter}" as a placeholder for parameters)
      * @param uriVars - Parameter values corresponding to placeholders in the URL template
      */
-    public MockHttpServletRequestBuilder GET(String urlTemplate, Object... uriVars) {
+    public MockHttpServletRequestBuilder GET(
+            Object requestContent, String urlTemplate, Object... uriVars) {
         if (!urlTemplate.startsWith("/")) {
             urlTemplate = "/" + urlTemplate;
         }
 
         return MockMvcRequestBuilders.get(urlTemplate, uriVars)
-                .contentType(MediaType.APPLICATION_JSON_VALUE);
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(getJackson().str(requestContent));
     }
 
     /**
@@ -100,7 +107,7 @@ public class AbstractRestTest {
 
         return MockMvcRequestBuilders.post(urlTemplate, uriVars)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(JacksonHelper.to(requestContent));
+                .content(getJackson().str(requestContent));
     }
 
     /**
@@ -112,9 +119,12 @@ public class AbstractRestTest {
      * @param uriVars - Parameter values corresponding to placeholders in the URL template
      */
     public ResultActions getThenExpectOk(
-            Object expectedResponseContent, String urlTemplate, Object... uriVars) {
+            Object requestContent,
+            Object expectedResponseContent,
+            String urlTemplate,
+            Object... uriVars) {
         try {
-            var req = GET(urlTemplate, uriVars);
+            var req = GET(requestContent, urlTemplate, uriVars);
             var actions = this.mockMvc.perform(req);
             return expectOk(actions, expectedResponseContent);
         } catch (Exception ex) {
