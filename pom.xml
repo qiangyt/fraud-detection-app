@@ -32,6 +32,7 @@
         <maven.test.failure.ignore>true</maven.test.failure.ignore>
 
         <springdoc.version>2.6.0</springdoc.version>
+        <aws.sdk.version>2.29.29</aws.sdk.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -139,14 +140,16 @@
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>sqs</artifactId>
-            <version>2.29.29</version>
+            <version>${aws.sdk.version}</version>
         </dependency>
 
         <!-- AWS SDK for CloudWatch Logs -->
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>cloudwatchlogs</artifactId>
-            <version>2.29.29</version>
+            <version>${aws.sdk.version}</version>
+        </dependency>
+
         </dependency>
 
         <!-- Spring Cloud AWS (Optional, but helps with integration) -->
