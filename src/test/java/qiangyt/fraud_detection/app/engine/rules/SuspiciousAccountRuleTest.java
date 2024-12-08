@@ -19,8 +19,12 @@ package qiangyt.fraud_detection.app.engine.rules;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.math.BigDecimal;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import qiangyt.fraud_detection.app.config.RuleProps;
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 import qiangyt.fraud_detection.sdk.FraudCategory;
 
@@ -30,7 +34,9 @@ public class SuspiciousAccountRuleTest {
 
     @BeforeEach
     public void setUp() {
+        var props = new RuleProps(); 
         suspiciousAccountRule = new SuspiciousAccountRule();
+        suspiciousAccountRule.setProps(props);
     }
 
     @Test
@@ -45,7 +51,7 @@ public class SuspiciousAccountRuleTest {
     @Test
     public void testApply_SuspiciousAccountFraud() {
         var entity = new DetectionReqEntity();
-        entity.setAccountId("account123");
+        entity.setAccountId("fbiden");
 
         var result = suspiciousAccountRule.apply(entity);
         assertEquals(FraudCategory.SUSPICIOUS_ACCOUNT, result);
