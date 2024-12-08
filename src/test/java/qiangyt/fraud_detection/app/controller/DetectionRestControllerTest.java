@@ -22,8 +22,8 @@ import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import qiangyt.fraud_detection.app.service.DetectionService;
 import qiangyt.fraud_detection.framework.json.Jackson;
 import qiangyt.fraud_detection.framework.misc.UuidHelper;
@@ -39,9 +39,9 @@ import qiangyt.fraud_detection.sdk.DetectionResult;
 @WebMvcTest(DetectionRestController.class)
 public class DetectionRestControllerTest extends AbstractRestTest {
 
-    @MockBean DetectionService service;
+    @MockitoBean DetectionService service;
 
-    @MockBean Jackson jackson;
+    @MockitoBean Jackson jackson;
 
     @Test
     void test_submit() {

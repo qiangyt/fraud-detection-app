@@ -17,7 +17,6 @@
  */
 package qiangyt.fraud_detection.framework.rest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,11 +42,6 @@ public class RestConfig implements WebMvcConfigurer {
     @Bean
     public ApiClientErrorHandler clientErrorHandler() {
         return new ApiClientErrorHandler(getJackson());
-    }
-
-    @Bean
-    public ObjectMapper objectMapper() {
-        return jackson.getMapper();
     }
 
     @Override
