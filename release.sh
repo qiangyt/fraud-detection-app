@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version=20241206A
+version=20241209A
 repo_d=/data/qiangyt/github/qiangyt/fraud-detection-app
 tag_suffix=${version} #$(date +"%Y%m%d-%H%M%S")
 
