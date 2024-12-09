@@ -10,3 +10,5 @@ aws ecr-public get-login-password --region us-east-1 | docker login --username A
 
 aws eks describe-cluster --name hsbc --region eu-north-1
 aws eks --region eu-north-1 update-kubeconfig --name hsbc
+
+kubectl apply -f aws-secret.yaml
