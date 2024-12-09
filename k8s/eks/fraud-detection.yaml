@@ -34,11 +34,16 @@ spec:
             secretKeyRef:
               name: aws-secret
               key: aws-access-key-secret
-        - name: AWS_SQS_QUEUE_URL
+        - name: AWS_SQS_DETECT_QUEUE_URL
           valueFrom:
             secretKeyRef:
               name: aws-secret
-              key: aws-sqs-queue-url
+              key: aws-sqs-detect-queue-url
+        - name: AWS_SQS_ALERT_QUEUE_URL
+          valueFrom:
+            secretKeyRef:
+              name: aws-secret
+              key: aws-sqs-alert-queue-url
 ---
 apiVersion: v1
 kind: Service

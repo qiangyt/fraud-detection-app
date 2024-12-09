@@ -3,9 +3,9 @@ POST http://localhost:8080/rest/detection
 Content-Type: application/json
     
 {
-    "accountId": "hsbc_dev_account_1",
-    "amount": 1009999,
-    "memo": "test"
+    "accountId": "integration-test-account-1",
+    "amount": 99900000,
+    "memo": "N/A"
 }
 
 ###
