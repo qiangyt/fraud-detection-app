@@ -35,12 +35,15 @@ public abstract class SqsBaseQueue<T> {
 
     @Autowired Jackson jackson;
 
-    protected void send(String queueUrl, T data, String deduplicationId) {
+    protected void send(String queueUrl, T data, String deduplicationId, String messageGroupId) {
         var msg = getJackson().str(data);
 
         var sqsReqBuilder = SendMessageRequest.builder().queueUrl(queueUrl).messageBody(msg);
         if (!StringHelper.isBlank(deduplicationId)) {
             sqsReqBuilder = sqsReqBuilder.messageDeduplicationId(deduplicationId);
+        }
+        if (!StringHelper.isBlank(messageGroupId)) {
+            sqsReqBuilder = sqsReqBuilder.messageGroupId(messageGroupId);
         }
         var sqsReq = sqsReqBuilder.build();
 

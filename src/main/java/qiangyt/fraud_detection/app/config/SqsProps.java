@@ -32,9 +32,7 @@ public class SqsProps {
 
     int timeout = 20;
 
-    String detectQueueUrl =
-            "https://sqs.eu-north-1.amazonaws.com/820242901663/hsbc_fraud_detection";
+    String detectQueueUrl = System.getenv("AWS_SQS_DETECT_QUEUE_URL"); //  "https://sqs.eu-north-1.amazonaws.com/820242901663/hsbc_fraud_detection";
 
-    String alertQueueUrl =
-            "https://sqs.eu-north-1.amazonaws.com/820242901663/hsbc_fraud_alert.fifo";
+    String alertQueueUrl = System.getenv("AWS_SQS_ALERT_QUEUE_URL"); // "https://sqs.eu-north-1.amazonaws.com/820242901663/hsbc_fraud_alert.fifo";
 }

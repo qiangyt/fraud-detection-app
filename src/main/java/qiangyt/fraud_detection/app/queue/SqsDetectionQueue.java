@@ -39,6 +39,6 @@ public class SqsDetectionQueue extends SqsBaseQueue<DetectionReqEntity>
 
     @Override
     public void send(DetectionReqEntity req) {
-        send(getProps().getDetectQueueUrl(), req, "");
+        send(getProps().getDetectQueueUrl(), req, "", "");
     }
 }

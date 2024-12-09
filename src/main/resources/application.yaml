@@ -20,10 +20,11 @@ aws:
   region: ${AWS_REGION}
   access-key-id: ${AWS_ACCESS_KEY_ID}
   access-key-secret: ${AWS_ACCESS_KEY_SECRET}
-  sqs:
-    queue-url: ${AWS_SQS_QUEUE_URL}
 
-#app:
+app:
+  sqs:
+    detect-queue-url: ${AWS_SQS_DETECT_QUEUE_URL}
+    alert-queue-url: ${AWS_SQS_ALERT_QUEUE_URL}
 
 management:
   endpoints:

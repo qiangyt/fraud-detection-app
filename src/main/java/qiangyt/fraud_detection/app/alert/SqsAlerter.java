@@ -31,6 +31,6 @@ public class SqsAlerter extends SqsBaseQueue<DetectionResult> implements Alertor
 
     @Override
     public void send(DetectionResult result) {
-        send(getProps().getAlertQueueUrl(), result, result.getEntity().getId());
+        send(getProps().getAlertQueueUrl(), result, result.getEntity().getId(), "alert");
     }
 }

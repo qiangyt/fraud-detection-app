@@ -24,9 +24,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties("aws")
 public class AwsProps {
 
-    private String region;
+    private String region = System.getenv("AWS_REGION");
 
-    private String accessKeyId;
+    private String accessKeyId = System.getenv("AWS_ACCESS_KEY_ID");
 
-    private String accessKeySecret;
+    private String accessKeySecret = System.getenv("AWS_ACCESS_KEY_SECRET");
 }
