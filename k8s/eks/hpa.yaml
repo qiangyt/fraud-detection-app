@@ -1,5 +1,3 @@
-# Horizontal Pod Autoscaler will automatically scale the pods based on CPU usage
-
 apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:

@@ -21,5 +21,5 @@ import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 
 public interface DetectionRequestQueue {
 
-    DetectionReqEntity send(DetectionReqEntity req);
+    void send(DetectionReqEntity req);
 }

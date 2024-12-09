@@ -18,18 +18,16 @@
 package qiangyt.fraud_detection.app.queue;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import qiangyt.fraud_detection.app.config.SqsProps;
 import qiangyt.fraud_detection.framework.json.Jackson;
-import qiangyt.fraud_detection.sdk.DetectionReqEntity;
+import qiangyt.fraud_detection.framework.misc.StringHelper;
 import software.amazon.awssdk.services.sqs.SqsClient;
+import software.amazon.awssdk.services.sqs.model.*;
 
 @lombok.Getter
 @lombok.Setter
 @lombok.extern.slf4j.Slf4j
-@Service
-public class SqsDetectionQueue extends SqsBaseQueue<DetectionReqEntity>
-        implements DetectionRequestQueue {
+public abstract class SqsBaseQueue<T> {
 
     @Autowired SqsProps props;
 
@@ -37,8 +35,19 @@ public class SqsDetectionQueue extends SqsBaseQueue<DetectionReqEntity>
 
     @Autowired Jackson jackson;
 
-    @Override
-    public void send(DetectionReqEntity req) {
-        send(getProps().getDetectQueueUrl(), req, "");
+    protected void send(String queueUrl, T data, String deduplicationId) {
+        var msg = getJackson().str(data);
+
+        var sqsReqBuilder = SendMessageRequest.builder().queueUrl(queueUrl).messageBody(msg);
+        if (!StringHelper.isBlank(deduplicationId)) {
+            sqsReqBuilder = sqsReqBuilder.messageDeduplicationId(deduplicationId);
+        }
+        var sqsReq = sqsReqBuilder.build();
+
+        getClient().sendMessage(sqsReq);
+
+        if (log.isDebugEnabled()) {
+            log.debug("message sent to SQS: " + getJackson().str(sqsReq));
+        }
     }
 }

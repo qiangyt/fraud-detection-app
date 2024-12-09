@@ -36,7 +36,7 @@ import qiangyt.fraud_detection.framework.rest.RestConfig;
 @Import({
     DetectionTaskProps.class,
     RuleProps.class,
-    SqsPollingProps.class,
+    SqsProps.class,
     AwsProps.class,
     SqsConfig.class,
     CloudWatchConfig.class,
@@ -65,7 +65,7 @@ public class FraudDetectionConfig {
     }
 
     @Bean
-    public ExecutorService sqsPollingThreadPool(SqsPollingProps props) {
+    public ExecutorService sqsPollingThreadPool(SqsProps props) {
         return Executors.newFixedThreadPool(props.getThreadPoolSize());
     }
 }

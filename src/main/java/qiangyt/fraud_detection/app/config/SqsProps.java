@@ -23,12 +23,18 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @Setter
 @Getter
-@ConfigurationProperties(prefix = "app.sqs.polling")
-public class SqsPollingProps {
+@ConfigurationProperties(prefix = "app.sqs")
+public class SqsProps {
 
     int threadPoolSize = 1;
 
     int batchSize = 10;
 
     int timeout = 20;
+
+    String detectQueueUrl =
+            "https://sqs.eu-north-1.amazonaws.com/820242901663/hsbc_fraud_detection";
+
+    String alertQueueUrl =
+            "https://sqs.eu-north-1.amazonaws.com/820242901663/hsbc_fraud_alert.fifo";
 }

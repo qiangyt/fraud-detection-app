@@ -20,7 +20,6 @@ package qiangyt.fraud_detection.framework.aws.sqs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import qiangyt.fraud_detection.framework.aws.AwsProps;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
@@ -31,7 +30,6 @@ import software.amazon.awssdk.services.sqs.SqsClient;
 @lombok.Setter
 @lombok.extern.slf4j.Slf4j
 @Configuration
-@Import(SqsProps.class)
 public class SqsConfig {
 
     @Autowired private AwsProps props;

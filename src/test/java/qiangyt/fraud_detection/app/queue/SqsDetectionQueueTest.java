@@ -26,7 +26,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import qiangyt.fraud_detection.framework.aws.sqs.SqsProps;
+import qiangyt.fraud_detection.app.config.SqsProps;
 import qiangyt.fraud_detection.framework.json.Jackson;
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 import software.amazon.awssdk.services.sqs.SqsClient;
@@ -53,7 +53,7 @@ public class SqsDetectionQueueTest {
         var req = new DetectionReqEntity();
         String messageBody = "{\"key\":\"value\"}";
 
-        when(props.getQueueUrl()).thenReturn(queueUrl);
+        when(props.getDetectQueueUrl()).thenReturn(queueUrl);
         when(jackson.str(req)).thenReturn(messageBody);
 
         sqsDetectionQueue.send(req);

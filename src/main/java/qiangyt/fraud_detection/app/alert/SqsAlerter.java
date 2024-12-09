@@ -15,16 +15,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package qiangyt.fraud_detection.framework.aws.sqs;
+package qiangyt.fraud_detection.app.alert;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Service;
+import qiangyt.fraud_detection.app.queue.SqsBaseQueue;
+import qiangyt.fraud_detection.sdk.DetectionResult;
 
 @lombok.Getter
 @lombok.Setter
-@ConfigurationProperties("aws.sqs")
-@lombok.experimental.SuperBuilder
-@lombok.NoArgsConstructor
-public class SqsProps {
+@lombok.extern.slf4j.Slf4j
+@Service
+@Primary
+public class SqsAlerter extends SqsBaseQueue<DetectionResult> implements Alertor {
 
-    private String queueUrl;
+    @Override
+    public void send(DetectionResult result) {
+        send(getProps().getAlertQueueUrl(), result, result.getEntity().getId());
+    }
 }

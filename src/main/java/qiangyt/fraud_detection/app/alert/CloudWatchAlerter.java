@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import qiangyt.fraud_detection.sdk.DetectionResult;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
+import software.amazon.awssdk.services.cloudwatch.model.Dimension;
 import software.amazon.awssdk.services.cloudwatch.model.MetricDatum;
 import software.amazon.awssdk.services.cloudwatch.model.PutMetricDataRequest;
 import software.amazon.awssdk.services.cloudwatch.model.StandardUnit;
@@ -35,9 +36,12 @@ public class CloudWatchAlerter implements Alertor {
 
     @Override
     public void send(DetectionResult result) {
+        var dim = Dimension.builder().name("id").value(result.getId()).build();
+
         var metric =
                 MetricDatum.builder()
                         .metricName(result.getCategory().name())
+                        .dimensions(dim)
                         .value(1.0)
                         .unit(StandardUnit.COUNT)
                         .build();

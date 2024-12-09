@@ -57,7 +57,7 @@ public class DetectionServiceTest {
                     }
                 };
 
-        when(queue.send(any(DetectionReqEntity.class))).thenReturn(entity);
+        // when(queue.send(any(DetectionReqEntity.class))).thenReturn(entity);
 
         var result = service.submit(req);
 

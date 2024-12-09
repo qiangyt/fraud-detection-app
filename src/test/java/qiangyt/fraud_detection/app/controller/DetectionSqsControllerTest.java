@@ -29,9 +29,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import qiangyt.fraud_detection.app.config.SqsPollingProps;
+import qiangyt.fraud_detection.app.config.SqsProps;
 import qiangyt.fraud_detection.app.service.DetectionService;
-import qiangyt.fraud_detection.framework.aws.sqs.SqsProps;
 import qiangyt.fraud_detection.framework.json.Jackson;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
@@ -45,7 +44,7 @@ public class DetectionSqsControllerTest {
 
     @Mock SqsClient client;
 
-    @Mock SqsPollingProps pollingProps;
+    @Mock SqsProps pollingProps;
 
     @Mock DetectionService service;
 

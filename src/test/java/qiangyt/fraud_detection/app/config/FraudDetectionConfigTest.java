@@ -53,7 +53,7 @@ public class FraudDetectionConfigTest {
     @Test
     public void testSqsPollingThreadPool() {
         var t = new FraudDetectionConfig();
-        var props = new SqsPollingProps();
+        var props = new SqsProps();
 
         var executorService = t.sqsPollingThreadPool(props);
         assertNotNull(executorService);

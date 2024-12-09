@@ -58,7 +58,8 @@ public class DetectionService implements DetectionApi {
     @Override
     public @NotNull DetectionReqEntity submit(@NotNull DetectionReq req) {
         var entity = req.toEntity();
-        return getRequestQueue().send(entity);
+        getRequestQueue().send(entity);
+        return entity;
     }
 
     public @NotNull CompletableFuture<DetectionResult> detectThenAlert(
@@ -71,9 +72,7 @@ public class DetectionService implements DetectionApi {
         return result.thenApplyAsync(
                 (prevResult) -> {
                     if (prevResult.getCategory().yes) {
-                        log.warn("fraud detected: " + jackson.str(prevResult));
-
-                        // TODO: async alert log
+                        // log.warn("fraud detected: " + jackson.str(prevResult));
                         getAlertor().send(prevResult);
                     }
                     return prevResult;

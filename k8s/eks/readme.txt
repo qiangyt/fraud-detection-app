@@ -8,5 +8,5 @@ sudo ./aws/install
 aws configure
 aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/g8s9f1z6
 
-aws eks describe-cluster --name happy-grunge-mongoose --region eu-north-1
-aws eks --region eu-north-1 update-kubeconfig --name happy-grunge-mongoose
+aws eks describe-cluster --name hsbc --region eu-north-1
+aws eks --region eu-north-1 update-kubeconfig --name hsbc

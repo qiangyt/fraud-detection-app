@@ -23,9 +23,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import qiangyt.fraud_detection.app.config.SqsPollingProps;
+import qiangyt.fraud_detection.app.config.SqsProps;
 import qiangyt.fraud_detection.app.service.DetectionService;
-import qiangyt.fraud_detection.framework.aws.sqs.SqsProps;
 import qiangyt.fraud_detection.framework.json.Jackson;
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 import software.amazon.awssdk.services.sqs.SqsClient;
@@ -49,8 +48,6 @@ public class DetectionSqsController {
 
     @lombok.Getter(lombok.AccessLevel.PRIVATE)
     final AtomicBoolean polling = new AtomicBoolean();
-
-    @Autowired SqsPollingProps pollingProps;
 
     @PostConstruct
     void start() {
@@ -89,15 +86,16 @@ public class DetectionSqsController {
     // depends on Sqs's long polling feature
     // @Scheduled(fixedRate = 5000) // 5 seconds polling interval
     void pollOne() {
-        var qurl = getProps().getQueueUrl();
+        var p = getProps();
+        var qurl = p.getDetectQueueUrl();
         var s = getService();
         var j = getJackson();
 
         var sqsReq =
                 ReceiveMessageRequest.builder()
                         .queueUrl(qurl)
-                        .maxNumberOfMessages(getPollingProps().getBatchSize())
-                        .waitTimeSeconds(getPollingProps().getTimeout()) // Long polling
+                        .maxNumberOfMessages(p.getBatchSize())
+                        .waitTimeSeconds(p.getTimeout()) // Long polling
                         .build();
 
         for (var msg : client.receiveMessage(sqsReq).messages()) {
