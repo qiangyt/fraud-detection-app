@@ -104,6 +104,7 @@ public class DetectionSqsController {
         var s = getService();
         var j = getJackson();
 
+        // Create the request to receive messages from the SQS queue
         var sqsReq =
                 ReceiveMessageRequest.builder()
                         .queueUrl(qurl)
@@ -111,13 +112,16 @@ public class DetectionSqsController {
                         .waitTimeSeconds(p.getTimeout()) // Long polling
                         .build();
 
+        // Process each received message
         for (var msg : client.receiveMessage(sqsReq).messages()) {
             String body = msg.body();
 
+            // Deserialize the message body into a DetectionReqEntity
             var entity = j.from(body, DetectionReqEntity.class);
+            // Perform detection and alert based on the entity
             s.detectThenAlert(entity);
 
-            // Delete the message ;
+            // Delete the message from the queue after processing
             client.deleteMessage(
                     DeleteMessageRequest.builder()
                             .queueUrl(qurl)

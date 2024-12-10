@@ -22,48 +22,67 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
+/** Unit tests for the {@link Internal} class. */
 public class InternalTest {
 
+    /** Tests the constructor of {@link Internal} with a formatted message. */
     @Test
     public void testInternalWithMessageFormat() {
+        // Create an Internal exception with a formatted message
         var ex = new Internal("Internal error: %s", "error1");
+        // Verify the status, code, and message
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, ex.getStatus());
         assertEquals(ErrorCode.NONE, ex.getCode());
         assertEquals("Internal error: error1", ex.getMessage());
     }
 
+    /** Tests the constructor of {@link Internal} with a simple message. */
     @Test
     public void testInternalWithMessage() {
+        // Create an Internal exception with a simple message
         var ex = new Internal("Internal error");
+        // Verify the status, code, and message
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, ex.getStatus());
         assertEquals(ErrorCode.NONE, ex.getCode());
         assertEquals("Internal error", ex.getMessage());
     }
 
+    /** Tests the constructor of {@link Internal} with a cause and a formatted message. */
     @Test
     public void testInternalWithCauseAndMessageFormat() {
+        // Create a cause exception
         var cause = new RuntimeException("Root cause");
+        // Create an Internal exception with a cause and a formatted message
         var ex = new Internal(cause, "Internal error: %s", "error1");
+        // Verify the status, code, message, and cause
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, ex.getStatus());
         assertEquals(ErrorCode.NONE, ex.getCode());
         assertEquals("Internal error: error1", ex.getMessage());
         assertEquals(cause, ex.getCause());
     }
 
+    /** Tests the constructor of {@link Internal} with a cause and a simple message. */
     @Test
     public void testInternalWithCauseAndMessage() {
+        // Create a cause exception
         var cause = new RuntimeException("Root cause");
+        // Create an Internal exception with a cause and a simple message
         var ex = new Internal(cause, "Internal error");
+        // Verify the status, code, message, and cause
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, ex.getStatus());
         assertEquals(ErrorCode.NONE, ex.getCode());
         assertEquals("Internal error", ex.getMessage());
         assertEquals(cause, ex.getCause());
     }
 
+    /** Tests the constructor of {@link Internal} with only a cause. */
     @Test
     public void testInternalWithCause() {
+        // Create a cause exception
         var cause = new RuntimeException("Root cause");
+        // Create an Internal exception with only a cause
         var ex = new Internal(cause);
+        // Verify the status, code, message, and cause
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, ex.getStatus());
         assertEquals(ErrorCode.NONE, ex.getCode());
         assertEquals("Internal Server Error", ex.getMessage());

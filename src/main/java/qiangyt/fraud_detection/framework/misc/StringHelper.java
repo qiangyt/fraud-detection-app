@@ -85,17 +85,18 @@ public class StringHelper {
      * @return a concatenated string with the specified delimiter
      */
     public static <T> String join(String delimiter, T[] array) {
+        // Initialize a StringBuilder with an estimated capacity
         var r = new StringBuilder(array.length * 64);
         var isFirst = true;
         for (var obj : array) {
             if (isFirst) {
-                isFirst = false;
+                isFirst = false; // Skip delimiter for the first element
             } else if (delimiter != null) {
-                r.append(delimiter);
+                r.append(delimiter); // Append delimiter before each subsequent element
             }
-            r.append(Objects.toString(obj));
+            r.append(Objects.toString(obj)); // Append the string representation of the element
         }
-        return r.toString();
+        return r.toString(); // Return the concatenated string
     }
 
     /**

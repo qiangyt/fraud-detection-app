@@ -60,15 +60,15 @@ public class IoHelper {
             var output = new ByteArrayOutputStream(1024);
             var buffer = new byte[1024];
             while (true) {
-                int read = input.read(buffer);
-                if (read == -1) {
+                int read = input.read(buffer); // Read up to buffer size from the input stream
+                if (read == -1) { // Check if end of stream is reached
                     break;
                 }
-                output.write(buffer, 0, read);
+                output.write(buffer, 0, read); // Write the read bytes to the output stream
             }
-            return output.toByteArray();
+            return output.toByteArray(); // Convert the output stream to a byte array
         } catch (IOException e) {
-            throw new Internal(e);
+            throw new Internal(e); // Wrap and throw an internal exception in case of an IOException
         }
     }
 }
