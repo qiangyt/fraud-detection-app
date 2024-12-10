@@ -20,6 +20,8 @@ package qiangyt.fraud_detection;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertNotNull;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import qiangyt.fraud_detection.sdk.DetectionReq;
@@ -36,6 +38,18 @@ public class SubmitIT extends AbstractIT {
         } finally {
             t.aroundTest();
         }
+    }
+
+    
+
+    @BeforeEach 
+    @AfterEach
+    public void aroundTest() {
+        var detectQueueUrl = sqsProps.getDetectQueueUrl();
+        clearQueue(detectQueueUrl);
+
+        var alertQueueUrl = sqsProps.getAlertQueueUrl();;
+        clearQueue(alertQueueUrl);
     }
 
     @Test

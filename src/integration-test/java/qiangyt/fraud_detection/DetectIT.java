@@ -27,13 +27,7 @@ public class DetectIT extends AbstractIT {
     // for debugging integration tests
     public static void main(String[] args) {
         var t = new DetectIT();
-        try {
-            t.aroundTest();
-
-            t.testDetect();
-        } finally {
-            t.aroundTest();
-        }
+        t.testDetect();
     }
 
     @Test
