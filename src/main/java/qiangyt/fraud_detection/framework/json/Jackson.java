@@ -32,13 +32,6 @@ import java.util.List;
 import lombok.Getter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import qiangyt.fraud_detection.framework.json.modules.BigDecimalModule;
-import qiangyt.fraud_detection.framework.json.modules.DateModule;
-import qiangyt.fraud_detection.framework.json.modules.FileModule;
-import qiangyt.fraud_detection.framework.json.modules.InstantModule;
-import qiangyt.fraud_detection.framework.json.modules.OffsetDateTimeModule;
-import qiangyt.fraud_detection.framework.json.modules.UriModule;
-import qiangyt.fraud_detection.framework.json.modules.UrlModule;
 import qiangyt.fraud_detection.framework.misc.StringHelper;
 
 @Getter
@@ -63,14 +56,6 @@ public class Jackson {
     }
 
     public static void initDefaultMapper(@Nonnull ObjectMapper mapper, boolean dump) {
-        mapper.registerModule(BigDecimalModule.build(dump));
-        mapper.registerModule(DateModule.build(dump));
-        mapper.registerModule(FileModule.build(dump));
-        mapper.registerModule(InstantModule.build(dump));
-        mapper.registerModule(OffsetDateTimeModule.build(dump));
-        mapper.registerModule(UriModule.build(dump));
-        mapper.registerModule(UrlModule.build(dump));
-
         mapper.setSerializationInclusion(Include.ALWAYS);
 
         mapper.configure(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS, false);
