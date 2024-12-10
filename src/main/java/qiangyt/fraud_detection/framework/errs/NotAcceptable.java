@@ -20,9 +20,7 @@ package qiangyt.fraud_detection.framework.errs;
 import org.springframework.http.HttpStatus;
 
 /** HTTP NOT_ACCEPTABLE */
-/**
- * Represents an HTTP 406 Not Acceptable error.
- */
+/** Represents an HTTP 406 Not Acceptable error. */
 public class NotAcceptable extends BaseError {
 
     /**
@@ -44,9 +42,7 @@ public class NotAcceptable extends BaseError {
         super(HttpStatus.NOT_ACCEPTABLE, ErrorCode.NONE, message);
     }
 
-    /**
-     * Constructs a new NotAcceptable error with no message.
-     */
+    /** Constructs a new NotAcceptable error with no message. */
     public NotAcceptable() {
         super(HttpStatus.NOT_ACCEPTABLE, ErrorCode.NONE);
     }

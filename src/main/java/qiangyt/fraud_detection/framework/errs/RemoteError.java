@@ -18,10 +18,19 @@
 package qiangyt.fraud_detection.framework.errs;
 
 @lombok.Getter
+/**
+ * Represents an error that occurs during a remote operation. Extends the {@link BadRequest} class
+ * to provide additional context about the error response received from the remote service.
+ */
 public class RemoteError extends BadRequest {
 
     final ErrorResponse response;
 
+    /**
+     * Constructs a new {@code RemoteError} with the specified error response.
+     *
+     * @param resp the error response received from the remote service
+     */
     public RemoteError(ErrorResponse resp) {
         super(resp.getCode(), resp.getMessage(), resp.getParams());
         this.response = resp;

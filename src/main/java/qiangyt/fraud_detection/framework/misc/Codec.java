@@ -36,6 +36,12 @@ public class Codec {
 
     public static final Pattern BASE64_PATTERN = Pattern.compile("^[A-Za-z0-9+/=]+$");
 
+    /**
+     * Checks if the content of the given file is Base64 encoded.
+     *
+     * @param file the file to check
+     * @return true if the file content is Base64 encoded, false otherwise
+     */
     public static boolean isBase64Encoded(MultipartFile file) {
         try (var reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
             // 读取文件的前2行进行判断
@@ -58,7 +64,12 @@ public class Codec {
         }
     }
 
-    /** Converts byte array encoded to Base64 (suitable for URL) */
+    /**
+     * Converts a byte array to a Base64 encoded string suitable for URLs.
+     *
+     * @param bytes the byte array to encode
+     * @return the Base64 encoded string
+     */
     public static String bytesToBase64(byte[] bytes) {
         if (bytes == null) {
             return null;
@@ -66,11 +77,24 @@ public class Codec {
         return Base64.encodeBase64URLSafeString(bytes);
     }
 
+    /**
+     * Converts a byte array to a Base64 Data URL string.
+     *
+     * @param bytes the byte array to encode
+     * @param type the type of the data (e.g., "png", "jpg")
+     * @return the Base64 Data URL string
+     */
     public static String bytesToBase64DataUrl(byte[] bytes, String type) {
         String base64 = bytesToBase64(bytes);
         return "data:image/" + type + ";base64," + base64;
     }
 
+    /**
+     * Converts a file to a Base64 Data URL string.
+     *
+     * @param file the file to encode
+     * @return the Base64 Data URL string
+     */
     public static String fileToBase64DataUrl(File file) {
         String type = IoHelper.getFileExtension(file);
         byte[] data;
@@ -82,6 +106,12 @@ public class Codec {
         return bytesToBase64DataUrl(data, type);
     }
 
+    /**
+     * Converts a Base64 encoded string to a regular string.
+     *
+     * @param base64ed the Base64 encoded string
+     * @return the decoded string
+     */
     public static String base64ToStr(String base64ed) {
         var bytes = base64ToBytes(base64ed);
         if (bytes == null) {
@@ -90,7 +120,12 @@ public class Codec {
         return new String(bytes, StandardCharsets.UTF_8);
     }
 
-    /** Converts base64 to byte array */
+    /**
+     * Converts a Base64 encoded string to a byte array.
+     *
+     * @param base64ed the Base64 encoded string
+     * @return the decoded byte array
+     */
     public static byte[] base64ToBytes(String base64ed) {
         if (base64ed == null) {
             return null;
@@ -98,14 +133,26 @@ public class Codec {
         return Base64.decodeBase64(base64ed + "==");
     }
 
-    /** Converts long to byte array */
+    /**
+     * Converts a long value to a byte array.
+     *
+     * @param value the long value to convert
+     * @param bytes the byte array to store the result
+     * @param offset the starting offset in the byte array
+     */
     static void longTobytes(long value, byte[] bytes, int offset) {
         for (int i = 7; i > -1; i--) {
             bytes[offset++] = (byte) ((value >> 8 * i) & 0xFF);
         }
     }
 
-    /** Converts byte array to long */
+    /**
+     * Converts a byte array to a long value.
+     *
+     * @param bytes the byte array to convert
+     * @param offset the starting offset in the byte array
+     * @return the long value
+     */
     static long bytesTolong(byte[] bytes, int offset) {
         long r = 0;
         for (int i = 7; i > -1; i--) {

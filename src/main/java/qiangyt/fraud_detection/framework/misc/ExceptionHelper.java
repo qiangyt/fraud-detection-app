@@ -19,17 +19,19 @@ package qiangyt.fraud_detection.framework.misc;
 
 import java.lang.reflect.InvocationTargetException;
 
-/** */
+/** Utility class for handling exceptions. */
 public class ExceptionHelper {
 
-    /** */
+    /** Private constructor to prevent instantiation. */
     private ExceptionHelper() {
         // dummy
     }
 
     /**
-     * @param error
-     * @return
+     * Retrieves the root cause of the given throwable.
+     *
+     * @param error the throwable to analyze
+     * @return the root cause of the throwable
      */
     public static Throwable getRootCause(Throwable error) {
         Throwable ex = error;
@@ -50,6 +52,12 @@ public class ExceptionHelper {
         }
     }
 
+    /**
+     * Retrieves the top element of the stack trace from the given throwable.
+     *
+     * @param error the throwable to analyze
+     * @return the top stack trace element, or null if no stack trace is available
+     */
     public static StackTraceElement topElement(Throwable error) {
         var elements = error.getStackTrace();
 

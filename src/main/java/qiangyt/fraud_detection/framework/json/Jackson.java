@@ -35,20 +35,36 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import qiangyt.fraud_detection.framework.misc.StringHelper;
 
+/**
+ * Jackson utility class for JSON serialization and deserialization. Provides methods to configure
+ * and use Jackson ObjectMapper.
+ */
 @Getter
-// @ThreadSafe
 public class Jackson {
 
+    /** Default Jackson instance with standard configuration. */
     @Nonnull public static final Jackson DEFAULT = new Jackson(buildDefaultMapper(false));
 
+    /** Jackson instance with pretty print enabled. */
     @Nonnull public static final Jackson DUMP = new Jackson(buildDefaultMapper(true));
 
     public final ObjectMapper mapper;
 
+    /**
+     * Constructor to initialize Jackson with a given ObjectMapper.
+     *
+     * @param mapper the ObjectMapper to use
+     */
     public Jackson(@Nonnull ObjectMapper mapper) {
         this.mapper = mapper;
     }
 
+    /**
+     * Builds a default ObjectMapper with standard or pretty print configuration.
+     *
+     * @param dump whether to enable pretty print
+     * @return the configured ObjectMapper
+     */
     @Nonnull
     public static ObjectMapper buildDefaultMapper(boolean dump) {
         var r = new ObjectMapper();
@@ -56,6 +72,12 @@ public class Jackson {
         return r;
     }
 
+    /**
+     * Initializes the given ObjectMapper with standard or pretty print configuration.
+     *
+     * @param mapper the ObjectMapper to configure
+     * @param dump whether to enable pretty print
+     */
     public static void initDefaultMapper(@Nonnull ObjectMapper mapper, boolean dump) {
         mapper.setSerializationInclusion(Include.ALWAYS);
 
@@ -119,10 +141,20 @@ public class Jackson {
         mapper.configure(SerializationFeature.USE_EQUALITY_FOR_OBJECT_ID, false);
     }
 
+    /**
+     * Registers a module with the ObjectMapper.
+     *
+     * @param module the module to register
+     */
     public void registerModule(@Nonnull com.fasterxml.jackson.databind.Module module) {
         getMapper().registerModule(module);
     }
 
+    /**
+     * Replaces the existing Jackson converter in the list of converters.
+     *
+     * @param converters the list of converters
+     */
     public void replaceConverter(List<HttpMessageConverter<?>> converters) {
         int position = 0;
         for (int i = converters.size() - 1; i >= 0; i--) {
@@ -138,6 +170,14 @@ public class Jackson {
         converters.add(position, jacksonConverter);
     }
 
+    /**
+     * Deserializes JSON string to an object of the specified class.
+     *
+     * @param text the JSON string
+     * @param clazz the class of the object
+     * @param <T> the type of the object
+     * @return the deserialized object
+     */
     public <T> T from(String text, @Nonnull Class<T> clazz) {
         if (StringHelper.isBlank(text)) {
             return null;
@@ -150,6 +190,14 @@ public class Jackson {
         }
     }
 
+    /**
+     * Deserializes JSON node to an object of the specified class.
+     *
+     * @param node the JSON node
+     * @param clazz the class of the object
+     * @param <T> the type of the object
+     * @return the deserialized object
+     */
     public <T> T from(JsonNode node, @Nonnull Class<T> clazz) {
         if (node == null) {
             return null;
@@ -162,6 +210,14 @@ public class Jackson {
         }
     }
 
+    /**
+     * Deserializes JSON from an InputStream to an object of the specified class.
+     *
+     * @param stream the InputStream
+     * @param clazz the class of the object
+     * @param <T> the type of the object
+     * @return the deserialized object
+     */
     public <T> T from(InputStream stream, @Nonnull Class<T> clazz) {
         if (stream == null) {
             return null;
@@ -174,6 +230,14 @@ public class Jackson {
         }
     }
 
+    /**
+     * Deserializes JSON from a ByteBuffer to an object of the specified class.
+     *
+     * @param buf the ByteBuffer
+     * @param clazz the class of the object
+     * @param <T> the type of the object
+     * @return the deserialized object
+     */
     public <T> T from(ByteBuffer buf, @Nonnull Class<T> clazz) {
         if (buf == null) {
             return null;
@@ -194,6 +258,14 @@ public class Jackson {
         }
     }
 
+    /**
+     * Deserializes JSON byte array to an object of the specified class.
+     *
+     * @param bytes the byte array
+     * @param clazz the class of the object
+     * @param <T> the type of the object
+     * @return the deserialized object
+     */
     public <T> T from(byte[] bytes, @Nonnull Class<T> clazz) {
         if (bytes == null) {
             return null;
@@ -206,6 +278,14 @@ public class Jackson {
         }
     }
 
+    /**
+     * Deserializes JSON string to an object of the specified type reference.
+     *
+     * @param text the JSON string
+     * @param typeReference the type reference of the object
+     * @param <T> the type of the object
+     * @return the deserialized object
+     */
     public <T> T from(String text, @Nonnull TypeReference<T> typeReference) {
         if (StringHelper.isBlank(text)) {
             return null;
@@ -218,6 +298,14 @@ public class Jackson {
         }
     }
 
+    /**
+     * Deserializes JSON node to an object of the specified type reference.
+     *
+     * @param node the JSON node
+     * @param typeReference the type reference of the object
+     * @param <T> the type of the object
+     * @return the deserialized object
+     */
     public <T> T from(JsonNode node, @Nonnull TypeReference<T> typeReference) {
         if (node == null) {
             return null;
@@ -230,6 +318,14 @@ public class Jackson {
         }
     }
 
+    /**
+     * Deserializes JSON from an InputStream to an object of the specified type reference.
+     *
+     * @param stream the InputStream
+     * @param typeReference the type reference of the object
+     * @param <T> the type of the object
+     * @return the deserialized object
+     */
     public <T> T from(InputStream stream, @Nonnull TypeReference<T> typeReference) {
         if (stream == null) {
             return null;
@@ -242,6 +338,14 @@ public class Jackson {
         }
     }
 
+    /**
+     * Deserializes JSON from a ByteBuffer to an object of the specified type reference.
+     *
+     * @param buf the ByteBuffer
+     * @param typeReference the type reference of the object
+     * @param <T> the type of the object
+     * @return the deserialized object
+     */
     public <T> T from(ByteBuffer buf, @Nonnull TypeReference<T> typeReference) {
         if (buf == null) {
             return null;
@@ -263,6 +367,14 @@ public class Jackson {
         }
     }
 
+    /**
+     * Deserializes JSON byte array to an object of the specified type reference.
+     *
+     * @param bytes the byte array
+     * @param typeReference the type reference of the object
+     * @param <T> the type of the object
+     * @return the deserialized object
+     */
     public <T> T from(byte[] bytes, @Nonnull TypeReference<T> typeReference) {
         if (bytes == null) {
             return null;
@@ -275,22 +387,53 @@ public class Jackson {
         }
     }
 
+    /**
+     * Serializes an object to a pretty JSON string.
+     *
+     * @param obj the object to serialize
+     * @return the JSON string
+     */
     public String pretty(Object obj) {
         return str(obj, true);
     }
 
+    /**
+     * Serializes an object to a JSON string.
+     *
+     * @param obj the object to serialize
+     * @return the JSON string
+     */
     public String str(Object obj) {
         return str(obj, false);
     }
 
+    /**
+     * Serializes an object to a JSON byte array.
+     *
+     * @param obj the object to serialize
+     * @return the JSON byte array
+     */
     public byte[] bytes(Object obj) {
         return bytes(obj, false);
     }
 
+    /**
+     * Serializes an object to a JSON ByteBuffer.
+     *
+     * @param obj the object to serialize
+     * @return the JSON ByteBuffer
+     */
     public ByteBuffer byteBuffer(Object obj) {
         return byteBuffer(obj, false);
     }
 
+    /**
+     * Serializes an object to a JSON string with optional pretty print.
+     *
+     * @param obj the object to serialize
+     * @param pretty whether to enable pretty print
+     * @return the JSON string
+     */
     public String str(Object obj, boolean pretty) {
         if (obj == null) {
             return null;
@@ -306,6 +449,13 @@ public class Jackson {
         }
     }
 
+    /**
+     * Serializes an object to a JSON byte array with optional pretty print.
+     *
+     * @param obj the object to serialize
+     * @param pretty whether to enable pretty print
+     * @return the JSON byte array
+     */
     public byte[] bytes(Object obj, boolean pretty) {
         if (obj == null) {
             return null;
@@ -313,6 +463,13 @@ public class Jackson {
         return byteBuffer(obj, pretty).array();
     }
 
+    /**
+     * Serializes an object to a JSON ByteBuffer with optional pretty print.
+     *
+     * @param obj the object to serialize
+     * @param pretty whether to enable pretty print
+     * @return the JSON ByteBuffer
+     */
     public ByteBuffer byteBuffer(Object obj, boolean pretty) {
         if (obj == null) {
             return null;

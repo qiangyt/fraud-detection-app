@@ -24,37 +24,87 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/** Helper class for Jackson JSON operations. */
 @Configuration
 public class JacksonHelper {
 
     @Nonnull public static final Jackson DEFAULT = Jackson.DEFAULT;
 
+    /**
+     * Provides a default Jackson bean if none is already configured.
+     *
+     * @return the default Jackson instance
+     */
     @Bean
     @ConditionalOnMissingBean
     public Jackson jackson() {
         return Jackson.DEFAULT;
     }
 
+    /**
+     * Converts an object to a pretty-printed JSON string.
+     *
+     * @param object the object to convert
+     * @return the pretty-printed JSON string
+     */
     public static String pretty(Object object) {
         return DEFAULT.pretty(object);
     }
 
+    /**
+     * Converts an object to a JSON string.
+     *
+     * @param object the object to convert
+     * @return the JSON string
+     */
     public static String to(Object object) {
         return DEFAULT.str(object, false);
     }
 
+    /**
+     * Converts a JSON string to an object of the specified class.
+     *
+     * @param json the JSON string
+     * @param clazz the class of the object
+     * @param <T> the type of the object
+     * @return the object
+     */
     public static <T> T from(String json, @Nonnull Class<T> clazz) {
         return DEFAULT.from(json, clazz);
     }
 
+    /**
+     * Converts a JSON string to an object of the specified type reference.
+     *
+     * @param json the JSON string
+     * @param typeReference the type reference of the object
+     * @param <T> the type of the object
+     * @return the object
+     */
     public static <T> T from(String json, @Nonnull TypeReference<T> typeReference) {
         return DEFAULT.from(json, typeReference);
     }
 
+    /**
+     * Converts a JSON input stream to an object of the specified class.
+     *
+     * @param json the JSON input stream
+     * @param clazz the class of the object
+     * @param <T> the type of the object
+     * @return the object
+     */
     public static <T> T from(InputStream json, @Nonnull Class<T> clazz) {
         return DEFAULT.from(json, clazz);
     }
 
+    /**
+     * Converts a JSON input stream to an object of the specified type reference.
+     *
+     * @param json the JSON input stream
+     * @param typeReference the type reference of the object
+     * @param <T> the type of the object
+     * @return the object
+     */
     public static <T> T from(InputStream json, @Nonnull TypeReference<T> typeReference) {
         return DEFAULT.from(json, typeReference);
     }

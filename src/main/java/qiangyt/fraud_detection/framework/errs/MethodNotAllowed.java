@@ -23,7 +23,8 @@ import org.springframework.http.HttpStatus;
 public class MethodNotAllowed extends BaseError {
 
     /**
-     * Constructs a new MethodNotAllowed exception with the specified detail message format and parameters.
+     * Constructs a new MethodNotAllowed exception with the specified detail message format and
+     * parameters.
      *
      * @param messageFormat the detail message format
      * @param params the parameters for the message format
@@ -41,15 +42,14 @@ public class MethodNotAllowed extends BaseError {
         super(HttpStatus.METHOD_NOT_ALLOWED, ErrorCode.NONE, message);
     }
 
-    /**
-     * Constructs a new MethodNotAllowed exception with no detail message.
-     */
+    /** Constructs a new MethodNotAllowed exception with no detail message. */
     public MethodNotAllowed() {
         super(HttpStatus.METHOD_NOT_ALLOWED, ErrorCode.NONE);
     }
 
     /**
-     * Constructs a new MethodNotAllowed exception with the specified cause, detail message format, and parameters.
+     * Constructs a new MethodNotAllowed exception with the specified cause, detail message format,
+     * and parameters.
      *
      * @param cause the cause of the exception
      * @param messageFormat the detail message format

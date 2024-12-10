@@ -21,8 +21,8 @@ import java.time.Instant;
 import org.springframework.http.HttpStatus;
 
 /**
- * Represents an HTTP 500 Internal Server Error.
- * This class extends {@link BaseError} to provide additional context for internal server errors.
+ * Represents an HTTP 500 Internal Server Error. This class extends {@link BaseError} to provide
+ * additional context for internal server errors.
  */
 @lombok.Getter
 @lombok.Setter

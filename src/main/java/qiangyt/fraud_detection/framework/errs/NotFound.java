@@ -20,13 +20,12 @@ package qiangyt.fraud_detection.framework.errs;
 import org.springframework.http.HttpStatus;
 
 /** HTTP NOT_FOUND */
-/**
- * Exception representing an HTTP 404 Not Found error.
- */
+/** Exception representing an HTTP 404 Not Found error. */
 public class NotFound extends BaseError {
 
     /**
-     * Constructs a new NotFound exception with the specified error code, message format, and parameters.
+     * Constructs a new NotFound exception with the specified error code, message format, and
+     * parameters.
      *
      * @param code the error code
      * @param messageFormat the message format
@@ -56,7 +55,8 @@ public class NotFound extends BaseError {
     }
 
     /**
-     * Constructs a new NotFound exception with the specified error code, cause, message format, and parameters.
+     * Constructs a new NotFound exception with the specified error code, cause, message format, and
+     * parameters.
      *
      * @param code the error code
      * @param cause the cause of the exception
