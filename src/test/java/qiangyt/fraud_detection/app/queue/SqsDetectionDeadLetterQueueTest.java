@@ -28,12 +28,11 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import qiangyt.fraud_detection.app.config.SqsProps;
 import qiangyt.fraud_detection.framework.json.Jackson;
-import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 
-/** Unit tests for {@link SqsDetectionQueue}. */
-public class SqsDetectionQueueTest {
+/** Unit tests for {@link SqsDetectionDeadLetterQueue}. */
+public class SqsDetectionDeadLetterQueueTest {
 
     @Mock SqsProps props;
 
@@ -41,7 +40,7 @@ public class SqsDetectionQueueTest {
 
     @Mock Jackson jackson;
 
-    @InjectMocks SqsDetectionQueue sqsDetectionQueue;
+    @InjectMocks SqsDetectionDeadLetterQueue sqsDetectionDeadLetterQueue;
 
     /** Sets up the test environment before each test. */
     @BeforeEach
@@ -50,21 +49,20 @@ public class SqsDetectionQueueTest {
     }
 
     /**
-     * Tests the {@link SqsDetectionQueue#send(DetectionReqEntity)} method. Verifies that the
-     * correct queue URL and message body are sent.
+     * Tests the {@link SqsDetectionDeadLetterQueue#send(String)} method. Verifies that the correct
+     * queue URL and message body are sent.
      */
     @Test
-    public void testSend() {
-        String queueUrl = "http://example.com/queue";
-        var req = new DetectionReqEntity();
+    public void testSendToDeadLetterQueue() {
+        String deadLetterQueueUrl = "http://example.com/dead-letter-queue";
         String messageBody = "{\"key\":\"value\"}";
 
-        // Mock the behavior of props and jackson
-        when(props.getDetectQueueUrl()).thenReturn(queueUrl);
-        when(jackson.str(req)).thenReturn(messageBody);
+        // Mock the behavior of props
+        when(props.getDetectDeadLetterQueueUrl()).thenReturn(deadLetterQueueUrl);
+        when(jackson.str(messageBody)).thenReturn(messageBody);
 
         // Call the method under test
-        sqsDetectionQueue.send(req);
+        sqsDetectionDeadLetterQueue.send(messageBody);
 
         // Capture the SendMessageRequest argument
         var captor = ArgumentCaptor.forClass(SendMessageRequest.class);
@@ -72,7 +70,7 @@ public class SqsDetectionQueueTest {
 
         // Verify the captured request
         var capturedRequest = captor.getValue();
-        assertEquals(queueUrl, capturedRequest.queueUrl());
+        assertEquals(deadLetterQueueUrl, capturedRequest.queueUrl());
         assertEquals(messageBody, capturedRequest.messageBody());
     }
 }
