@@ -26,7 +26,7 @@ import qiangyt.fraud_detection.app.config.FraudDetectionConfig;
 @Import(FraudDetectionConfig.class)
 public class FraudDetectionApp {
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         SpringApplication.run(FraudDetectionApp.class, args);
     }
 }

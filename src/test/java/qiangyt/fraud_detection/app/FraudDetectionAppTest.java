@@ -36,4 +36,13 @@ public class FraudDetectionAppTest {
     void contextLoads() {
         // Test to ensure the Spring application context loads successfully
     }
+
+    @Test
+    void testMain() {
+        try {
+            FraudDetectionApp.main(new String[0]);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 }
