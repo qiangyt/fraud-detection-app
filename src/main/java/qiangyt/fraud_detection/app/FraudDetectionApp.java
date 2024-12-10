@@ -21,16 +21,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
 import qiangyt.fraud_detection.app.config.FraudDetectionConfig;
-import qiangyt.fraud_detection.framework.misc.ManifestFile;
 
 @SpringBootApplication(scanBasePackages = "qiangyt.fraud_detection")
 @Import(FraudDetectionConfig.class)
 public class FraudDetectionApp {
 
     public static void main(String[] args) throws Exception {
-        for (var dep : ManifestFile.parseClassPath().entrySet()) {
-            System.out.printf("%s: %s\n", dep.getKey(), dep.getValue());
-        }
         SpringApplication.run(FraudDetectionApp.class, args);
     }
 }

@@ -8,7 +8,7 @@ sudo ./aws/install
 aws configure
 aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/g8s9f1z6
 
-aws eks describe-cluster --name hsbc --region eu-north-1
-aws eks --region eu-north-1 update-kubeconfig --name hsbc
+aws eks describe-cluster --name charming-grunge-sparrow --region eu-north-1
+aws eks --region eu-north-1 update-kubeconfig --name charming-grunge-sparrow
 
 kubectl apply -f aws-secret.yaml
