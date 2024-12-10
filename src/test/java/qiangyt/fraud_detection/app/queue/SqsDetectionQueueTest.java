@@ -32,6 +32,7 @@ import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 
+/** Unit tests for {@link SqsDetectionQueue}. */
 public class SqsDetectionQueueTest {
 
     @Mock SqsProps props;
@@ -42,25 +43,34 @@ public class SqsDetectionQueueTest {
 
     @InjectMocks SqsDetectionQueue sqsDetectionQueue;
 
+    /** Sets up the test environment before each test. */
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
+    /**
+     * Tests the {@link SqsDetectionQueue#send(DetectionReqEntity)} method. Verifies that the
+     * correct queue URL and message body are sent.
+     */
     @Test
     public void testSend() {
         String queueUrl = "http://example.com/queue";
         var req = new DetectionReqEntity();
         String messageBody = "{\"key\":\"value\"}";
 
+        // Mock the behavior of props and jackson
         when(props.getDetectQueueUrl()).thenReturn(queueUrl);
         when(jackson.str(req)).thenReturn(messageBody);
 
+        // Call the method under test
         sqsDetectionQueue.send(req);
 
+        // Capture the SendMessageRequest argument
         var captor = ArgumentCaptor.forClass(SendMessageRequest.class);
         verify(client).sendMessage(captor.capture());
 
+        // Verify the captured request
         SendMessageRequest capturedRequest = captor.getValue();
         assertEquals(queueUrl, capturedRequest.queueUrl());
         assertEquals(messageBody, capturedRequest.messageBody());

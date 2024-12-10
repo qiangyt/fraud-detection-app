@@ -41,6 +41,7 @@ import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 import qiangyt.fraud_detection.sdk.DetectionResult;
 import qiangyt.fraud_detection.sdk.FraudCategory;
 
+/** Unit tests for {@link DetectionService}. */
 public class DetectionServiceTest {
 
     @Mock Alerter alertor;
@@ -56,6 +57,7 @@ public class DetectionServiceTest {
 
     @InjectMocks DetectionService service;
 
+    /** Sets up the test environment before each test. */
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -66,14 +68,15 @@ public class DetectionServiceTest {
         service.setJackson(Jackson.DEFAULT);
     }
 
+    /** Cleans up the test environment after each test. */
     @AfterEach
     public void tearDown() {
         service.shutdown();
     }
 
+    /** Tests the {@link DetectionService#submit(DetectionReq)} method. */
     @Test
     public void testSubmit() {
-
         var entity = new DetectionReqEntity();
         var req =
                 new DetectionReq() {
@@ -83,13 +86,13 @@ public class DetectionServiceTest {
                     }
                 };
 
-        // when(queue.send(any(DetectionReqEntity.class))).thenReturn(entity);
-
+        // Submits a detection request and verifies the result
         var result = service.submit(req);
 
         assertEquals(entity, result);
     }
 
+    /** Tests the {@link DetectionService#detectThenAlert(DetectionReqEntity)} method. */
     @Test
     public void testDetectThenAlert() throws Exception {
         var entity = new DetectionReqEntity();
@@ -98,6 +101,7 @@ public class DetectionServiceTest {
         when(engine.detect(any(DetectionReqEntity.class))).thenReturn(category);
         doNothing().when(alertor).send(any(DetectionResult.class));
 
+        // Detects fraud and sends an alert, then verifies the result
         var futureResult = service.detectThenAlert(entity);
         var detectionResult = futureResult.join();
 
@@ -106,24 +110,28 @@ public class DetectionServiceTest {
         verify(alertor, times(1)).send(detectionResult);
     }
 
+    /** Tests the {@link DetectionService#detect(DetectionReqEntity)} method. */
     @Test
     public void testDetect() {
         var entity = new DetectionReqEntity();
         var category = FraudCategory.BIG_AMOUNT;
         when(engine.detect(any(DetectionReqEntity.class))).thenReturn(category);
 
+        // Detects fraud and verifies the result
         var result = service.detect(entity);
 
         assertEquals(category, result.getCategory());
         assertEquals(entity, result.getEntity());
     }
 
+    /** Tests the {@link DetectionService#shutdown()} method. */
     @Test
     public void testShutdown() {
         var executor = spy(new ThreadPoolTaskExecutor());
         executor.initialize();
         service.setDetectionTaskExecutor(executor);
 
+        // Shuts down the service and verifies the executor is shut down
         service.shutdown();
 
         verify(executor, times(1)).shutdown();

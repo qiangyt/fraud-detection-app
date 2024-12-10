@@ -23,14 +23,20 @@ import org.junit.jupiter.api.Test;
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 import qiangyt.fraud_detection.sdk.FraudCategory;
 
+/** Unit test for the DroolsRuleEngine class. */
 public class DroolsRuleEngineTest {
 
+    /**
+     * Tests the detect method of DroolsRuleEngine. Ensures that a DetectionReqEntity with default
+     * values results in FraudCategory.NONE.
+     */
     @Test
     public void testDetect() {
         DroolsRuleEngine engine = new DroolsRuleEngine();
         DetectionReqEntity entity = new DetectionReqEntity();
         // Set up entity with test data
         FraudCategory result = engine.detect(entity);
+        // Assert that the result is FraudCategory.NONE
         assertEquals(FraudCategory.NONE, result);
     }
 }

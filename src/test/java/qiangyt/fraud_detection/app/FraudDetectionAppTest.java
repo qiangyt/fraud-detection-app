@@ -21,6 +21,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 
+/**
+ * Test class for the FraudDetectionApp. It contains tests to ensure the Spring application context
+ * loads successfully and that the main method of the application runs without exceptions.
+ */
 @SpringBootTest
 @TestPropertySource(
         properties = {
@@ -32,16 +36,20 @@ import org.springframework.test.context.TestPropertySource;
         })
 public class FraudDetectionAppTest {
 
+    /** Test to ensure the Spring application context loads successfully. */
     @Test
     void contextLoads() {
-        // Test to ensure the Spring application context loads successfully
+        // The contextLoads test will pass if the application context can start successfully
     }
 
+    /** Tests main method of the application runs */
     @Test
     void testMain() {
         try {
+            // Attempt to run the main method of the application
             FraudDetectionApp.main(new String[0]);
         } catch (Exception ex) {
+            // Print stack trace if an exception occurs
             ex.printStackTrace();
         }
     }

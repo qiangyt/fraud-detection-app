@@ -22,48 +22,67 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
+/** Unit tests for the {@link BadRequest} class. */
 public class BadRequestTest {
 
+    /** Tests the BadRequest constructor with a formatted message. */
     @Test
     public void testBadRequestWithMessageFormat() {
+        // Create BadRequest exception with formatted message
         var ex = new BadRequest(ErrorCode.NONE, "Invalid parameter: %s", "param1");
+        // Verify the status, code, and message
         assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus());
         assertEquals(ErrorCode.NONE, ex.getCode());
         assertEquals("Invalid parameter: param1", ex.getMessage());
     }
 
+    /** Tests the BadRequest constructor with a simple message. */
     @Test
     public void testBadRequestWithMessage() {
+        // Create BadRequest exception with simple message
         var ex = new BadRequest(ErrorCode.NONE, "Invalid request");
+        // Verify the status, code, and message
         assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus());
         assertEquals(ErrorCode.NONE, ex.getCode());
         assertEquals("Invalid request", ex.getMessage());
     }
 
+    /** Tests the BadRequest constructor with a cause and formatted message. */
     @Test
     public void testBadRequestWithCauseAndMessageFormat() {
+        // Create a root cause exception
         var cause = new RuntimeException("Root cause");
+        // Create BadRequest exception with cause and formatted message
         var ex = new BadRequest(ErrorCode.NONE, cause, "Invalid parameter: %s", "param1");
+        // Verify the status, code, message, and cause
         assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus());
         assertEquals(ErrorCode.NONE, ex.getCode());
         assertEquals("Invalid parameter: param1", ex.getMessage());
         assertEquals(cause, ex.getCause());
     }
 
+    /** Tests the BadRequest constructor with a cause and simple message. */
     @Test
     public void testBadRequestWithCauseAndMessage() {
+        // Create a root cause exception
         var cause = new RuntimeException("Root cause");
+        // Create BadRequest exception with cause and simple message
         var ex = new BadRequest(ErrorCode.NONE, cause, "Invalid request");
+        // Verify the status, code, message, and cause
         assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus());
         assertEquals(ErrorCode.NONE, ex.getCode());
         assertEquals("Invalid request", ex.getMessage());
         assertEquals(cause, ex.getCause());
     }
 
+    /** Tests the BadRequest constructor with only a cause. */
     @Test
     public void testBadRequestWithCause() {
+        // Create a root cause exception
         var cause = new RuntimeException("Root cause");
+        // Create BadRequest exception with only cause
         var ex = new BadRequest(ErrorCode.NONE, cause);
+        // Verify the status, code, message, and cause
         assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus());
         assertEquals(ErrorCode.NONE, ex.getCode());
         assertEquals("Bad Request", ex.getMessage());
