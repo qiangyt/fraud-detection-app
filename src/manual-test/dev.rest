@@ -10,7 +10,15 @@ Content-Type: application/json
 
 ###
 GET http://localhost:8080/rest/detection
+Content-Type: application/json
     
+{
+    "id": "integration-test-2",
+    "accountId": "fbiden",
+    "amount": 999,
+    "memo": "N/A"
+}
+
 
 ###
 GET http://localhost:8080/v3/api-docs

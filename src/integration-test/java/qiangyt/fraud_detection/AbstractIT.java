@@ -17,25 +17,20 @@
  */
 package qiangyt.fraud_detection;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertNotNull;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import qiangyt.fraud_detection.app.config.SqsProps;
 import qiangyt.fraud_detection.client.v1.client.rest.AppClient;
 import qiangyt.fraud_detection.framework.aws.AwsProps;
 import qiangyt.fraud_detection.framework.aws.sqs.SqsConfig;
 import qiangyt.fraud_detection.framework.json.JacksonHelper;
-import qiangyt.fraud_detection.sdk.DetectionReq;
 import qiangyt.fraud_detection.sdk.DetectionResult;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
 
-public class HelloIT {
+public abstract class AbstractIT {
 
     public static final String BASE_URL = "http://localhost:8080";
     
@@ -57,13 +52,9 @@ public class HelloIT {
         sqsProps.setTimeout(2); // decreases the polling timeout
     }
 
-    public static void main(String[] args) {
-        new HelloIT().test();
-    }
-
     @BeforeEach 
     @AfterEach
-    public void beforeTest() {
+    public void aroundTest() {
         var detectQueueUrl = sqsProps.getDetectQueueUrl();
         clearQueue(detectQueueUrl);
 
@@ -71,38 +62,10 @@ public class HelloIT {
         clearQueue(alertQueueUrl);
     }
 
-
-    @Test
-    public void test() {
-        // first, sends a non-fraud request
-        var nonFraudReq = DetectionReq.builder()
-                    .accountId("integration-test-account-1")
-                    .amount(999)
-                    .memo("N/A")
-                    .build();
-        var nonFraudEntity = appClient.submit(nonFraudReq);
-        dump("non-fraud entity: ", nonFraudEntity);
-
-        // no alert
-        assertNull(pollAlert());
-
-        // second, sends a fraud request
-        var fraudReq = DetectionReq.builder()
-                    .accountId("integration-test-account-1")
-                    .amount(999 * 100000)
-                    .memo("N/A")
-                    .build();
-        var fraudEntity = appClient.submit(fraudReq);
-        dump("fraud entity: ", fraudEntity);
-
-        // got alert
-        assertNotNull(pollAlert());
-    }
-
     static int i = 0;
 
     void dump(String hint, Object obj) {
-        System.out.printf("\n%02d. %s:\n%s\n", ++i, hint, JacksonHelper.pretty(obj));
+        System.out.printf("\n%02d. %s.%s:\n%s\n", ++i, getClass().getSimpleName(), hint, JacksonHelper.pretty(obj));
     }
 
     void clearQueue(String queueUrl) {
