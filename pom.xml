@@ -202,7 +202,7 @@
                         <goals>
                             <goal>report</goal>
                         </goals>
-                        <phase>test</phase>
+                        <phase>verify</phase>
                         <configuration>
                             <formats>
                                 <format>HTML</format>
