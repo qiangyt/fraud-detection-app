@@ -406,14 +406,14 @@
                         </googleJavaFormat>
                     </java>
                 </configuration>
-                <!--<executions>
+                <executions>
                     <execution>
                         <goals>
-                            <goal>check</goal>
+                            <goal>apply</goal>
                         </goals>
-                        <phase>package</phase>
+                        <phase>verify</phase>
                     </execution>
-                </executions>-->
+                </executions>
             </plugin>
 
             <plugin>
