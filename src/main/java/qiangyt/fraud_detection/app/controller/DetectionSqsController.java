@@ -46,7 +46,6 @@ public class DetectionSqsController {
 
     @Autowired ExecutorService sqsPollingThreadPool;
 
-    @lombok.Getter(lombok.AccessLevel.PRIVATE)
     final AtomicBoolean polling = new AtomicBoolean();
 
     @PostConstruct
@@ -67,7 +66,7 @@ public class DetectionSqsController {
 
         log.info("SQS detection queue polling: started");
 
-        while (getPolling().get() && !Thread.currentThread().isInterrupted()) {
+        while (getPolling().get()) {
             try {
                 // if (log.isDebugEnabled()) {
                 log.info("SQS detection queue polling: new polling");
@@ -76,6 +75,12 @@ public class DetectionSqsController {
             } catch (IllegalStateException ex) {
                 if (ex.getMessage().equals("Connection pool shut down")) {
                     break;
+                }
+
+                // sleep for a while to avoid busy loop
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
                 }
             } catch (Exception ex) {
                 log.error("Error in polling", ex);

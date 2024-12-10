@@ -19,6 +19,7 @@ package qiangyt.fraud_detection.app.controller;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -141,5 +142,25 @@ public class DetectionSqsControllerTest {
         target.poll();
 
         verify(client, times(1)).receiveMessage(any(ReceiveMessageRequest.class));
+    }
+
+    @Test
+    void testPollHandlesOtherIllegalStateException() throws InterruptedException {
+        when(client.receiveMessage(any(ReceiveMessageRequest.class)))
+                .thenThrow(new IllegalStateException("Some other error"));
+
+        var thread =
+                new Thread(
+                        () -> {
+                            target.poll();
+                        });
+        thread.start();
+
+        Thread.sleep(200);
+        target.getPolling().set(false);
+        thread.interrupt();
+        thread.join();
+
+        verify(client, atLeastOnce()).receiveMessage(any(ReceiveMessageRequest.class));
     }
 }
