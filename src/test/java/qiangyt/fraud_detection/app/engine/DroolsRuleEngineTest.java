@@ -17,19 +17,20 @@
  */
 package qiangyt.fraud_detection.app.engine;
 
-import org.springframework.stereotype.Service;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 import qiangyt.fraud_detection.sdk.FraudCategory;
 
-@lombok.Getter
-@lombok.Setter
-@Service
-@lombok.extern.slf4j.Slf4j
-public class DroolsRuleEngine implements DetectionEngine {
+public class DroolsRuleEngineTest {
 
-    @Override
-    public FraudCategory detect(DetectionReqEntity entity) {
-        // TODO: apply drools rules
-        return FraudCategory.NONE;
+    @Test
+    public void testDetect() {
+        DroolsRuleEngine engine = new DroolsRuleEngine();
+        DetectionReqEntity entity = new DetectionReqEntity();
+        // Set up entity with test data
+        FraudCategory result = engine.detect(entity);
+        assertEquals(FraudCategory.NONE, result);
     }
 }
