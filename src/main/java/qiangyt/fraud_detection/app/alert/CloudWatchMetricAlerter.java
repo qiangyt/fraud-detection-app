@@ -27,6 +27,7 @@ import software.amazon.awssdk.services.cloudwatch.model.MetricDatum;
 import software.amazon.awssdk.services.cloudwatch.model.PutMetricDataRequest;
 import software.amazon.awssdk.services.cloudwatch.model.StandardUnit;
 
+/** Alerter implementation that sends metrics to AWS CloudWatch. */
 @lombok.extern.slf4j.Slf4j
 @lombok.Getter
 @lombok.Setter
@@ -37,11 +38,17 @@ public class CloudWatchMetricAlerter implements Alerter {
 
     @Autowired GroupedAlerter group;
 
+    /** Initializes the alerter by registering it with the grouped alerter. */
     @PostConstruct
     void init() {
         getGroup().registerAlerter(this);
     }
 
+    /**
+     * Sends a detection result as a metric to AWS CloudWatch.
+     *
+     * @param result the detection result to be sent
+     */
     @Override
     public void send(DetectionResult result) {
         var dim = Dimension.builder().name("id").value(result.getId()).build();

@@ -32,26 +32,26 @@ public class SubmitIT extends AbstractIT {
     public static void main(String[] args) {
         var t = new SubmitIT();
         try {
-            t.aroundTest();
+            t.aroundTest(); // setup before test
 
-            t.testSubmit();
+            t.testSubmit(); // run the test
         } finally {
-            t.aroundTest();
+            t.aroundTest(); // cleanup after test
         }
     }
 
-    
-
+    // Setup and cleanup method to clear the queues before and after each test
     @BeforeEach 
     @AfterEach
     public void aroundTest() {
         var detectQueueUrl = sqsProps.getDetectQueueUrl();
         clearQueue(detectQueueUrl);
 
-        var alertQueueUrl = sqsProps.getAlertQueueUrl();;
+        var alertQueueUrl = sqsProps.getAlertQueueUrl();
         clearQueue(alertQueueUrl);
     }
 
+    // Test method to submit detection requests and verify alerts
     @Test
     public void testSubmit() {
         // first, sends a non-fraud request

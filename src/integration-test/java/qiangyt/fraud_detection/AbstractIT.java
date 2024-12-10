@@ -27,6 +27,10 @@ import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
 
+/**
+ * AbstractIT is an abstract integration test class that provides common functionality
+ * for integration tests, such as initializing clients and interacting with SQS queues.
+ */
 public abstract class AbstractIT {
 
     public static final String BASE_URL = "http://localhost:8080";
@@ -51,10 +55,21 @@ public abstract class AbstractIT {
 
     static int i = 0;
 
+    /**
+     * Dumps the given object with a hint for debugging purposes.
+     *
+     * @param hint a hint to describe the context of the dump
+     * @param obj the object to be dumped
+     */
     void dump(String hint, Object obj) {
         System.out.printf("\n%02d. %s.%s:\n%s\n", ++i, getClass().getSimpleName(), hint, JacksonHelper.pretty(obj));
     }
 
+    /**
+     * Clears all messages from the specified SQS queue.
+     *
+     * @param queueUrl the URL of the SQS queue to be cleared
+     */
     void clearQueue(String queueUrl) {
         var req = ReceiveMessageRequest.builder()
                         .queueUrl(queueUrl)
@@ -72,6 +87,12 @@ public abstract class AbstractIT {
         }      
     }
 
+    /**
+     * Polls the alert queue for a detection result. If a message is found, it is deleted
+     * from the queue and the detection result is returned.
+     *
+     * @return the detection result from the alert queue, or null if no message is found
+     */
     DetectionResult pollAlert() {        
         var alertQueueUrl = sqsProps.getAlertQueueUrl();
 

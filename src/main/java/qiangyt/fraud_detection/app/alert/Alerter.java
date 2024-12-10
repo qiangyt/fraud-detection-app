@@ -19,7 +19,13 @@ package qiangyt.fraud_detection.app.alert;
 
 import qiangyt.fraud_detection.sdk.DetectionResult;
 
+/** The {@code Alerter} interface provides a method to send alerts based on detection results. */
 public interface Alerter {
 
+    /**
+     * Sends an alert based on the provided detection result.
+     *
+     * @param alert the detection result to be sent as an alert
+     */
     void send(DetectionResult alert);
 }

@@ -22,14 +22,24 @@ import static org.junit.Assert.assertFalse;
 import org.junit.jupiter.api.Test;
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 
+/**
+ * Integration tests for the fraud detection application.
+ */
 public class DetectIT extends AbstractIT {
 
-    // for debugging integration tests
+    /**
+     * Main method for debugging integration tests.
+     * 
+     * @param args command line arguments
+     */
     public static void main(String[] args) {
         var t = new DetectIT();
         t.testDetect();
     }
 
+    /**
+     * Tests the fraud detection functionality by sending both non-fraud and fraud requests.
+     */
     @Test
     public void testDetect() {
         // first, sends a non-fraud request
