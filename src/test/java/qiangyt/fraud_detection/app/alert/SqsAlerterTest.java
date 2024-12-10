@@ -1,5 +1,9 @@
 package qiangyt.fraud_detection.app.alert;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
+
+import java.util.Date;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -14,27 +18,17 @@ import qiangyt.fraud_detection.sdk.FraudCategory;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
-
-import java.util.Date;
-
 public class SqsAlerterTest {
 
-    @Mock
-    private SqsProps props;
+    @Mock SqsProps props;
 
-    @Mock
-    private SqsClient client;
+    @Mock SqsClient client;
 
-    @Mock
-    private Jackson jackson;
+    @Mock Jackson jackson;
 
-    @Mock
-    private GroupedAlerter group;
+    @Mock GroupedAlerter group;
 
-    @InjectMocks
-    private SqsAlerter alerter;
+    @InjectMocks SqsAlerter alerter;
 
     @BeforeEach
     public void setUp() {
@@ -45,9 +39,16 @@ public class SqsAlerterTest {
 
     @Test
     public void testSend() {
-        var entity = DetectionReqEntity.builder().accountId("account-id").amount(123).memo("memo").id("entity-id").receivedAt(new Date()).build(); 
+        var entity =
+                DetectionReqEntity.builder()
+                        .accountId("account-id")
+                        .amount(123)
+                        .memo("memo")
+                        .id("entity-id")
+                        .receivedAt(new Date())
+                        .build();
         var result = DetectionResult.from(entity, FraudCategory.SUSPICIOUS_ACCOUNT);
-        
+
         when(jackson.str(result)).thenReturn("test-message");
 
         alerter.send(result);
