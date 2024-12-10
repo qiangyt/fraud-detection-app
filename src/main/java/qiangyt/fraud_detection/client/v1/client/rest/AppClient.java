@@ -57,10 +57,6 @@ public class AppClient implements DetectionApi {
 
     @PostConstruct
     public void init() {
-        if (isInited()) {
-            return;
-        }
-
         if (getJackson() == null) {
             setJackson(Jackson.DEFAULT);
         }

@@ -132,4 +132,14 @@ public class DetectionSqsControllerTest {
 
         assertTrue(called.get());
     }
+
+    @Test
+    void testPollHandlesIllegalStateException() {
+        when(client.receiveMessage(any(ReceiveMessageRequest.class)))
+                .thenThrow(new IllegalStateException("Connection pool shut down"));
+
+        target.poll();
+
+        verify(client, times(1)).receiveMessage(any(ReceiveMessageRequest.class));
+    }
 }
