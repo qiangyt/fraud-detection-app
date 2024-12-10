@@ -23,6 +23,10 @@ import org.springframework.stereotype.Service;
 import qiangyt.fraud_detection.app.queue.SqsBaseQueue;
 import qiangyt.fraud_detection.sdk.DetectionResult;
 
+/**
+ * SqsAlerter is responsible for sending alert messages to an SQS queue. It extends SqsBaseQueue and
+ * implements the Alerter interface.
+ */
 @lombok.Getter
 @lombok.Setter
 @lombok.extern.slf4j.Slf4j
@@ -31,11 +35,17 @@ public class SqsAlerter extends SqsBaseQueue<DetectionResult> implements Alerter
 
     @Autowired GroupedAlerter group;
 
+    /** Initializes the SqsAlerter by registering it with the GroupedAlerter. */
     @PostConstruct
     void init() {
         getGroup().registerAlerter(this);
     }
 
+    /**
+     * Sends a DetectionResult to the configured SQS queue.
+     *
+     * @param result the DetectionResult to be sent
+     */
     @Override
     public void send(DetectionResult result) {
         send(getProps().getAlertQueueUrl(), result, result.getEntity().getId(), "alert");

@@ -68,9 +68,6 @@ public class DetectionSqsController {
 
         while (getPolling().get()) {
             try {
-                // if (log.isDebugEnabled()) {
-                log.info("SQS detection queue polling: new polling");
-                // }
                 pollOne();
             } catch (IllegalStateException ex) {
                 if (ex.getMessage().equals("Connection pool shut down")) {
@@ -109,8 +106,6 @@ public class DetectionSqsController {
 
         for (var msg : client.receiveMessage(sqsReq).messages()) {
             String body = msg.body();
-            // if (log.isDebugEnabled())
-            log.info("Received message: " + body);
 
             var entity = j.from(body, DetectionReqEntity.class);
             s.detectThenAlert(entity);

@@ -22,10 +22,18 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @lombok.Getter
 @lombok.Setter
+
+/**
+ * Configuration properties for fraud detection rules.
+ *
+ * <p>Hard-coded suspicious accounts here, just to simplifes the demo
+ */
 @ConfigurationProperties(prefix = "app.rules")
 public class RuleProps {
 
+    /** Maximum transaction amount allowed before flagging as suspicious. */
     int maxTransactionAmount = 100000;
 
+    /** Set of suspicious account usernames. */
     Set<String> suspicousAccounts = Set.of("cgrant", "fbiden");
 }

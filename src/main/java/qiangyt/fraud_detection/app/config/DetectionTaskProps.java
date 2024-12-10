@@ -19,12 +19,15 @@ package qiangyt.fraud_detection.app.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+/** Configuration properties for the detection task. */
 @lombok.Getter
 @lombok.Setter
 @ConfigurationProperties(prefix = "app.detection-task")
 public class DetectionTaskProps {
 
+    /** The capacity of the queue used for detection tasks. */
     int queueCapacity = 500;
 
+    /** The number of seconds to wait for termination. */
     int AwaitTerminationSeconds = 60;
 }

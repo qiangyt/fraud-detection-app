@@ -33,6 +33,10 @@ import qiangyt.fraud_detection.sdk.DetectionReq;
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 import qiangyt.fraud_detection.sdk.DetectionResult;
 
+/**
+ * REST controller for handling fraud detection requests. Provides endpoints for submitting
+ * detection requests both asynchronously and synchronously.
+ */
 @Validated
 @lombok.Getter
 @lombok.Setter
@@ -43,12 +47,28 @@ public class DetectionRestController {
 
     @Autowired DetectionService service;
 
+    /**
+     * Submits a detection request for asynchronous processing. Use POST verb because it will send
+     * something to a queue.
+     *
+     * @param req the detection request
+     * @return the detection request entity
+     */
     @PostMapping()
     public DetectionReqEntity submit(@Valid @RequestBody DetectionReq req) {
         return getService().submit(req);
     }
 
-    // for test only
+    /**
+     * Submits a detection request for synchronous processing. Only for test purposes to help with
+     * integration testing.
+     *
+     * <p>Uses GET verb because it is just a pure calculation, doesn't change any state, that is,
+     * idempotent.
+     *
+     * @param entity the detection request entity
+     * @return the detection result
+     */
     @GetMapping()
     public DetectionResult detect(@Valid @RequestBody DetectionReqEntity entity) {
         return getService().detect(entity);

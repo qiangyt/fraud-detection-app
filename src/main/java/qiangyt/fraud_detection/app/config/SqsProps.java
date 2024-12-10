@@ -26,16 +26,30 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "app.sqs")
 public class SqsProps {
 
+    /** The size of the thread pool used for processing SQS messages. */
     int threadPoolSize = 1;
 
+    /** The number of messages to retrieve in a single batch from the SQS queue. */
     int batchSize = 10;
 
+    /** The timeout (in seconds) for processing messages from the SQS queue. */
     int timeout = 20;
 
-    String detectQueueUrl = System.getenv("AWS_SQS_DETECT_QUEUE_URL"); //
-    // "https://sqs.eu-north-1.amazonaws.com/820242901663/hsbc_fraud_detection";
+    /**
+     * The URL of the SQS queue used for fraud detection. This value is retrieved from the
+     * environment variable AWS_SQS_DETECT_QUEUE_URL.
+     *
+     * <p>For example, "https://sqs.eu-north-1.amazonaws.com/820242901663/hsbc_fraud_detection"
+     */
+    String detectQueueUrl = System.getenv("AWS_SQS_DETECT_QUEUE_URL");
 
-    String alertQueueUrl =
-            System.getenv(
-                    "AWS_SQS_ALERT_QUEUE_URL"); // "https://sqs.eu-north-1.amazonaws.com/820242901663/hsbc_fraud_alert.fifo";
+    /**
+     * The URL of the SQS queue used for fraud alerts. It must be a FIFO queue to ensure that
+     * messages are processed in order and uniqueness.
+     *
+     * <p>This value is retrieved from the environment variable AWS_SQS_ALERT_QUEUE_URL.
+     *
+     * <p>for example, "https://sqs.eu-north-1.amazonaws.com/820242901663/hsbc_fraud_alert.fifo"
+     */
+    String alertQueueUrl = System.getenv("AWS_SQS_ALERT_QUEUE_URL");
 }

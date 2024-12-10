@@ -31,6 +31,10 @@ import qiangyt.fraud_detection.framework.aws.cloudwatch.CloudWatchConfig;
 import qiangyt.fraud_detection.framework.aws.sqs.SqsConfig;
 import qiangyt.fraud_detection.framework.rest.RestConfig;
 
+/**
+ * Configuration class for the Fraud Detection application. It sets up various beans required for
+ * the application.
+ */
 @Configuration
 @EnableAsync
 @Import({
@@ -44,11 +48,22 @@ import qiangyt.fraud_detection.framework.rest.RestConfig;
 })
 public class FraudDetectionConfig {
 
+    /**
+     * Creates an OpenAPI bean to provide API documentation.
+     *
+     * @return an OpenAPI instance with API information.
+     */
     @Bean
     public OpenAPI openApiInfo() {
         return new OpenAPI().info(new Info().title("Fraud Detection API").version("1.0"));
     }
 
+    /**
+     * Creates a ThreadPoolTaskExecutor bean for handling detection tasks.
+     *
+     * @param props the properties for configuring the task executor.
+     * @return a configured ThreadPoolTaskExecutor instance.
+     */
     @Bean
     public ThreadPoolTaskExecutor detectionTaskExecutor(DetectionTaskProps props) {
         int cpuCoreCount = Runtime.getRuntime().availableProcessors();
@@ -64,6 +79,12 @@ public class FraudDetectionConfig {
         return p;
     }
 
+    /**
+     * Creates an ExecutorService bean for handling SQS polling tasks.
+     *
+     * @param props the properties for configuring the thread pool.
+     * @return a configured ExecutorService instance.
+     */
     @Bean
     public ExecutorService sqsPollingThreadPool(SqsProps props) {
         return Executors.newFixedThreadPool(props.getThreadPoolSize());

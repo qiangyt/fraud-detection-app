@@ -26,16 +26,31 @@ import qiangyt.fraud_detection.sdk.DetectionResult;
 @lombok.Getter
 @lombok.Setter
 @lombok.extern.slf4j.Slf4j
+/**
+ * GroupedAlerter is a service that manages a list of alerters and sends alerts to all registered
+ * alerters.
+ */
 @Service
 @Primary
 public class GroupedAlerter implements Alerter {
 
     final List<Alerter> alerters = new ArrayList<>();
 
+    /**
+     * Registers a new alerter to the list of alerters.
+     *
+     * @param alerter the alerter to be registered
+     */
     void registerAlerter(Alerter alerter) {
         getAlerters().add(alerter);
     }
 
+    /**
+     * Sends an alert to all registered alerters. If an alerter fails to send the alert, an error is
+     * logged and the process continues with the next alerter.
+     *
+     * @param alert the detection result to be sent as an alert
+     */
     @Override
     public void send(DetectionResult alert) {
         for (Alerter alerter : alerters) {

@@ -81,7 +81,6 @@ public class DetectionService implements DetectionApi {
 
     @Override
     public DetectionResult detect(DetectionReqEntity entity) {
-        // uses dedicated task pool to execute engine
         var category = getEngine().detect(entity);
         return DetectionResult.from(entity, category);
     }
