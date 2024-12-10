@@ -17,7 +17,6 @@
  */
 package qiangyt.fraud_detection.app.engine;
 
-import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,24 +35,22 @@ import qiangyt.fraud_detection.sdk.FraudCategory;
 @Primary
 @Service
 @lombok.extern.slf4j.Slf4j
-public class SimpleDetectionEngine implements DetectionEngine {
+public class ChainedDetectionEngine implements DetectionEngine {
 
-    final List<DetectionRule> rules = new ArrayList<>();
+    final List<DetectionRule> rulesChain = new ArrayList<>();
 
     @Autowired BigAmountRule bigAmountRule;
 
     @Autowired SuspiciousAccountRule suspiciousAccountRule;
 
-    @PostConstruct
-    void init() {
-        getRules().add(getBigAmountRule());
-        getRules().add(getSuspiciousAccountRule());
+    public void addRule(DetectionRule rule) {
+        getRulesChain().add(rule);
     }
 
     @Override
     public FraudCategory detect(DetectionReqEntity entity) {
-        for (DetectionRule rule : getRules()) {
-            FraudCategory result = rule.apply(entity);
+        for (DetectionRule rule : getRulesChain()) {
+            FraudCategory result = rule.detect(entity);
             if (result != FraudCategory.NONE) {
                 return result;
             }

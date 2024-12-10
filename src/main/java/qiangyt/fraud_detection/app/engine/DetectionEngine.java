@@ -17,13 +17,7 @@
  */
 package qiangyt.fraud_detection.app.engine;
 
-import qiangyt.fraud_detection.sdk.DetectionReqEntity;
-import qiangyt.fraud_detection.sdk.FraudCategory;
-
 /*
  * A simple rule-based detection system
  */
-public interface DetectionEngine {
-
-    FraudCategory detect(DetectionReqEntity entity);
-}
+public interface DetectionEngine extends DetectionRule {}

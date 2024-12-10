@@ -43,7 +43,7 @@ public class BigAmountRuleTest {
         var entity = new DetectionReqEntity();
         entity.setAmount(50);
 
-        var result = bigAmountRule.apply(entity);
+        var result = bigAmountRule.detect(entity);
         assertEquals(FraudCategory.NONE, result);
     }
 
@@ -52,7 +52,7 @@ public class BigAmountRuleTest {
         var entity = new DetectionReqEntity();
         entity.setAmount(150);
 
-        var result = bigAmountRule.apply(entity);
+        var result = bigAmountRule.detect(entity);
         assertEquals(FraudCategory.BIG_AMOUNT, result);
     }
 }

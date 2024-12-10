@@ -1,4 +1,3 @@
-
 /*
  * fraud-detection-app - fraud detection app
  * Copyright © 2024 Yiting Qiang (qiangyt@wxcount.com)
@@ -32,14 +31,11 @@ import qiangyt.fraud_detection.sdk.FraudCategory;
 
 public class GroupedAlerterTest {
 
-    @Mock
-    private Alerter alerter1;
+    @Mock private Alerter alerter1;
 
-    @Mock
-    private Alerter alerter2;
+    @Mock private Alerter alerter2;
 
-    @InjectMocks
-    private GroupedAlerter groupedAlerter;
+    @InjectMocks private GroupedAlerter groupedAlerter;
 
     @BeforeEach
     public void setUp() {
@@ -50,13 +46,14 @@ public class GroupedAlerterTest {
 
     @Test
     public void testSend() {
-        var entity = DetectionReqEntity.builder()
-                .accountId("account-id")
-                .amount(123)
-                .memo("memo")
-                .id("entity-id")
-                .receivedAt(new Date())
-                .build();
+        var entity =
+                DetectionReqEntity.builder()
+                        .accountId("account-id")
+                        .amount(123)
+                        .memo("memo")
+                        .id("entity-id")
+                        .receivedAt(new Date())
+                        .build();
         var result = DetectionResult.from(entity, FraudCategory.SUSPICIOUS_ACCOUNT);
 
         groupedAlerter.send(result);
@@ -70,13 +67,14 @@ public class GroupedAlerterTest {
         var newAlerter = mock(Alerter.class);
         groupedAlerter.registerAlerter(newAlerter);
 
-        var entity = DetectionReqEntity.builder()
-                .accountId("account-id")
-                .amount(123)
-                .memo("memo")
-                .id("entity-id")
-                .receivedAt(new Date())
-                .build();
+        var entity =
+                DetectionReqEntity.builder()
+                        .accountId("account-id")
+                        .amount(123)
+                        .memo("memo")
+                        .id("entity-id")
+                        .receivedAt(new Date())
+                        .build();
         var result = DetectionResult.from(entity, FraudCategory.SUSPICIOUS_ACCOUNT);
 
         groupedAlerter.send(result);

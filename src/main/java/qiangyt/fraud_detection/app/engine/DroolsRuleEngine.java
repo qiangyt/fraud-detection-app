@@ -26,7 +26,7 @@ import qiangyt.fraud_detection.sdk.FraudCategory;
 @lombok.Setter
 @Service
 @lombok.extern.slf4j.Slf4j
-public class DroolsRuleEngine implements DetectionEngine, DetectionRule {
+public class DroolsRuleEngine implements DetectionEngine {
 
     @PostConstruct
     void init() {
@@ -34,13 +34,8 @@ public class DroolsRuleEngine implements DetectionEngine, DetectionRule {
     }
 
     @Override
-    public FraudCategory apply(DetectionReqEntity entity) {
+    public FraudCategory detect(DetectionReqEntity entity) {
         // TODO: apply drools rules
         return FraudCategory.NONE;
-    }
-
-    @Override
-    public FraudCategory detect(DetectionReqEntity entity) {
-        return apply(entity);
     }
 }

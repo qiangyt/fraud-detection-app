@@ -23,5 +23,5 @@ import qiangyt.fraud_detection.sdk.FraudCategory;
 @FunctionalInterface
 public interface DetectionRule {
 
-    FraudCategory apply(DetectionReqEntity entity);
+    FraudCategory detect(DetectionReqEntity entity);
 }

@@ -17,9 +17,11 @@
  */
 package qiangyt.fraud_detection.app.engine.rules;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import qiangyt.fraud_detection.app.config.RuleProps;
+import qiangyt.fraud_detection.app.engine.ChainedDetectionEngine;
 import qiangyt.fraud_detection.app.engine.DetectionRule;
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 import qiangyt.fraud_detection.sdk.FraudCategory;
@@ -31,8 +33,15 @@ public class BigAmountRule implements DetectionRule {
 
     @Autowired RuleProps props;
 
+    @Autowired ChainedDetectionEngine chain;
+
+    @PostConstruct
+    void init() {
+        chain.addRule(this);
+    }
+
     @Override
-    public FraudCategory apply(DetectionReqEntity entity) {
+    public FraudCategory detect(DetectionReqEntity entity) {
         if (entity.getAmount() >= getProps().getMaxTransactionAmount()) {
             return FraudCategory.BIG_AMOUNT;
         }

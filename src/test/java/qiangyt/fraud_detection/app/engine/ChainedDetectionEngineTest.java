@@ -28,9 +28,9 @@ import org.mockito.MockitoAnnotations;
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 import qiangyt.fraud_detection.sdk.FraudCategory;
 
-public class SimpleDetectionEngineTest {
+public class ChainedDetectionEngineTest {
 
-    @InjectMocks SimpleDetectionEngine detectionEngine;
+    @InjectMocks ChainedDetectionEngine detectionEngine;
 
     @Mock DetectionRule rule1;
 
@@ -39,9 +39,9 @@ public class SimpleDetectionEngineTest {
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        detectionEngine.getRules().clear();
-        detectionEngine.getRules().add(rule1);
-        detectionEngine.getRules().add(rule2);
+        detectionEngine.getRulesChain().clear();
+        detectionEngine.getRulesChain().add(rule1);
+        detectionEngine.getRulesChain().add(rule2);
     }
 
     @Test
@@ -50,8 +50,8 @@ public class SimpleDetectionEngineTest {
         entity.setAmount(5000);
         entity.setAccountId("account789");
 
-        when(rule1.apply(entity)).thenReturn(FraudCategory.NONE);
-        when(rule2.apply(entity)).thenReturn(FraudCategory.NONE);
+        when(rule1.detect(entity)).thenReturn(FraudCategory.NONE);
+        when(rule2.detect(entity)).thenReturn(FraudCategory.NONE);
 
         var result = detectionEngine.detect(entity);
         assertEquals(FraudCategory.NONE, result);
@@ -63,8 +63,8 @@ public class SimpleDetectionEngineTest {
         entity.setAmount(15000);
         entity.setAccountId("account789");
 
-        when(rule1.apply(entity)).thenReturn(FraudCategory.BIG_AMOUNT);
-        when(rule2.apply(entity)).thenReturn(FraudCategory.NONE);
+        when(rule1.detect(entity)).thenReturn(FraudCategory.BIG_AMOUNT);
+        when(rule2.detect(entity)).thenReturn(FraudCategory.NONE);
 
         var result = detectionEngine.detect(entity);
         assertEquals(FraudCategory.BIG_AMOUNT, result);
@@ -76,8 +76,8 @@ public class SimpleDetectionEngineTest {
         entity.setAmount(5000);
         entity.setAccountId("account123");
 
-        when(rule1.apply(entity)).thenReturn(FraudCategory.NONE);
-        when(rule2.apply(entity)).thenReturn(FraudCategory.SUSPICIOUS_ACCOUNT);
+        when(rule1.detect(entity)).thenReturn(FraudCategory.NONE);
+        when(rule2.detect(entity)).thenReturn(FraudCategory.SUSPICIOUS_ACCOUNT);
 
         var result = detectionEngine.detect(entity);
         assertEquals(FraudCategory.SUSPICIOUS_ACCOUNT, result);

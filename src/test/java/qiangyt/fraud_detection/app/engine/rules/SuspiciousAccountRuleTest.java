@@ -41,7 +41,7 @@ public class SuspiciousAccountRuleTest {
         var entity = new DetectionReqEntity();
         entity.setAccountId("account789");
 
-        var result = suspiciousAccountRule.apply(entity);
+        var result = suspiciousAccountRule.detect(entity);
         assertEquals(FraudCategory.NONE, result);
     }
 
@@ -50,7 +50,7 @@ public class SuspiciousAccountRuleTest {
         var entity = new DetectionReqEntity();
         entity.setAccountId("fbiden");
 
-        var result = suspiciousAccountRule.apply(entity);
+        var result = suspiciousAccountRule.detect(entity);
         assertEquals(FraudCategory.SUSPICIOUS_ACCOUNT, result);
     }
 }

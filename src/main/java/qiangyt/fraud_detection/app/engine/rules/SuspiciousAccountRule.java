@@ -17,20 +17,31 @@
  */
 package qiangyt.fraud_detection.app.engine.rules;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import qiangyt.fraud_detection.app.config.RuleProps;
+import qiangyt.fraud_detection.app.engine.ChainedDetectionEngine;
 import qiangyt.fraud_detection.app.engine.DetectionRule;
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 import qiangyt.fraud_detection.sdk.FraudCategory;
 
+@lombok.Getter
+@lombok.Setter
 @Service
 public class SuspiciousAccountRule implements DetectionRule {
 
-    @lombok.Getter @lombok.Setter @Autowired RuleProps props;
+    @Autowired RuleProps props;
+
+    @Autowired ChainedDetectionEngine chain;
+
+    @PostConstruct
+    void init() {
+        chain.addRule(this);
+    }
 
     @Override
-    public FraudCategory apply(DetectionReqEntity entity) {
+    public FraudCategory detect(DetectionReqEntity entity) {
         if (getProps().getSuspicousAccounts().contains(entity.getAccountId())) {
             return FraudCategory.SUSPICIOUS_ACCOUNT;
         }
