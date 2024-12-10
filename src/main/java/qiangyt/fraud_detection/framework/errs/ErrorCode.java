@@ -17,21 +17,61 @@
  */
 package qiangyt.fraud_detection.framework.errs;
 
+/**
+ * Enum representing various error codes used in the fraud detection application.
+ */
 public enum ErrorCode {
+    /**
+     * No error.
+     */
     NONE,
 
+    /**
+     * The requested path was not found.
+     */
     PATH_NOT_FOUND,
 
     // ALREADY_EXISTS,
     // ALREADY_VALIDATED,
     // OTHER,
+
+    /**
+     * The provided parameter is not valid.
+     */
     PARAMETER_NOT_VALID,
+
+    /**
+     * A constraint violation occurred.
+     */
     CONSTRAINT_VIOLATION,
+
+    /**
+     * The data format is incorrect.
+     */
     WRONG_DATA_FORMAT,
+
+    /**
+     * The field cannot be updated.
+     */
     FIELD_NOT_UPDATEABLE,
+
+    /**
+     * The field cannot be assigned.
+     */
     FIELD_NOT_ASSIGNABLE,
+
+    /**
+     * The field does not exist.
+     */
     FIELD_NOT_EXISTS,
 
+    /**
+     * The value is not a valid enum.
+     */
     INVALID_ENUM,
+
+    /**
+     * The property is invalid.
+     */
     INVALID_PROPERTY
 }

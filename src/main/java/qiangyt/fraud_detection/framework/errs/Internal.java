@@ -20,33 +20,71 @@ package qiangyt.fraud_detection.framework.errs;
 import java.time.Instant;
 import org.springframework.http.HttpStatus;
 
-/** HTTP INTERNAL_SERVER_ERROR */
+/**
+ * Represents an HTTP 500 Internal Server Error.
+ * This class extends {@link BaseError} to provide additional context for internal server errors.
+ */
 @lombok.Getter
 @lombok.Setter
 public class Internal extends BaseError {
 
     Long id;
 
+    /**
+     * Constructs a new Internal error with the specified message format and parameters.
+     *
+     * @param messageFormat the message format string
+     * @param params the parameters to be formatted into the message
+     */
     public Internal(String messageFormat, Object... params) {
         super(HttpStatus.INTERNAL_SERVER_ERROR, ErrorCode.NONE, messageFormat, params);
     }
 
+    /**
+     * Constructs a new Internal error with the specified message.
+     *
+     * @param message the error message
+     */
     public Internal(String message) {
         super(HttpStatus.INTERNAL_SERVER_ERROR, ErrorCode.NONE, message);
     }
 
+    /**
+     * Constructs a new Internal error with the specified cause, message format, and parameters.
+     *
+     * @param cause the cause of the error
+     * @param messageFormat the message format string
+     * @param params the parameters to be formatted into the message
+     */
     public Internal(Throwable cause, String messageFormat, Object... params) {
         super(HttpStatus.INTERNAL_SERVER_ERROR, ErrorCode.NONE, cause, messageFormat, params);
     }
 
+    /**
+     * Constructs a new Internal error with the specified cause and message.
+     *
+     * @param cause the cause of the error
+     * @param message the error message
+     */
     public Internal(Throwable cause, String message) {
         super(HttpStatus.INTERNAL_SERVER_ERROR, ErrorCode.NONE, cause, message);
     }
 
+    /**
+     * Constructs a new Internal error with the specified cause.
+     *
+     * @param cause the cause of the error
+     */
     public Internal(Throwable cause) {
         super(HttpStatus.INTERNAL_SERVER_ERROR, ErrorCode.NONE, cause);
     }
 
+    /**
+     * Converts this error to an {@link ErrorResponse} object.
+     *
+     * @param path the request path that caused the error
+     * @return the error response
+     */
     @Override
     public ErrorResponse toResponse(String path) {
         return ErrorResponse.builder()

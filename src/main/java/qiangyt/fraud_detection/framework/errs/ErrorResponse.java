@@ -24,22 +24,51 @@ import qiangyt.fraud_detection.framework.json.JacksonHelper;
 @lombok.Setter
 @lombok.experimental.SuperBuilder
 @lombok.NoArgsConstructor
+/**
+ * Represents an error response with details about the error.
+ */
 public class ErrorResponse {
 
+    /**
+     * The timestamp when the error occurred.
+     */
     Instant timestamp;
 
+    /**
+     * The HTTP status code of the error.
+     */
     int status;
 
+    /**
+     * A short description of the error.
+     */
     String error;
 
+    /**
+     * The specific error code.
+     */
     ErrorCode code;
 
+    /**
+     * A detailed message about the error.
+     */
     String message;
 
+    /**
+     * Additional parameters related to the error.
+     */
     Object[] params;
 
+    /**
+     * The path where the error occurred.
+     */
     String path;
 
+    /**
+     * Converts the error response to a pretty-printed JSON string.
+     *
+     * @return the JSON string representation of the error response.
+     */
     @Override
     public String toString() {
         return JacksonHelper.pretty(this);

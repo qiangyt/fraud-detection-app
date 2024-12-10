@@ -56,6 +56,13 @@ import qiangyt.fraud_detection.framework.misc.ValidationHelper;
 @ControllerAdvice // (annotations = {RestController.class})
 public class ErrorAdvice {
 
+    /**
+     * Handles any exception thrown within the application.
+     *
+     * @param ex the exception that was thrown
+     * @param req the HTTP request during which the exception was thrown
+     * @return a ResponseEntity containing the error response and HTTP status
+     */
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<ErrorResponse> handleError(Throwable ex, HttpServletRequest req) {
         var err = normalizeError(ex);
@@ -69,6 +76,12 @@ public class ErrorAdvice {
         return new ResponseEntity<>(err.toResponse(req.getRequestURI()), status);
     }
 
+    /**
+     * Normalizes the given exception into a BaseError.
+     *
+     * @param ex the exception to normalize
+     * @return a BaseError representing the normalized exception
+     */
     public static BaseError normalizeError(Throwable ex) {
         ex = ExceptionHelper.getRootCause(ex);
 
