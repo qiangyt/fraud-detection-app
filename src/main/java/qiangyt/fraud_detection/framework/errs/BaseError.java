@@ -50,7 +50,6 @@ public abstract class BaseError extends RuntimeException {
      */
     public BaseError(HttpStatus status, ErrorCode code, String messageFormat, Object... params) {
         super(String.format(messageFormat, params));
-
         this.status = status;
         this.code = code == null ? ErrorCode.NONE : code;
         this.params = params == null ? NO_PARAMS : params;
@@ -66,7 +65,6 @@ public abstract class BaseError extends RuntimeException {
      */
     public BaseError(HttpStatus status, ErrorCode code, String message) {
         super(message);
-
         this.status = status;
         this.code = code == null ? ErrorCode.NONE : code;
         this.params = NO_PARAMS;
@@ -101,7 +99,6 @@ public abstract class BaseError extends RuntimeException {
             String messageFormat,
             Object... params) {
         super(String.format(messageFormat, params), cause);
-
         this.status = status;
         this.code = code == null ? ErrorCode.NONE : code;
         this.params = params == null ? NO_PARAMS : params;
@@ -117,7 +114,6 @@ public abstract class BaseError extends RuntimeException {
      */
     public BaseError(HttpStatus status, ErrorCode code, Throwable cause, String message) {
         super(message, cause);
-
         this.status = status;
         this.code = code == null ? ErrorCode.NONE : code;
         this.params = NO_PARAMS;
@@ -138,6 +134,9 @@ public abstract class BaseError extends RuntimeException {
     /**
      * Export to a Map. Cascading exceptions are not included. For RESTful APIs, this map serves as
      * the HTTP response body.
+     *
+     * @param path the request path
+     * @return the error response
      */
     public ErrorResponse toResponse(String path) {
         return ErrorResponse.builder()

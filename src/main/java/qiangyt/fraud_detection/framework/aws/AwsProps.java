@@ -21,12 +21,16 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @lombok.Getter
 @lombok.Setter
+/** Configuration properties for AWS. */
 @ConfigurationProperties("aws")
 public class AwsProps {
 
+    /** The AWS region. */
     private String region = System.getenv("AWS_REGION");
 
+    /** The AWS access key ID. */
     private String accessKeyId = System.getenv("AWS_ACCESS_KEY_ID");
 
+    /** The AWS access key secret. */
     private String accessKeySecret = System.getenv("AWS_ACCESS_KEY_SECRET");
 }

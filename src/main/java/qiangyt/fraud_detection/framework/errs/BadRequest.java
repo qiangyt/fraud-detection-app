@@ -19,29 +19,69 @@ package qiangyt.fraud_detection.framework.errs;
 
 import org.springframework.http.HttpStatus;
 
-/** HTTP BAD_REQUEST */
+/** Represents an HTTP 400 Bad Request error. */
 public class BadRequest extends BaseError {
 
+    /**
+     * Constructs a new BadRequest with the specified error code, message format, and parameters.
+     *
+     * @param code the error code
+     * @param messageFormat the message format
+     * @param params the parameters for the message format
+     */
     public BadRequest(ErrorCode code, String messageFormat, Object... params) {
         super(HttpStatus.BAD_REQUEST, code, messageFormat, params);
     }
 
+    /**
+     * Constructs a new BadRequest with the specified error code and message.
+     *
+     * @param code the error code
+     * @param message the message
+     */
     public BadRequest(ErrorCode code, String message) {
         super(HttpStatus.BAD_REQUEST, code, message);
     }
 
+    /**
+     * Constructs a new BadRequest with the specified error code.
+     *
+     * @param code the error code
+     */
     public BadRequest(ErrorCode code) {
         super(HttpStatus.BAD_REQUEST, code);
     }
 
+    /**
+     * Constructs a new BadRequest with the specified error code, cause, message format, and
+     * parameters.
+     *
+     * @param code the error code
+     * @param cause the cause of the error
+     * @param messageFormat the message format
+     * @param params the parameters for the message format
+     */
     public BadRequest(ErrorCode code, Throwable cause, String messageFormat, Object... params) {
         super(HttpStatus.BAD_REQUEST, code, cause, messageFormat, params);
     }
 
+    /**
+     * Constructs a new BadRequest with the specified error code, cause, and message.
+     *
+     * @param code the error code
+     * @param cause the cause of the error
+     * @param message the message
+     */
     public BadRequest(ErrorCode code, Throwable cause, String message) {
         super(HttpStatus.BAD_REQUEST, code, cause, message);
     }
 
+    /**
+     * Constructs a new BadRequest with the specified error code and cause.
+     *
+     * @param code the error code
+     * @param cause the cause of the error
+     */
     public BadRequest(ErrorCode code, Throwable cause) {
         super(HttpStatus.BAD_REQUEST, code, cause);
     }

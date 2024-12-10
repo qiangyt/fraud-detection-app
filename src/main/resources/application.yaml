@@ -17,50 +17,50 @@
 #
 
 aws:
-  region: ${AWS_REGION}
-  access-key-id: ${AWS_ACCESS_KEY_ID}
-  access-key-secret: ${AWS_ACCESS_KEY_SECRET}
+  region: ${AWS_REGION} # AWS region for the application
+  access-key-id: ${AWS_ACCESS_KEY_ID} # AWS access key ID
+  access-key-secret: ${AWS_ACCESS_KEY_SECRET} # AWS access key secret
 
 app:
   sqs:
-    detect-queue-url: ${AWS_SQS_DETECT_QUEUE_URL}
-    alert-queue-url: ${AWS_SQS_ALERT_QUEUE_URL}
+    detect-queue-url: ${AWS_SQS_DETECT_QUEUE_URL} # URL for the SQS detect queue
+    alert-queue-url: ${AWS_SQS_ALERT_QUEUE_URL} # URL for the SQS alert queue
 
 management:
   endpoints:
-    enabled-by-default: true
-    web.exposure.include: "*"
+    enabled-by-default: true # Enable all management endpoints by default
+    web.exposure.include: "*" # Expose all management endpoints over web
   endpoint:
-    env.show-values: ALWAYS 
-    configprops.show-values: ALWAYS
+    env.show-values: ALWAYS # Always show environment values
+    configprops.show-values: ALWAYS # Always show configuration properties values
   info:
-    build.enabled: true
-    env.enabled: true
-    git.enabled: true
-    java.enabled: true
-    os.enabled: true
-    process.enabled: true
+    build.enabled: true # Enable build info endpoint
+    env.enabled: true # Enable environment info endpoint
+    git.enabled: true # Enable git info endpoint
+    java.enabled: true # Enable Java info endpoint
+    os.enabled: true # Enable OS info endpoint
+    process.enabled: true # Enable process info endpoint
 
 spring:
-  application.name: fraud_detection
-  devtools.restart.trigger-file: reloadtrigger
+  application.name: fraud_detection # Name of the Spring application
+  devtools.restart.trigger-file: reloadtrigger # File to trigger a restart in devtools
   main:
-    allow-circular-references: true
-    lazy-initialization: false
-    keep-alive: true # ensures that the JVM is kept alive, even if all threads are virtual threads. 
-  mvc.throw-exception-if-no-handler-found: true
-  servlet.session.persistent: false
+    allow-circular-references: true # Allow circular references in Spring beans
+    lazy-initialization: false # Disable lazy initialization
+    keep-alive: true # Ensure JVM is kept alive, even if all threads are virtual threads
+  mvc.throw-exception-if-no-handler-found: true # Throw exception if no handler is found for a request
+  servlet.session.persistent: false # Disable persistent sessions
+
 springdoc:
-  pre-loading-enabled: true
-  writer-with-order-by-keys: true
-  writer-with-default-pretty-printer: true
-  disable-i18n: true
-  show-spring-cloud-functions: false
-  enable-groovy: false
-  enable-spring-security: false
-  enable-kotlin: false
-  enable-hateoas: false
-  enable-data-rest: false
-  api-docs.version: openapi_3_1
-  
-  
+  pre-loading-enabled: true # Enable pre-loading of SpringDoc
+  writer-with-order-by-keys: true # Order keys in the writer
+  writer-with-default-pretty-printer: true # Enable default pretty printer for the writer
+  disable-i18n: true # Disable internationalization
+  show-spring-cloud-functions: false # Disable showing Spring Cloud functions
+  enable-groovy: false # Disable Groovy support
+  enable-spring-security: false # Disable Spring Security support
+  enable-kotlin: false # Disable Kotlin support
+  enable-hateoas: false # Disable HATEOAS support
+  enable-data-rest: false # Disable Spring Data REST support
+  api-docs.version: openapi_3_1 # Version of the OpenAPI documentation
+

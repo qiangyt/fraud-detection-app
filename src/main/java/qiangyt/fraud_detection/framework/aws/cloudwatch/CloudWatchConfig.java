@@ -26,6 +26,7 @@ import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
 
+/** Configuration class for AWS CloudWatch client. */
 @lombok.Getter
 @lombok.Setter
 @Configuration
@@ -33,6 +34,11 @@ public class CloudWatchConfig {
 
     @Autowired AwsProps awsProps;
 
+    /**
+     * Creates and configures a CloudWatchClient bean.
+     *
+     * @return a configured CloudWatchClient instance
+     */
     @Bean
     public CloudWatchClient cloudWatchClient() {
         var ap = getAwsProps();

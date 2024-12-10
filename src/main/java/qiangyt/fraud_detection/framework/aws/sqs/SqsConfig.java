@@ -26,6 +26,7 @@ import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.sqs.SqsClient;
 
+/** Configuration class for setting up AWS SQS client. */
 @lombok.Getter
 @lombok.Setter
 @lombok.extern.slf4j.Slf4j
@@ -34,11 +35,22 @@ public class SqsConfig {
 
     @Autowired private AwsProps props;
 
+    /**
+     * Retrieves the AWS region from the properties.
+     *
+     * @return the AWS region.
+     */
     @Bean
     public Region getRegion() {
         return Region.of(getProps().getRegion());
     }
 
+    /**
+     * Creates and configures an SQS client using the provided region and credentials.
+     *
+     * @param region the AWS region.
+     * @return the configured SQS client.
+     */
     @Bean
     public SqsClient createClient(Region region) {
         var p = getProps();
