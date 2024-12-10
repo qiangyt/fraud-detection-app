@@ -65,14 +65,18 @@ public class ErrorAdvice {
      */
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<ErrorResponse> handleError(Throwable ex, HttpServletRequest req) {
+        // Normalize the exception to a BaseError
         var err = normalizeError(ex);
         var status = err.getStatus();
+
+        // Log the exception based on its status
         if (err.getStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
             log.error(ex.getMessage(), ex);
         } else {
             log.warn(ex.getMessage(), ex);
         }
 
+        // Return the error response with the appropriate HTTP status
         return new ResponseEntity<>(err.toResponse(req.getRequestURI()), status);
     }
 
@@ -83,12 +87,15 @@ public class ErrorAdvice {
      * @return a BaseError representing the normalized exception
      */
     public static BaseError normalizeError(Throwable ex) {
+        // Get the root cause of the exception
         ex = ExceptionHelper.getRootCause(ex);
 
+        // If the exception is already a BaseError, return it
         if (ex instanceof BaseError) {
             return ((BaseError) ex);
         }
 
+        // Handle specific types of exceptions and convert them to BaseError
         if (ex instanceof MethodArgumentNotValidException) {
             List<ObjectError> objErrors =
                     ((MethodArgumentNotValidException) ex).getBindingResult().getAllErrors();
@@ -167,6 +174,7 @@ public class ErrorAdvice {
             return new NotFound(ErrorCode.PATH_NOT_FOUND, ex, ex.getMessage());
         }
 
+        // For any other exceptions, return an Internal error
         return new Internal(ex);
     }
 }
