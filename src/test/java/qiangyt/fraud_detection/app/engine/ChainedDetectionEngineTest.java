@@ -39,9 +39,8 @@ public class ChainedDetectionEngineTest {
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        detectionEngine.getRulesChain().clear();
-        detectionEngine.getRulesChain().add(rule1);
-        detectionEngine.getRulesChain().add(rule2);
+        detectionEngine.addRule(rule1);
+        detectionEngine.addRule(rule2);
     }
 
     @Test

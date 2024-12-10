@@ -18,24 +18,38 @@
 package qiangyt.fraud_detection.app.engine.rules;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import qiangyt.fraud_detection.app.config.RuleProps;
+import qiangyt.fraud_detection.app.engine.ChainedDetectionEngine;
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 import qiangyt.fraud_detection.sdk.FraudCategory;
 
 public class BigAmountRuleTest {
 
-    private BigAmountRule bigAmountRule;
+    @Mock private ChainedDetectionEngine chain;
+
+    @InjectMocks private BigAmountRule rule;
 
     @BeforeEach
     public void setUp() {
+        MockitoAnnotations.openMocks(this);
+
         var props = new RuleProps();
         props.setMaxTransactionAmount(100);
+        rule.setProps(props);
+    }
 
-        bigAmountRule = new BigAmountRule();
-        bigAmountRule.setProps(props);
+    @Test
+    public void testInit() {
+        rule.init();
+        verify(chain, times(1)).addRule(rule);
     }
 
     @Test
@@ -43,7 +57,7 @@ public class BigAmountRuleTest {
         var entity = new DetectionReqEntity();
         entity.setAmount(50);
 
-        var result = bigAmountRule.detect(entity);
+        var result = rule.detect(entity);
         assertEquals(FraudCategory.NONE, result);
     }
 
@@ -52,7 +66,7 @@ public class BigAmountRuleTest {
         var entity = new DetectionReqEntity();
         entity.setAmount(150);
 
-        var result = bigAmountRule.detect(entity);
+        var result = rule.detect(entity);
         assertEquals(FraudCategory.BIG_AMOUNT, result);
     }
 }

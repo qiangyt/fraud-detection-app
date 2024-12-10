@@ -18,22 +18,38 @@
 package qiangyt.fraud_detection.app.engine.rules;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import qiangyt.fraud_detection.app.config.RuleProps;
+import qiangyt.fraud_detection.app.engine.ChainedDetectionEngine;
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 import qiangyt.fraud_detection.sdk.FraudCategory;
 
 public class SuspiciousAccountRuleTest {
 
-    private SuspiciousAccountRule suspiciousAccountRule;
+    @Mock private ChainedDetectionEngine chain;
+
+    @InjectMocks private SuspiciousAccountRule rule;
 
     @BeforeEach
     public void setUp() {
+        MockitoAnnotations.openMocks(this);
+
         var props = new RuleProps();
-        suspiciousAccountRule = new SuspiciousAccountRule();
-        suspiciousAccountRule.setProps(props);
+        props.setMaxTransactionAmount(100);
+        rule.setProps(props);
+    }
+
+    @Test
+    public void testInit() {
+        rule.init();
+        verify(chain, times(1)).addRule(rule);
     }
 
     @Test
@@ -41,7 +57,7 @@ public class SuspiciousAccountRuleTest {
         var entity = new DetectionReqEntity();
         entity.setAccountId("account789");
 
-        var result = suspiciousAccountRule.detect(entity);
+        var result = rule.detect(entity);
         assertEquals(FraudCategory.NONE, result);
     }
 
@@ -50,7 +66,7 @@ public class SuspiciousAccountRuleTest {
         var entity = new DetectionReqEntity();
         entity.setAccountId("fbiden");
 
-        var result = suspiciousAccountRule.detect(entity);
+        var result = rule.detect(entity);
         assertEquals(FraudCategory.SUSPICIOUS_ACCOUNT, result);
     }
 }
