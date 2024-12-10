@@ -72,7 +72,7 @@ public class DetectionService implements DetectionApi {
         return result.thenApplyAsync(
                 (prevResult) -> {
                     if (prevResult.getCategory().yes) {
-                        // log.warn("fraud detected: " + jackson.str(prevResult));
+                        log.warn("fraud detected: " + jackson.str(prevResult));
                         getAlertor().send(prevResult);
                     }
                     return prevResult;

@@ -19,30 +19,56 @@ package qiangyt.fraud_detection.app.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import qiangyt.fraud_detection.app.alert.Alerter;
 import qiangyt.fraud_detection.app.engine.DetectionEngine;
 import qiangyt.fraud_detection.app.queue.DetectionRequestQueue;
+import qiangyt.fraud_detection.framework.json.Jackson;
 import qiangyt.fraud_detection.sdk.DetectionReq;
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
+import qiangyt.fraud_detection.sdk.DetectionResult;
 import qiangyt.fraud_detection.sdk.FraudCategory;
 
 public class DetectionServiceTest {
 
+    @Mock Alerter alertor;
+
     @Mock DetectionRequestQueue queue;
 
     @Mock DetectionEngine engine;
+
+    ThreadPoolTaskExecutor detectionTaskExecutor = new ThreadPoolTaskExecutor();
+
+    {
+    }
 
     @InjectMocks DetectionService service;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
+
+        detectionTaskExecutor.initialize();
+
+        service.setDetectionTaskExecutor(detectionTaskExecutor);
+        service.setJackson(Jackson.DEFAULT);
+    }
+
+    @AfterEach
+    public void tearDown() {
+        service.shutdown();
     }
 
     @Test
@@ -65,6 +91,22 @@ public class DetectionServiceTest {
     }
 
     @Test
+    public void testDetectThenAlert() throws Exception {
+        var entity = new DetectionReqEntity();
+        var category = FraudCategory.BIG_AMOUNT;
+
+        when(engine.detect(any(DetectionReqEntity.class))).thenReturn(category);
+        doNothing().when(alertor).send(any(DetectionResult.class));
+
+        var futureResult = service.detectThenAlert(entity);
+        var detectionResult = futureResult.join();
+
+        assertEquals(category, detectionResult.getCategory());
+        assertEquals(entity, detectionResult.getEntity());
+        verify(alertor, times(1)).send(detectionResult);
+    }
+
+    @Test
     public void testDetect() {
         var entity = new DetectionReqEntity();
         var category = FraudCategory.BIG_AMOUNT;
@@ -74,5 +116,16 @@ public class DetectionServiceTest {
 
         assertEquals(category, result.getCategory());
         assertEquals(entity, result.getEntity());
+    }
+
+    @Test
+    public void testShutdown() {
+        var executor = spy(new ThreadPoolTaskExecutor());
+        executor.initialize();
+        service.setDetectionTaskExecutor(executor);
+
+        service.shutdown();
+
+        verify(executor, times(1)).shutdown();
     }
 }
