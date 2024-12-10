@@ -39,6 +39,11 @@ spec:
             secretKeyRef:
               name: aws-secret
               key: aws-sqs-detect-queue-url
+        - name: AWS_SQS_DETECT_DEAD_LETTER_QUEUE_URL
+          valueFrom:
+            secretKeyRef:
+              name: aws-secret
+              key: aws-sqs-detect-dead-letter-queue-url
         - name: AWS_SQS_ALERT_QUEUE_URL
           valueFrom:
             secretKeyRef:
