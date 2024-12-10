@@ -20,10 +20,15 @@ package qiangyt.fraud_detection.framework.rest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-/** Home redirection to OpenAPI api documentation */
+/** HomeController is responsible for redirecting the root URL to the OpenAPI API documentation. */
 @Controller
 public class HomeController {
 
+    /**
+     * Redirects the root URL ("/") to the Swagger UI documentation page.
+     *
+     * @return a redirection string to "swagger-ui.html"
+     */
     @RequestMapping("/")
     public String index() {
         return "redirect:swagger-ui.html";

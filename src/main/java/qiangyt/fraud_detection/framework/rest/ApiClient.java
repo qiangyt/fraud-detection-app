@@ -26,6 +26,10 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClient.RequestBodySpec;
 import qiangyt.fraud_detection.framework.json.Jackson;
 
+/**
+ * ApiClient is a base class for making REST API calls. It initializes a RestClient with a base URL
+ * and error handler.
+ */
 @lombok.Getter
 @lombok.Setter
 @lombok.experimental.SuperBuilder
@@ -45,10 +49,16 @@ public class ApiClient {
     @lombok.Setter(lombok.AccessLevel.PRIVATE)
     boolean inited;
 
+    /**
+     * Constructs an ApiClient with the specified path.
+     *
+     * @param path the path for the API endpoint
+     */
     public ApiClient(String path) {
         this.path = path;
     }
 
+    /** Initializes the RestClient if it has not been initialized yet. */
     @PostConstruct
     public void init() {
         if (isInited()) {
@@ -65,34 +75,88 @@ public class ApiClient {
         setInited(true);
     }
 
+    /**
+     * Builds the HTTP headers for the request.
+     *
+     * @return a Consumer to set the HTTP headers
+     */
     public Consumer<HttpHeaders> buildHeaders() {
         return headers -> {};
     }
 
+    /**
+     * Sends a GET request to the specified URI.
+     *
+     * @param uri the URI of the request
+     * @param vars the variables for the URI template
+     * @return a RequestBodySpec to further customize the request
+     */
     protected RequestBodySpec get(String uri, Object... vars) {
         return (RequestBodySpec) getRestClient().get().uri(uri, vars).headers(buildHeaders());
     }
 
+    /**
+     * Sends a HEAD request to the specified URI.
+     *
+     * @param uri the URI of the request
+     * @param vars the variables for the URI template
+     * @return a RequestBodySpec to further customize the request
+     */
     protected RequestBodySpec head(String uri, Object... vars) {
         return (RequestBodySpec) getRestClient().head().uri(uri, vars).headers(buildHeaders());
     }
 
+    /**
+     * Sends a POST request to the specified URI.
+     *
+     * @param uri the URI of the request
+     * @param vars the variables for the URI template
+     * @return a RequestBodySpec to further customize the request
+     */
     protected RequestBodySpec post(String uri, Object... vars) {
         return (RequestBodySpec) getRestClient().post().uri(uri, vars).headers(buildHeaders());
     }
 
+    /**
+     * Sends a PUT request to the specified URI.
+     *
+     * @param uri the URI of the request
+     * @param vars the variables for the URI template
+     * @return a RequestBodySpec to further customize the request
+     */
     protected RequestBodySpec put(String uri, Object... vars) {
         return (RequestBodySpec) getRestClient().put().uri(uri, vars).headers(buildHeaders());
     }
 
+    /**
+     * Sends a PATCH request to the specified URI.
+     *
+     * @param uri the URI of the request
+     * @param vars the variables for the URI template
+     * @return a RequestBodySpec to further customize the request
+     */
     protected RequestBodySpec patch(String uri, Object... vars) {
         return (RequestBodySpec) getRestClient().patch().uri(uri, vars).headers(buildHeaders());
     }
 
+    /**
+     * Sends a DELETE request to the specified URI.
+     *
+     * @param uri the URI of the request
+     * @param vars the variables for the URI template
+     * @return a RequestBodySpec to further customize the request
+     */
     protected RequestBodySpec delete(String uri, Object... vars) {
         return (RequestBodySpec) getRestClient().delete().uri(uri, vars).headers(buildHeaders());
     }
 
+    /**
+     * Sends an OPTIONS request to the specified URI.
+     *
+     * @param uri the URI of the request
+     * @param vars the variables for the URI template
+     * @return a RequestBodySpec to further customize the request
+     */
     protected RequestBodySpec options(String uri, Object... vars) {
         return (RequestBodySpec) getRestClient().options().uri(uri, vars).headers(buildHeaders());
     }

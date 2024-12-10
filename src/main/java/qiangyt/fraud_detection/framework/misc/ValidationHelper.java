@@ -25,18 +25,37 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 
+/** Helper class for validation-related utilities. */
 public class ValidationHelper {
 
+    /**
+     * Unwraps the ConstraintViolation from the given ObjectError and returns the leaf bean.
+     *
+     * @param err the ObjectError to unwrap
+     * @return the leaf bean or null if not found
+     */
     public static Object hackBean(ObjectError err) {
         var src = err.unwrap(ConstraintViolation.class);
         return (src == null) ? null : src.getLeafBean();
     }
 
+    /**
+     * Retrieves the class of the leaf bean from the given ObjectError.
+     *
+     * @param err the ObjectError to inspect
+     * @return the class of the leaf bean or null if not found
+     */
     public static Class<?> hackBeanClass(ObjectError err) {
         var bean = hackBean(err);
         return (bean == null) ? null : bean.getClass();
     }
 
+    /**
+     * Retrieves the JSON field name for the given FieldError.
+     *
+     * @param err the FieldError to inspect
+     * @return the JSON field name or the original field name if not found
+     */
     public static String hackJsonFieldName(FieldError err) {
         var fieldName = err.getField();
 
@@ -50,6 +69,13 @@ public class ValidationHelper {
 
     private static final Map<String, String> FIELD_NAMES_CACHE = new ConcurrentHashMap<>();
 
+    /**
+     * Retrieves the JSON field name for the given class and field name.
+     *
+     * @param klass the class to inspect
+     * @param fieldName the field name to inspect
+     * @return the JSON field name or the original field name if not found
+     */
     public static String hackJsonFieldName(Class<?> klass, String fieldName) {
         return FIELD_NAMES_CACHE.computeIfAbsent(
                 klass.getName() + ":" + fieldName,

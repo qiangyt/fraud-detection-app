@@ -19,20 +19,27 @@ package qiangyt.fraud_detection.framework.misc;
 
 import java.util.UUID;
 
-/** Utility class for UUID */
+/**
+ * Utility class for UUID operations, including generating, compressing, and decompressing UUIDs.
+ */
 public class UuidHelper {
 
     /**
-     * Generate short UUID string (22 characters)
+     * Generate a short UUID string (22 characters).
      *
-     * @return
+     * @return a compressed UUID string
      */
     public static String shortUuid() {
         var uuid = UUID.randomUUID();
         return compress(uuid);
     }
 
-    /** Compress the UUID object into a short UUID string. */
+    /**
+     * Compress the UUID object into a short UUID string.
+     *
+     * @param uuid the UUID to compress
+     * @return a compressed UUID string
+     */
     public static String compress(UUID uuid) {
         byte[] byUuid = new byte[16];
         long least = uuid.getLeastSignificantBits();
@@ -42,7 +49,13 @@ public class UuidHelper {
         return Codec.bytesToBase64(byUuid);
     }
 
-    /** Decompress the short UUID string into a UUID object. */
+    /**
+     * Decompress the short UUID string into a UUID object.
+     *
+     * @param compressedUuid the compressed UUID string
+     * @return the original UUID object
+     * @throws IllegalArgumentException if the compressed UUID string is not 22 characters long
+     */
     public static UUID uncompress(String compressedUuid) {
         if (compressedUuid.length() != 22) {
             throw new IllegalArgumentException("Invalid uuid!");

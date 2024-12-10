@@ -30,6 +30,13 @@ public class StringHelper {
     private static final Pattern PHONE_WITH_COUNTRY_CODE_PATTERN =
             Pattern.compile(PHONE_WITH_COUNTRY_CODE_REGEX);
 
+    /**
+     * Parses a phone number with a country code.
+     *
+     * @param phoneNoOrOther the phone number string which may include a country code
+     * @return a Pair containing the country code and phone number, or null if the input is blank or
+     *     doesn't match the pattern
+     */
     public static Pair<String, String> parsePhoneNumber(String phoneNoOrOther) {
         if (isBlank(phoneNoOrOther)) {
             return null;
@@ -45,7 +52,13 @@ public class StringHelper {
         return null;
     }
 
-    /** toString for array */
+    /**
+     * Converts an array to a string representation.
+     *
+     * @param array the array to be converted
+     * @param <T> the type of elements in the array
+     * @return a string representation of the array, or null if the array is null
+     */
     public static <T> String toString(T[] array) {
         if (array == null) {
             return null;
@@ -64,10 +77,12 @@ public class StringHelper {
     }
 
     /**
-     * toString for array with a specified delimiter
+     * Joins an array of strings with a specified delimiter.
      *
-     * @param delimiter
-     * @param array array
+     * @param delimiter the delimiter to be used between strings
+     * @param array the array of strings to be concatenated
+     * @param <T> the type of elements in the array
+     * @return a concatenated string with the specified delimiter
      */
     public static <T> String join(String delimiter, T[] array) {
         var r = new StringBuilder(array.length * 64);
@@ -83,16 +98,34 @@ public class StringHelper {
         return r.toString();
     }
 
-    /** determine if a string is null or consists entirely of whitespace characters i */
+    /**
+     * Determines if a string is null or consists entirely of whitespace characters.
+     *
+     * @param str the string to be checked
+     * @return true if the string is null or blank, false otherwise
+     */
     public static boolean isBlank(String str) {
         return (str == null || str.length() == 0 || str.trim().length() == 0);
     }
 
-    /** determine it is not null and not entirely composed of whitespace characters */
+    /**
+     * Determines if a string is not null and not entirely composed of whitespace characters.
+     *
+     * @param str the string to be checked
+     * @return true if the string is not null and not blank, false otherwise
+     */
     public static boolean notBlank(String str) {
         return !isBlank(str);
     }
 
+    /**
+     * Returns the rightmost part of a string with the specified length.
+     *
+     * @param str the string to be processed
+     * @param length the number of characters to return from the right
+     * @return the rightmost part of the string, or the original string if its length is less than
+     *     or equal to the specified length
+     */
     public static String right(String str, int length) {
         if (str == null || str.length() <= length) {
             return str;
@@ -100,6 +133,14 @@ public class StringHelper {
         return str.substring(str.length() - length);
     }
 
+    /**
+     * Returns the leftmost part of a string with the specified length.
+     *
+     * @param str the string to be processed
+     * @param length the number of characters to return from the left
+     * @return the leftmost part of the string, or the original string if its length is less than or
+     *     equal to the specified length
+     */
     public static String left(String str, int length) {
         if (str == null || str.length() <= length) {
             return str;

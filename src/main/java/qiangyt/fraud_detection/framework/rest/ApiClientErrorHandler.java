@@ -25,20 +25,43 @@ import qiangyt.fraud_detection.framework.errs.ErrorResponse;
 import qiangyt.fraud_detection.framework.errs.RemoteError;
 import qiangyt.fraud_detection.framework.json.Jackson;
 
+/**
+ * Handles client-side HTTP errors by converting the response body to an {@link ErrorResponse} and
+ * throwing a {@link RemoteError}.
+ */
 @lombok.Getter
 public class ApiClientErrorHandler implements ResponseErrorHandler {
 
     Jackson jackson;
 
+    /**
+     * Constructs an {@code ApiClientErrorHandler} with the specified {@link Jackson} instance.
+     *
+     * @param jackson the {@link Jackson} instance used for JSON deserialization
+     */
     public ApiClientErrorHandler(@Autowired Jackson jackson) {
         this.jackson = jackson;
     }
 
+    /**
+     * Checks if the given {@link ClientHttpResponse} has an error status code.
+     *
+     * @param resp the {@link ClientHttpResponse} to check
+     * @return {@code true} if the response has an error status code, {@code false} otherwise
+     * @throws IOException if an I/O error occurs
+     */
     @Override
     public boolean hasError(ClientHttpResponse resp) throws IOException {
         return resp.getStatusCode().isError();
     }
 
+    /**
+     * Handles the error in the given {@link ClientHttpResponse} by converting the response body to
+     * an {@link ErrorResponse} and throwing a {@link RemoteError}.
+     *
+     * @param resp the {@link ClientHttpResponse} containing the error
+     * @throws IOException if an I/O error occurs
+     */
     @Override
     public void handleError(ClientHttpResponse resp) throws IOException {
         var err = getJackson().from(resp.getBody(), ErrorResponse.class);
