@@ -21,7 +21,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,7 +50,7 @@ public class DetectionRestController {
 
     // for test only
     @GetMapping()
-    public DetectionResult detect(@Valid @NotNull DetectionReqEntity entity) {
+    public DetectionResult detect(@Valid @RequestBody DetectionReqEntity entity) {
         return getService().detect(entity);
     }
 }
