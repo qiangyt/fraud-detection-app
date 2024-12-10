@@ -20,13 +20,26 @@ package qiangyt.fraud_detection.sdk;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
 
+/** Interface for the fraud detection API. */
 @Validated
 public interface DetectionApi {
 
+    /**
+     * Submits a detection request.
+     *
+     * @param req the detection request
+     * @return the detection request entity
+     */
     @NotNull
     DetectionReqEntity submit(@NotNull DetectionReq req);
 
-    // for test only
+    /**
+     * Detects fraud based on the provided detection request entity. This method is intended for
+     * testing purposes only.
+     *
+     * @param entity the detection request entity
+     * @return the detection result
+     */
     @NotNull
     DetectionResult detect(@NotNull DetectionReqEntity entity);
 }

@@ -24,18 +24,32 @@ import qiangyt.fraud_detection.sdk.DetectionReq;
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 import qiangyt.fraud_detection.sdk.DetectionResult;
 
+/** Client for interacting with the fraud detection API. */
 @Component
 public class DetectionApiClient extends ApiClient implements DetectionApi {
 
+    /** Constructs a new DetectionApiClient. */
     public DetectionApiClient() {
         super("rest/detection");
     }
 
+    /**
+     * Submits a detection request.
+     *
+     * @param req the detection request
+     * @return the detection request entity
+     */
     @Override
     public DetectionReqEntity submit(DetectionReq req) {
         return post("").body(req).retrieve().body(DetectionReqEntity.class);
     }
 
+    /**
+     * Detects fraud based on the given detection request entity.
+     *
+     * @param entity the detection request entity
+     * @return the detection result
+     */
     @Override
     public DetectionResult detect(DetectionReqEntity entity) {
         return get("").body(entity).retrieve().body(DetectionResult.class);

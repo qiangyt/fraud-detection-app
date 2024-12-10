@@ -24,20 +24,34 @@ import qiangyt.fraud_detection.framework.misc.UuidHelper;
 @lombok.Setter
 @lombok.experimental.SuperBuilder
 @lombok.NoArgsConstructor
+/** Represents the result of a fraud detection process. */
 public class DetectionResult {
 
+    /** Unique identifier for the detection result. */
     String id;
 
+    /** The entity that was analyzed for fraud. */
     DetectionReqEntity entity;
 
+    /** Indicates whether the entity is fraudulent. */
     boolean fraudulent;
 
+    /** The category of fraud detected. */
     FraudCategory category;
 
+    /** A message providing additional information about the detection result. */
     String message;
 
+    /** The date and time when the fraud was detected. */
     Date detectedAt;
 
+    /**
+     * Creates a DetectionResult from the given entity and fraud category.
+     *
+     * @param entity the entity that was analyzed for fraud
+     * @param category the category of fraud detected
+     * @return a new DetectionResult instance
+     */
     public static DetectionResult from(DetectionReqEntity entity, FraudCategory category) {
         return DetectionResult.builder()
                 .id(UuidHelper.shortUuid())

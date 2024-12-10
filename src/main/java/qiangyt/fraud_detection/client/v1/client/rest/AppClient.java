@@ -29,6 +29,10 @@ import qiangyt.fraud_detection.sdk.DetectionReq;
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 import qiangyt.fraud_detection.sdk.DetectionResult;
 
+/**
+ * AppClient is a REST client for the fraud detection API. It implements the DetectionApi interface
+ * and provides methods to submit detection requests and get detection results.
+ */
 @lombok.Getter
 @lombok.Setter
 @Component
@@ -45,16 +49,27 @@ public class AppClient implements DetectionApi {
     @lombok.Setter(lombok.AccessLevel.PRIVATE)
     boolean inited;
 
+    /**
+     * Constructs an AppClient with the specified base URL.
+     *
+     * @param baseUrl the base URL of the fraud detection API
+     */
     public AppClient(@Value("${app.base-url:http://localhost:8080}") String baseUrl) {
         this.baseUrl = baseUrl;
     }
 
+    /**
+     * Prepares the given ApiClient by setting its Jackson, error handler, and base URL.
+     *
+     * @param c the ApiClient to prepare
+     */
     void prepareClient(ApiClient c) {
         c.setJackson(getJackson());
         c.setErrorHandler(getErrorHandler());
         c.setBaseUrl(getBaseUrl());
     }
 
+    /** Initializes the AppClient. This method is called after the bean properties have been set. */
     @PostConstruct
     public void init() {
         if (getJackson() == null) {
@@ -76,11 +91,23 @@ public class AppClient implements DetectionApi {
         setInited(true);
     }
 
+    /**
+     * Submits a detection request.
+     *
+     * @param req the detection request to submit
+     * @return the detection request entity
+     */
     @Override
     public DetectionReqEntity submit(DetectionReq req) {
         return getDetectionApiClient().submit(req);
     }
 
+    /**
+     * Detects fraud based on the given detection request entity.
+     *
+     * @param entity the detection request entity
+     * @return the detection result
+     */
     @Override
     public DetectionResult detect(DetectionReqEntity entity) {
         return getDetectionApiClient().detect(entity);

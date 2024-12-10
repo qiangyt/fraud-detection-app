@@ -22,18 +22,27 @@ import jakarta.validation.constraints.NotNull;
 import java.util.Date;
 import qiangyt.fraud_detection.framework.misc.UuidHelper;
 
+/** Represents a request for fraud detection. */
 @lombok.Getter
 @lombok.Setter
 @lombok.experimental.SuperBuilder
 @lombok.NoArgsConstructor
 public class DetectionReq {
 
+    /** The account ID associated with the request. */
     @NotBlank private String accountId;
 
+    /** The amount involved in the request. */
     @NotNull private int amount;
 
+    /** An optional memo for the request. */
     private String memo;
 
+    /**
+     * Converts this request to a DetectionReqEntity.
+     *
+     * @return a DetectionReqEntity representing this request.
+     */
     public DetectionReqEntity toEntity() {
         return DetectionReqEntity.builder()
                 .accountId(getAccountId())

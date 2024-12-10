@@ -19,19 +19,25 @@ package qiangyt.fraud_detection.sdk;
 
 import java.util.Date;
 
+/** Represents a detection request entity containing details about a fraud detection request. */
 @lombok.Getter
 @lombok.Setter
 @lombok.experimental.SuperBuilder
 @lombok.NoArgsConstructor
 public class DetectionReqEntity {
 
+    /** The account ID associated with the detection request. */
     String accountId;
 
+    /** The amount involved in the detection request. */
     int amount;
 
+    /** A memo or note associated with the detection request. */
     String memo;
 
+    /** The unique identifier for the detection request. */
     String id;
 
+    /** The date and time when the detection request was received. */
     Date receivedAt;
 }

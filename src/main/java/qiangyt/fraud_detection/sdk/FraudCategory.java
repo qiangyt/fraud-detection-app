@@ -17,14 +17,29 @@
  */
 package qiangyt.fraud_detection.sdk;
 
+/** Enum representing different categories of fraud. */
 public enum FraudCategory {
+    /** No fraud detected. */
     NONE(false, "none"),
+
+    /** Fraud detected due to the transaction amount exceeding a threshold. */
     BIG_AMOUNT(true, "the transaction amount exceeds a threshold"),
+
+    /** Fraud detected due to the transaction originating from a suspicious account. */
     SUSPICIOUS_ACCOUNT(true, "the transaction originates from a suspicious account");
 
+    /** Indicates whether the category represents a fraud. */
     public final boolean yes;
+
+    /** Message describing the fraud category. */
     public final String message;
 
+    /**
+     * Constructor for FraudCategory.
+     *
+     * @param yes Indicates whether the category represents a fraud.
+     * @param message Message describing the fraud category.
+     */
     private FraudCategory(boolean yes, String message) {
         this.yes = yes;
         this.message = message;
