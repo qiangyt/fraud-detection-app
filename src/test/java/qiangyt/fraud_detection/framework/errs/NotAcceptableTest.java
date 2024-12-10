@@ -22,48 +22,75 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
+/** Unit tests for the {@link NotAcceptable} exception class. */
 public class NotAcceptableTest {
 
+    /** Test the NotAcceptable exception with a formatted message. */
     @Test
     public void testNotAcceptableWithMessageFormat() {
+        // Create exception with formatted message
         var ex = new NotAcceptable("Invalid parameter: %s", "param1");
+
+        // Verify the status, code, and message
         assertEquals(HttpStatus.NOT_ACCEPTABLE, ex.getStatus());
         assertEquals(ErrorCode.NONE, ex.getCode());
         assertEquals("Invalid parameter: param1", ex.getMessage());
     }
 
+    /** Test the NotAcceptable exception with a simple message. */
     @Test
     public void testNotAcceptableWithMessage() {
+        // Create exception with simple message
         var ex = new NotAcceptable("Invalid request");
+
+        // Verify the status, code, and message
         assertEquals(HttpStatus.NOT_ACCEPTABLE, ex.getStatus());
         assertEquals(ErrorCode.NONE, ex.getCode());
         assertEquals("Invalid request", ex.getMessage());
     }
 
+    /** Test the NotAcceptable exception with a cause and formatted message. */
     @Test
     public void testNotAcceptableWithCauseAndMessageFormat() {
+        // Create a cause exception
         var cause = new RuntimeException("Root cause");
+
+        // Create exception with cause and formatted message
         var ex = new NotAcceptable(cause, "Invalid parameter: %s", "param1");
+
+        // Verify the status, code, message, and cause
         assertEquals(HttpStatus.NOT_ACCEPTABLE, ex.getStatus());
         assertEquals(ErrorCode.NONE, ex.getCode());
         assertEquals("Invalid parameter: param1", ex.getMessage());
         assertEquals(cause, ex.getCause());
     }
 
+    /** Test the NotAcceptable exception with a cause and simple message. */
     @Test
     public void testNotAcceptableWithCauseAndMessage() {
+        // Create a cause exception
         var cause = new RuntimeException("Root cause");
+
+        // Create exception with cause and simple message
         var ex = new NotAcceptable(cause, "Invalid request");
+
+        // Verify the status, code, message, and cause
         assertEquals(HttpStatus.NOT_ACCEPTABLE, ex.getStatus());
         assertEquals(ErrorCode.NONE, ex.getCode());
         assertEquals("Invalid request", ex.getMessage());
         assertEquals(cause, ex.getCause());
     }
 
+    /** Test the NotAcceptable exception with only a cause. */
     @Test
     public void testNotAcceptableWithCause() {
+        // Create a cause exception
         var cause = new RuntimeException("Root cause");
+
+        // Create exception with cause
         var ex = new NotAcceptable(cause);
+
+        // Verify the status, code, message, and cause
         assertEquals(HttpStatus.NOT_ACCEPTABLE, ex.getStatus());
         assertEquals(ErrorCode.NONE, ex.getCode());
         assertEquals("Not Acceptable", ex.getMessage());

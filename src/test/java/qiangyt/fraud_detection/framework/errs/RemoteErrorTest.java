@@ -21,10 +21,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
+/** Unit test for {@link RemoteError}. */
 public class RemoteErrorTest {
 
+    /** Tests the creation and properties of {@link RemoteError}. */
     @Test
     public void testRemoteError() {
+        // Create an ErrorResponse with specific parameters
         ErrorResponse response =
                 ErrorResponse.builder()
                         .code(ErrorCode.PARAMETER_NOT_VALID)
@@ -32,8 +35,10 @@ public class RemoteErrorTest {
                         .params(new Object[] {"param1"})
                         .build();
 
+        // Create a RemoteError using the ErrorResponse
         RemoteError remoteError = new RemoteError(response);
 
+        // Verify the properties of the RemoteError
         assertEquals(ErrorCode.PARAMETER_NOT_VALID, remoteError.getCode());
         assertEquals("Invalid parameter", remoteError.getMessage());
         assertArrayEquals(new Object[] {"param1"}, remoteError.getParams());

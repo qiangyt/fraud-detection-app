@@ -52,6 +52,7 @@ public class SqsConfigTest {
     public void testGetRegion() {
         // Retrieve the region from SqsConfig
         Region region = sqsConfig.getRegion();
+
         // Assert that the region is not null and matches the expected value
         assertNotNull(region);
         assert (region.id().equals("us-west-2"));
@@ -62,8 +63,10 @@ public class SqsConfigTest {
     public void testCreateClient() {
         // Retrieve the region from SqsConfig
         Region region = sqsConfig.getRegion();
+
         // Create an SqsClient using the retrieved region
         SqsClient sqsClient = sqsConfig.createClient(region);
+
         // Assert that the SqsClient is not null
         assertNotNull(sqsClient);
     }

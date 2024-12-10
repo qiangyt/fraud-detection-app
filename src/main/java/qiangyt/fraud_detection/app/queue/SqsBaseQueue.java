@@ -49,17 +49,26 @@ public abstract class SqsBaseQueue<T> {
      * @param messageGroupId the message group ID for the message (optional)
      */
     protected void send(String queueUrl, T data, String deduplicationId, String messageGroupId) {
+        // Convert the data object to a JSON string
         var msg = getJackson().str(data);
 
+        // Build the SQS request with the queue URL and message body
         var sqsReqBuilder = SendMessageRequest.builder().queueUrl(queueUrl).messageBody(msg);
+
+        // Add deduplication ID if provided
         if (!StringHelper.isBlank(deduplicationId)) {
             sqsReqBuilder = sqsReqBuilder.messageDeduplicationId(deduplicationId);
         }
+
+        // Add message group ID if provided
         if (!StringHelper.isBlank(messageGroupId)) {
             sqsReqBuilder = sqsReqBuilder.messageGroupId(messageGroupId);
         }
+
+        // Build the final SQS request
         var sqsReq = sqsReqBuilder.build();
 
+        // Send the message to the SQS queue
         getClient().sendMessage(sqsReq);
     }
 }

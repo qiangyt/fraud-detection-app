@@ -68,6 +68,7 @@ public class CloudWatchMetricAlerterTest {
                         .id("entity-id")
                         .receivedAt(new Date())
                         .build();
+
         // Create a DetectionResult from the entity
         var result = DetectionResult.from(entity, FraudCategory.SUSPICIOUS_ACCOUNT);
 

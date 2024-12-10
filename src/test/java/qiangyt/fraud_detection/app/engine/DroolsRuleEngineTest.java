@@ -34,8 +34,10 @@ public class DroolsRuleEngineTest {
     public void testDetect() {
         DroolsRuleEngine engine = new DroolsRuleEngine();
         DetectionReqEntity entity = new DetectionReqEntity();
+
         // Set up entity with test data
         FraudCategory result = engine.detect(entity);
+
         // Assert that the result is FraudCategory.NONE
         assertEquals(FraudCategory.NONE, result);
     }

@@ -22,56 +22,87 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
+/** Unit tests for the {@link NotFound} exception class. */
 class NotFoundTest {
 
+    /** Tests the NotFound exception with a formatted message. */
     @Test
     void testNotFoundWithMessageFormat() {
+        // Create NotFound exception with formatted message
         var ex = new NotFound(ErrorCode.PATH_NOT_FOUND, "Resource %s not found", "User");
+
+        // Verify the status, code, and message
         assertEquals(HttpStatus.NOT_FOUND, ex.getStatus());
         assertEquals(ErrorCode.PATH_NOT_FOUND, ex.getCode());
         assertEquals("Resource User not found", ex.getMessage());
     }
 
+    /** Tests the NotFound exception with a simple message. */
     @Test
     void testNotFoundWithMessage() {
+        // Create NotFound exception with simple message
         var ex = new NotFound(ErrorCode.PATH_NOT_FOUND, "Resource not found");
+
+        // Verify the status, code, and message
         assertEquals(HttpStatus.NOT_FOUND, ex.getStatus());
         assertEquals(ErrorCode.PATH_NOT_FOUND, ex.getCode());
         assertEquals("Resource not found", ex.getMessage());
     }
 
+    /** Tests the NotFound exception with only an error code. */
     @Test
     void testNotFoundWithCodeOnly() {
+        // Create NotFound exception with only error code
         var ex = new NotFound(ErrorCode.PATH_NOT_FOUND);
+
+        // Verify the status, code, and default message
         assertEquals(HttpStatus.NOT_FOUND, ex.getStatus());
         assertEquals(ErrorCode.PATH_NOT_FOUND, ex.getCode());
         assertEquals(HttpStatus.NOT_FOUND.getReasonPhrase(), ex.getMessage());
     }
 
+    /** Tests the NotFound exception with a cause and a formatted message. */
     @Test
     void testNotFoundWithCauseAndMessageFormat() {
+        // Create a cause exception
         var cause = new RuntimeException("Underlying cause");
+
+        // Create NotFound exception with cause and formatted message
         var ex = new NotFound(ErrorCode.PATH_NOT_FOUND, cause, "Resource %s not found", "User");
+
+        // Verify the status, code, message, and cause
         assertEquals(HttpStatus.NOT_FOUND, ex.getStatus());
         assertEquals(ErrorCode.PATH_NOT_FOUND, ex.getCode());
         assertEquals("Resource User not found", ex.getMessage());
         assertEquals(cause, ex.getCause());
     }
 
+    /** Tests the NotFound exception with a cause and a simple message. */
     @Test
     void testNotFoundWithCauseAndMessage() {
+        // Create a cause exception
         var cause = new RuntimeException("Underlying cause");
+
+        // Create NotFound exception with cause and simple message
         var ex = new NotFound(ErrorCode.PATH_NOT_FOUND, cause, "Resource not found");
+
+        // Verify the status, code, message, and cause
         assertEquals(HttpStatus.NOT_FOUND, ex.getStatus());
         assertEquals(ErrorCode.PATH_NOT_FOUND, ex.getCode());
         assertEquals("Resource not found", ex.getMessage());
         assertEquals(cause, ex.getCause());
     }
 
+    /** Tests the NotFound exception with only a cause. */
     @Test
     void testNotFoundWithCauseOnly() {
+        // Create a cause exception
         var cause = new RuntimeException("Underlying cause");
+
+        // Create NotFound exception with only cause
         var ex = new NotFound(ErrorCode.PATH_NOT_FOUND, cause);
+
+        // Verify the status, code, default message, and cause
         assertEquals(HttpStatus.NOT_FOUND, ex.getStatus());
         assertEquals(ErrorCode.PATH_NOT_FOUND, ex.getCode());
         assertEquals(HttpStatus.NOT_FOUND.getReasonPhrase(), ex.getMessage());

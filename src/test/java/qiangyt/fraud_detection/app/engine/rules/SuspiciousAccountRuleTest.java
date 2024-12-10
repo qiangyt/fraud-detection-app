@@ -52,6 +52,7 @@ public class SuspiciousAccountRuleTest {
     @Test
     public void testInit() {
         rule.init();
+
         // Verify that the rule is added to the chain once
         verify(chain, times(1)).addRule(rule);
     }
@@ -63,6 +64,7 @@ public class SuspiciousAccountRuleTest {
         entity.setAccountId("account789");
 
         var result = rule.detect(entity);
+
         // Assert that the result is no fraud
         assertEquals(FraudCategory.NONE, result);
     }
@@ -74,6 +76,7 @@ public class SuspiciousAccountRuleTest {
         entity.setAccountId("fbiden");
 
         var result = rule.detect(entity);
+
         // Assert that the result is suspicious account fraud
         assertEquals(FraudCategory.SUSPICIOUS_ACCOUNT, result);
     }

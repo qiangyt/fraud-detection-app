@@ -30,6 +30,7 @@ public class MethodNotAllowedTest {
     public void testMethodNotAllowedWithMessageFormat() {
         // Create exception with formatted message
         var ex = new MethodNotAllowed("Invalid method: %s", "POST");
+
         // Verify status, code, and message
         assertEquals(HttpStatus.METHOD_NOT_ALLOWED, ex.getStatus());
         assertEquals(ErrorCode.NONE, ex.getCode());
@@ -41,6 +42,7 @@ public class MethodNotAllowedTest {
     public void testMethodNotAllowedWithMessage() {
         // Create exception with simple message
         var ex = new MethodNotAllowed("Method not allowed");
+
         // Verify status, code, and message
         assertEquals(HttpStatus.METHOD_NOT_ALLOWED, ex.getStatus());
         assertEquals(ErrorCode.NONE, ex.getCode());
@@ -52,8 +54,10 @@ public class MethodNotAllowedTest {
     public void testMethodNotAllowedWithCauseAndMessageFormat() {
         // Create cause exception
         var cause = new RuntimeException("Root cause");
+
         // Create exception with cause and formatted message
         var ex = new MethodNotAllowed(cause, "Invalid method: %s", "POST");
+
         // Verify status, code, message, and cause
         assertEquals(HttpStatus.METHOD_NOT_ALLOWED, ex.getStatus());
         assertEquals(ErrorCode.NONE, ex.getCode());
@@ -66,8 +70,10 @@ public class MethodNotAllowedTest {
     public void testMethodNotAllowedWithCauseAndMessage() {
         // Create cause exception
         var cause = new RuntimeException("Root cause");
+
         // Create exception with cause and simple message
         var ex = new MethodNotAllowed(cause, "Method not allowed");
+
         // Verify status, code, message, and cause
         assertEquals(HttpStatus.METHOD_NOT_ALLOWED, ex.getStatus());
         assertEquals(ErrorCode.NONE, ex.getCode());
@@ -80,8 +86,10 @@ public class MethodNotAllowedTest {
     public void testMethodNotAllowedWithCause() {
         // Create cause exception
         var cause = new RuntimeException("Root cause");
+
         // Create exception with cause
         var ex = new MethodNotAllowed(cause);
+
         // Verify status, code, message, and cause
         assertEquals(HttpStatus.METHOD_NOT_ALLOWED, ex.getStatus());
         assertEquals(ErrorCode.NONE, ex.getCode());

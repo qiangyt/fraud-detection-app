@@ -30,6 +30,7 @@ public class InternalTest {
     public void testInternalWithMessageFormat() {
         // Create an Internal exception with a formatted message
         var ex = new Internal("Internal error: %s", "error1");
+
         // Verify the status, code, and message
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, ex.getStatus());
         assertEquals(ErrorCode.NONE, ex.getCode());
@@ -41,6 +42,7 @@ public class InternalTest {
     public void testInternalWithMessage() {
         // Create an Internal exception with a simple message
         var ex = new Internal("Internal error");
+
         // Verify the status, code, and message
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, ex.getStatus());
         assertEquals(ErrorCode.NONE, ex.getCode());
@@ -52,8 +54,10 @@ public class InternalTest {
     public void testInternalWithCauseAndMessageFormat() {
         // Create a cause exception
         var cause = new RuntimeException("Root cause");
+
         // Create an Internal exception with a cause and a formatted message
         var ex = new Internal(cause, "Internal error: %s", "error1");
+
         // Verify the status, code, message, and cause
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, ex.getStatus());
         assertEquals(ErrorCode.NONE, ex.getCode());
@@ -66,8 +70,10 @@ public class InternalTest {
     public void testInternalWithCauseAndMessage() {
         // Create a cause exception
         var cause = new RuntimeException("Root cause");
+
         // Create an Internal exception with a cause and a simple message
         var ex = new Internal(cause, "Internal error");
+
         // Verify the status, code, message, and cause
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, ex.getStatus());
         assertEquals(ErrorCode.NONE, ex.getCode());
@@ -80,8 +86,10 @@ public class InternalTest {
     public void testInternalWithCause() {
         // Create a cause exception
         var cause = new RuntimeException("Root cause");
+
         // Create an Internal exception with only a cause
         var ex = new Internal(cause);
+
         // Verify the status, code, message, and cause
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, ex.getStatus());
         assertEquals(ErrorCode.NONE, ex.getCode());

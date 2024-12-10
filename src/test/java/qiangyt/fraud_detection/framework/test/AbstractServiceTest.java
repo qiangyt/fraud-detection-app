@@ -41,11 +41,18 @@ public abstract class AbstractServiceTest {
 
     MockHttpServletRequest request = new MockHttpServletRequest();
 
+    /** Initializes mocks before each test. */
     @BeforeEach
     public void beforeEach() {
         MockitoAnnotations.openMocks(this);
     }
 
+    /**
+     * Matches a boolean value.
+     *
+     * @param that the expected boolean value
+     * @return true if the actual value matches the expected value
+     */
     public static boolean matchBoolean(boolean that) {
         return ArgumentMatchers.booleanThat(
                 b -> {
@@ -54,10 +61,22 @@ public abstract class AbstractServiceTest {
                 });
     }
 
+    /**
+     * Matches a string value.
+     *
+     * @param that the expected string value
+     * @return the matched string value
+     */
     public static String matchString(String that) {
         return ArgumentMatchers.argThat((String actual) -> that.equals(actual));
     }
 
+    /**
+     * Matches an integer value.
+     *
+     * @param that the expected integer value
+     * @return true if the actual value matches the expected value
+     */
     public static int matchInt(int that) {
         return ArgumentMatchers.intThat(
                 i -> {
@@ -66,6 +85,15 @@ public abstract class AbstractServiceTest {
                 });
     }
 
+    /**
+     * Asserts that the executable throws an exception of the expected type with the expected code.
+     *
+     * @param <T> the type of the expected exception
+     * @param expectedType the class of the expected exception
+     * @param code the expected error code
+     * @param executable the executable to test
+     * @return the thrown exception
+     */
     @SuppressWarnings("unchecked")
     public static <T extends BaseError> T assertThrows(
             Class<T> expectedType, Enum<?> code, Executable executable) {

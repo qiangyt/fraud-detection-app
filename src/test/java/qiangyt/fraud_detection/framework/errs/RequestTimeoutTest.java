@@ -22,56 +22,84 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
+/** Unit tests for the {@link RequestTimeout} class. */
 class RequestTimeoutTest {
 
+    /** Tests the constructor with a formatted message. */
     @Test
     void testRequestTimeoutWithMessageFormat() {
+        // Create exception with formatted message
         var ex = new RequestTimeout("Timeout after %d seconds", 30);
+
+        // Verify the status, code, and message
         assertEquals(HttpStatus.REQUEST_TIMEOUT, ex.getStatus());
         assertEquals(ErrorCode.NONE, ex.getCode());
         assertEquals("Timeout after 30 seconds", ex.getMessage());
     }
 
+    /** Tests the constructor with a simple message. */
     @Test
     void testRequestTimeoutWithMessage() {
+        // Create exception with simple message
         var ex = new RequestTimeout("Timeout occurred");
+
+        // Verify the status, code, and message
         assertEquals(HttpStatus.REQUEST_TIMEOUT, ex.getStatus());
         assertEquals(ErrorCode.NONE, ex.getCode());
         assertEquals("Timeout occurred", ex.getMessage());
     }
 
+    /** Tests the constructor without a message. */
     @Test
     void testRequestTimeoutWithoutMessage() {
+        // Create exception without message
         var ex = new RequestTimeout();
+
+        // Verify the status, code, and default message
         assertEquals(HttpStatus.REQUEST_TIMEOUT, ex.getStatus());
         assertEquals(ErrorCode.NONE, ex.getCode());
         assertEquals(HttpStatus.REQUEST_TIMEOUT.getReasonPhrase(), ex.getMessage());
     }
 
+    /** Tests the constructor with a cause and a formatted message. */
     @Test
     void testRequestTimeoutWithCauseAndMessageFormat() {
         var cause = new RuntimeException("Underlying cause");
+
+        // Create exception with cause and formatted message
         var ex = new RequestTimeout(cause, "Timeout after %d seconds", 30);
+
+        // Verify the status, code, message, and cause
         assertEquals(HttpStatus.REQUEST_TIMEOUT, ex.getStatus());
         assertEquals(ErrorCode.NONE, ex.getCode());
         assertEquals("Timeout after 30 seconds", ex.getMessage());
         assertEquals(cause, ex.getCause());
     }
 
+    /** Tests the constructor with a cause and a simple message. */
     @Test
     void testRequestTimeoutWithCauseAndMessage() {
         var cause = new RuntimeException("Underlying cause");
+
+        // Create exception with cause and simple message
         var ex = new RequestTimeout(cause, "Timeout occurred");
+
+        // Verify the status, code, message, and cause
         assertEquals(HttpStatus.REQUEST_TIMEOUT, ex.getStatus());
         assertEquals(ErrorCode.NONE, ex.getCode());
         assertEquals("Timeout occurred", ex.getMessage());
         assertEquals(cause, ex.getCause());
     }
 
+    /** Tests the constructor with only a cause. */
     @Test
     void testRequestTimeoutWithCauseOnly() {
         var cause = new RuntimeException("Underlying cause");
+
+        // Create exception with only cause
         var ex = new RequestTimeout(cause);
+
+        // Verify the status, code, default message, and cause
         assertEquals(HttpStatus.REQUEST_TIMEOUT, ex.getStatus());
         assertEquals(ErrorCode.NONE, ex.getCode());
         assertEquals(HttpStatus.REQUEST_TIMEOUT.getReasonPhrase(), ex.getMessage());

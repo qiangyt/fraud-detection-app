@@ -30,6 +30,7 @@ public class BadRequestTest {
     public void testBadRequestWithMessageFormat() {
         // Create BadRequest exception with formatted message
         var ex = new BadRequest(ErrorCode.NONE, "Invalid parameter: %s", "param1");
+
         // Verify the status, code, and message
         assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus());
         assertEquals(ErrorCode.NONE, ex.getCode());
@@ -41,6 +42,7 @@ public class BadRequestTest {
     public void testBadRequestWithMessage() {
         // Create BadRequest exception with simple message
         var ex = new BadRequest(ErrorCode.NONE, "Invalid request");
+
         // Verify the status, code, and message
         assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus());
         assertEquals(ErrorCode.NONE, ex.getCode());
@@ -52,8 +54,10 @@ public class BadRequestTest {
     public void testBadRequestWithCauseAndMessageFormat() {
         // Create a root cause exception
         var cause = new RuntimeException("Root cause");
+
         // Create BadRequest exception with cause and formatted message
         var ex = new BadRequest(ErrorCode.NONE, cause, "Invalid parameter: %s", "param1");
+
         // Verify the status, code, message, and cause
         assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus());
         assertEquals(ErrorCode.NONE, ex.getCode());
@@ -66,8 +70,10 @@ public class BadRequestTest {
     public void testBadRequestWithCauseAndMessage() {
         // Create a root cause exception
         var cause = new RuntimeException("Root cause");
+
         // Create BadRequest exception with cause and simple message
         var ex = new BadRequest(ErrorCode.NONE, cause, "Invalid request");
+
         // Verify the status, code, message, and cause
         assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus());
         assertEquals(ErrorCode.NONE, ex.getCode());
@@ -80,8 +86,10 @@ public class BadRequestTest {
     public void testBadRequestWithCause() {
         // Create a root cause exception
         var cause = new RuntimeException("Root cause");
+
         // Create BadRequest exception with only cause
         var ex = new BadRequest(ErrorCode.NONE, cause);
+
         // Verify the status, code, message, and cause
         assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus());
         assertEquals(ErrorCode.NONE, ex.getCode());

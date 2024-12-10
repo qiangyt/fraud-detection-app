@@ -24,22 +24,24 @@ import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import org.junit.jupiter.api.Test;
 
+/** Unit tests for the {@link DetectionReq} class. */
 class DetectionReqTest {
 
     static final Validator v = Validation.buildDefaultValidatorFactory().getValidator();
 
+    /** Tests that a valid {@link DetectionReq} instance passes validation. */
     @Test
     void testValidDetectionReq() {
-        DetectionReq req =
-                DetectionReq.builder().accountId("12345").amount(100).memo("Test memo").build();
+        var req = DetectionReq.builder().accountId("12345").amount(100).memo("Test memo").build();
 
         var violations = v.validate(req);
         assertTrue(violations.isEmpty(), "There should be no constraint violations");
     }
 
+    /** Tests that an invalid {@link DetectionReq} instance fails validation. */
     @Test
     void testInvalidDetectionReq() {
-        DetectionReq req = DetectionReq.builder().accountId("").memo("Test memo").build();
+        var req = DetectionReq.builder().accountId("").memo("Test memo").build();
 
         var violations = v.validate(req);
         assertFalse(violations.isEmpty(), "There should be constraint violations");
