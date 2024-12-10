@@ -23,6 +23,7 @@ import java.util.Date;
 @lombok.Setter
 @lombok.experimental.SuperBuilder
 @lombok.NoArgsConstructor
+@lombok.experimental.Accessors(chain = true)
 public class DetectionReqEntity {
 
     String accountId;

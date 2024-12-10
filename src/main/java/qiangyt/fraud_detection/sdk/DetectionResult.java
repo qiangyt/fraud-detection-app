@@ -24,6 +24,7 @@ import qiangyt.fraud_detection.framework.misc.UuidHelper;
 @lombok.Setter
 @lombok.experimental.SuperBuilder
 @lombok.NoArgsConstructor
+@lombok.experimental.Accessors(chain = true)
 public class DetectionResult {
 
     String id;

@@ -17,7 +17,9 @@
  */
 package qiangyt.fraud_detection.app.engine;
 
-import jakarta.annotation.PostConstruct;
+import org.kie.api.runtime.KieContainer;
+import org.kie.api.runtime.KieSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 import qiangyt.fraud_detection.sdk.FraudCategory;
@@ -28,14 +30,18 @@ import qiangyt.fraud_detection.sdk.FraudCategory;
 @lombok.extern.slf4j.Slf4j
 public class DroolsRuleEngine implements DetectionEngine {
 
-    @PostConstruct
-    void init() {
-        // initialize the drools engine and loads the rules
-    }
+    @Autowired KieContainer kieContainer;
 
     @Override
     public FraudCategory detect(DetectionReqEntity entity) {
-        // TODO: apply drools rules
+        KieSession s = kieContainer.newKieSession();
+
+        try {
+            s.insert(entity);
+            s.fireAllRules();
+        } finally {
+            s.dispose();
+        }
         return FraudCategory.NONE;
     }
 }
