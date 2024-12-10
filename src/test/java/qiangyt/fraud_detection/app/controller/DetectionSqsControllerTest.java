@@ -20,6 +20,7 @@ package qiangyt.fraud_detection.app.controller;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -34,6 +35,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import qiangyt.fraud_detection.app.config.SqsProps;
+import qiangyt.fraud_detection.app.queue.SqsDetectionDeadLetterQueue;
 import qiangyt.fraud_detection.app.service.DetectionService;
 import qiangyt.fraud_detection.framework.json.Jackson;
 import software.amazon.awssdk.services.sqs.SqsClient;
@@ -56,6 +58,8 @@ public class DetectionSqsControllerTest {
     @InjectMocks DetectionSqsController target;
 
     @Mock ExecutorService sqsPollingThreadPool;
+
+    @Mock SqsDetectionDeadLetterQueue deadLetterQueue;
 
     /** Sets up the test environment before each test. */
     @BeforeEach
@@ -94,6 +98,28 @@ public class DetectionSqsControllerTest {
 
         // Verify that detectThenAlert was not called
         verify(service, never()).detectThenAlert(any());
+    }
+
+    /**
+     * Tests the pollOne method when an error occurs and the message is sent to the dead letter
+     * queue.
+     */
+    @Test
+    void testPollOne_sendsToDeadLetterQueue() {
+        // Mock the behavior of SqsClient and DetectionService
+        var msg = Message.builder().body("{\"id\":\"123\"}").build();
+        when(client.receiveMessage(any(ReceiveMessageRequest.class)))
+                .thenReturn(ReceiveMessageResponse.builder().messages(msg).build());
+        doThrow(new RuntimeException("Processing error")).when(service).detectThenAlert(any());
+
+        // Call the method under test
+        target.pollOne();
+
+        // Verify that the message was sent to the dead letter queue
+        verify(deadLetterQueue, times(1)).send(msg.body());
+
+        // Verify that the message was deleted from the queue
+        verify(client, times(1)).deleteMessage(any(DeleteMessageRequest.class));
     }
 
     /** Tests the start method. */
