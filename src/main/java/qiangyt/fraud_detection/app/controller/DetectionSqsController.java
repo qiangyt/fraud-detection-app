@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import qiangyt.fraud_detection.app.config.SqsProps;
+import qiangyt.fraud_detection.app.queue.SqsDetectionDeadLetterQueue;
 import qiangyt.fraud_detection.app.service.DetectionService;
 import qiangyt.fraud_detection.framework.json.Jackson;
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
@@ -48,6 +49,8 @@ public class DetectionSqsController {
     @Autowired ExecutorService sqsPollingThreadPool;
 
     final AtomicBoolean polling = new AtomicBoolean();
+
+    @Autowired SqsDetectionDeadLetterQueue deadLetterQueue;
 
     /** Initializes the SQS polling by submitting the poll task to the thread pool. */
     @PostConstruct
@@ -116,10 +119,18 @@ public class DetectionSqsController {
         for (var msg : client.receiveMessage(sqsReq).messages()) {
             String body = msg.body();
 
-            // Deserialize the message body into a DetectionReqEntity
-            var entity = j.from(body, DetectionReqEntity.class);
-            // Perform detection and alert based on the entity
-            s.detectThenAlert(entity);
+            try {
+                // Deserialize the message body into a DetectionReqEntity
+                var entity = j.from(body, DetectionReqEntity.class);
+
+                // Perform detection and alert based on the entity
+                s.detectThenAlert(entity);
+            } catch (Exception ex) {
+                log.error("Error processing message: " + body, ex);
+
+                // Send the message to the dead letter queue if an error occurs
+                getDeadLetterQueue().send(body);
+            }
 
             // Delete the message from the queue after processing
             client.deleteMessage(

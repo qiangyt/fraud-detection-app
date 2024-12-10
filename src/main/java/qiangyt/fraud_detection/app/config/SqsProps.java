@@ -44,6 +44,15 @@ public class SqsProps {
     String detectQueueUrl = System.getenv("AWS_SQS_DETECT_QUEUE_URL");
 
     /**
+     * The URL of the SQS queue used for fraud detection dead letter queue. This value is retrieved
+     * from the environment variable AWS_SQS_DETECT_DEAD_LETTER_QUEUE_URL.
+     *
+     * <p>For example,
+     * "https://sqs.eu-north-1.amazonaws.com/820242901663/hsbc_fraud_detection_dead_letter"
+     */
+    String detectDeadLetterQueueUrl = System.getenv("AWS_SQS_DETECT_DEAD_LETTER_QUEUE_URL");
+
+    /**
      * The URL of the SQS queue used for fraud alerts. It must be a FIFO queue to ensure that
      * messages are processed in order and uniqueness.
      *

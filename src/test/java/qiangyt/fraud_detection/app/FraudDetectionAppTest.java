@@ -32,6 +32,7 @@ import org.springframework.test.context.TestPropertySource;
             "AWS_ACCESS_KEY_ID=fake",
             "AWS_ACCESS_KEY_SECRET=fake",
             "AWS_SQS_DETECT_QUEUE_URL=fake",
+            "AWS_SQS_DETECT_DEAD_LETTER_QUEUE_URL=fake",
             "AWS_SQS_ALERT_QUEUE_URL=fake"
         })
 public class FraudDetectionAppTest {

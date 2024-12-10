@@ -24,6 +24,7 @@ aws:
 app:
   sqs:
     detect-queue-url: ${AWS_SQS_DETECT_QUEUE_URL} # URL for the SQS detect queue
+    detect-dead-letter-queue-url: ${AWS_SQS_DETECT_DEAD_LETTER_QUEUE_URL} # URL for the SQS detect dead letter queue
     alert-queue-url: ${AWS_SQS_ALERT_QUEUE_URL} # URL for the SQS alert queue
 
 management:

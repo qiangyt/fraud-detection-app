@@ -18,23 +18,20 @@
 package qiangyt.fraud_detection.app.queue;
 
 import org.springframework.stereotype.Service;
-import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 
-/** Service for handling SQS detection queue operations. */
+/** Service for handling SQS detection dead letter queue operations. */
 @lombok.Getter
 @lombok.Setter
 @lombok.extern.slf4j.Slf4j
 @Service
-public class SqsDetectionQueue extends SqsBaseQueue<DetectionReqEntity>
-        implements DetectionRequestQueue {
+public class SqsDetectionDeadLetterQueue extends SqsBaseQueue<String> {
 
     /**
      * Sends a detection request entity to the SQS detection queue.
      *
      * @param req the detection request entity to be sent
      */
-    @Override
-    public void send(DetectionReqEntity req) {
-        send(getProps().getDetectQueueUrl(), req, "", "");
+    public void send(String msg) {
+        send(getProps().getDetectDeadLetterQueueUrl(), msg, "", "");
     }
 }
