@@ -17,6 +17,7 @@
  */
 package qiangyt.fraud_detection.app.alert;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import qiangyt.fraud_detection.sdk.DetectionResult;
@@ -33,6 +34,13 @@ import software.amazon.awssdk.services.cloudwatch.model.StandardUnit;
 public class CloudWatchMetricAlerter implements Alerter {
 
     @Autowired CloudWatchClient client;
+
+    @Autowired GroupedAlerter group;
+
+    @PostConstruct
+    void init() {
+        getGroup().registerAlerter(this);
+    }
 
     @Override
     public void send(DetectionResult result) {

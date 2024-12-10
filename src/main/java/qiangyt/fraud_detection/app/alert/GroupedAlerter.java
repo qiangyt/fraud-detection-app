@@ -17,27 +17,33 @@
  */
 package qiangyt.fraud_detection.app.alert;
 
-import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.ArrayList;
+import java.util.List;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
-import qiangyt.fraud_detection.app.queue.SqsBaseQueue;
 import qiangyt.fraud_detection.sdk.DetectionResult;
 
 @lombok.Getter
 @lombok.Setter
 @lombok.extern.slf4j.Slf4j
 @Service
-public class SqsAlerter extends SqsBaseQueue<DetectionResult> implements Alerter {
+@Primary
+public class GroupedAlerter implements Alerter {
 
-    @Autowired GroupedAlerter group;
+    final List<Alerter> alerters = new ArrayList<>();
 
-    @PostConstruct
-    void init() {
-        getGroup().registerAlerter(this);
+    void registerAlerter(Alerter alerter) {
+        getAlerters().add(alerter);
     }
 
     @Override
-    public void send(DetectionResult result) {
-        send(getProps().getAlertQueueUrl(), result, result.getEntity().getId(), "alert");
+    public void send(DetectionResult alert) {
+        for (Alerter alerter : alerters) {
+            try {
+                alerter.send(alert);
+            } catch (Exception ex) {
+                log.error("failed to send alert", ex);
+            }
+        }
     }
 }
