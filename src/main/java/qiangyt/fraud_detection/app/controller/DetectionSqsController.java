@@ -30,6 +30,7 @@ import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.*;
 
+/** Controller for handling SQS messages related to fraud detection. */
 @Service
 @lombok.Getter
 @lombok.Setter
@@ -48,11 +49,13 @@ public class DetectionSqsController {
 
     final AtomicBoolean polling = new AtomicBoolean();
 
+    /** Initializes the SQS polling by submitting the poll task to the thread pool. */
     @PostConstruct
     void start() {
         getSqsPollingThreadPool().submit(this::poll);
     }
 
+    /** Stops the SQS polling and shuts down the thread pool. */
     @PreDestroy
     void stop() {
         log.info("Stopping SQS detection queue polling");
@@ -61,6 +64,7 @@ public class DetectionSqsController {
         getSqsPollingThreadPool().shutdown();
     }
 
+    /** Polls the SQS queue continuously until stopped. */
     void poll() {
         getPolling().set(true);
 
@@ -87,9 +91,12 @@ public class DetectionSqsController {
         log.info("SQS detection queue polling: stopped");
     }
 
-    // we don't use scheduled job, instead, we use a thread to poll the queue
-    // continuously and
-    // depends on Sqs's long polling feature
+    /**
+     * Polls a single batch of messages from the SQS queue and processes them.
+     *
+     * <p>We don't use scheduled job, instead, we use a thread to poll the queue continuously and
+     * depends on Sqs's long polling feature
+     */
     // @Scheduled(fixedRate = 5000) // 5 seconds polling interval
     void pollOne() {
         var p = getProps();

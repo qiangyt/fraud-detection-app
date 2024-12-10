@@ -26,6 +26,7 @@ import qiangyt.fraud_detection.app.engine.DetectionRule;
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 import qiangyt.fraud_detection.sdk.FraudCategory;
 
+/** This rule detects suspicious accounts based on predefined properties. */
 @lombok.Getter
 @lombok.Setter
 @Service
@@ -35,11 +36,18 @@ public class SuspiciousAccountRule implements DetectionRule {
 
     @Autowired ChainedDetectionEngine chain;
 
+    /** Initializes the rule and adds it to the detection engine chain. */
     @PostConstruct
     void init() {
         chain.addRule(this);
     }
 
+    /**
+     * Detects if the given entity's account ID is suspicious.
+     *
+     * @param entity the detection request entity containing account information
+     * @return the fraud category, either SUSPICIOUS_ACCOUNT or NONE
+     */
     @Override
     public FraudCategory detect(DetectionReqEntity entity) {
         if (getProps().getSuspicousAccounts().contains(entity.getAccountId())) {

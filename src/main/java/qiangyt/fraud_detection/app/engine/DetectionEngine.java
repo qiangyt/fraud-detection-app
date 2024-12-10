@@ -17,7 +17,9 @@
  */
 package qiangyt.fraud_detection.app.engine;
 
-/*
- * A simple rule-based detection system
+/**
+ * The DetectionEngine interface represents a simple rule-based detection system. It extends the
+ * DetectionRule interface, inheriting its methods. Implementations of this interface should provide
+ * the logic for detecting fraud based on predefined rules.
  */
 public interface DetectionEngine extends DetectionRule {}

@@ -26,6 +26,7 @@ import qiangyt.fraud_detection.app.engine.DetectionRule;
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 import qiangyt.fraud_detection.sdk.FraudCategory;
 
+/** This rule detects transactions that exceed a specified maximum amount. */
 @lombok.Getter
 @lombok.Setter
 @Service
@@ -35,11 +36,18 @@ public class BigAmountRule implements DetectionRule {
 
     @Autowired ChainedDetectionEngine chain;
 
+    /** Initializes the rule by adding it to the detection engine chain. */
     @PostConstruct
     void init() {
         chain.addRule(this);
     }
 
+    /**
+     * Detects if the transaction amount exceeds the maximum allowed amount.
+     *
+     * @param entity the detection request entity containing transaction details
+     * @return the fraud category if the transaction amount is too big, otherwise NONE
+     */
     @Override
     public FraudCategory detect(DetectionReqEntity entity) {
         if (entity.getAmount() >= getProps().getMaxTransactionAmount()) {

@@ -30,6 +30,8 @@ import qiangyt.fraud_detection.sdk.FraudCategory;
 /*
  * A simple rule-based detection system
  */
+
+/** A simple rule-based detection system that chains multiple detection rules. */
 @lombok.Getter
 @lombok.Setter
 @Primary
@@ -43,10 +45,22 @@ public class ChainedDetectionEngine implements DetectionEngine {
 
     @Autowired SuspiciousAccountRule suspiciousAccountRule;
 
+    /**
+     * Adds a new detection rule to the chain.
+     *
+     * @param rule the detection rule to be added
+     */
     public void addRule(DetectionRule rule) {
         getRulesChain().add(rule);
     }
 
+    /**
+     * Detects fraud based on the provided detection request entity. It iterates through the chain
+     * of rules and returns the first non-NONE fraud category detected.
+     *
+     * @param entity the detection request entity
+     * @return the detected fraud category, or FraudCategory.NONE if no fraud is detected
+     */
     @Override
     public FraudCategory detect(DetectionReqEntity entity) {
         for (DetectionRule rule : getRulesChain()) {
