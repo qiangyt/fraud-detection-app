@@ -73,6 +73,10 @@ public class DetectionSqsController {
                 log.info("SQS detection queue polling: new polling");
                 // }
                 pollOne();
+            } catch (IllegalStateException ex) {
+                if (ex.getMessage().equals("Connection pool shut down")) {
+                    break;
+                }
             } catch (Exception ex) {
                 log.error("Error in polling", ex);
             }
