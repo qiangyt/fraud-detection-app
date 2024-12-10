@@ -1,8 +1,9 @@
 #!/bin/bash
 
-version=20241209A
+./test.sh
+
 repo_d=/data/qiangyt/github/qiangyt/fraud-detection-app
-tag_suffix=${version} #$(date +"%Y%m%d-%H%M%S")
+tag_suffix=$(date +"%Y%m%d-%H%M%S")
 
 registry=public.ecr.aws/g8s9f1z6/fraud-detection-app
 tag=${registry}:${tag_suffix}
