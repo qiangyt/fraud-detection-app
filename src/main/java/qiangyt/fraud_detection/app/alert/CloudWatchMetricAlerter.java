@@ -30,7 +30,7 @@ import software.amazon.awssdk.services.cloudwatch.model.StandardUnit;
 @lombok.Getter
 @lombok.Setter
 @Service
-public class CloudWatchAlerter implements Alertor {
+public class CloudWatchMetricAlerter implements Alerter {
 
     @Autowired CloudWatchClient client;
 

@@ -19,7 +19,7 @@ package qiangyt.fraud_detection.app.alert;
 
 import qiangyt.fraud_detection.sdk.DetectionResult;
 
-public interface Alertor {
+public interface Alerter {
 
     void send(DetectionResult alert);
 }

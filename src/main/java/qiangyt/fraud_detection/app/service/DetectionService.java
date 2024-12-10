@@ -23,7 +23,7 @@ import java.util.concurrent.CompletableFuture;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
-import qiangyt.fraud_detection.app.alert.Alertor;
+import qiangyt.fraud_detection.app.alert.Alerter;
 import qiangyt.fraud_detection.app.engine.DetectionEngine;
 import qiangyt.fraud_detection.app.queue.DetectionRequestQueue;
 import qiangyt.fraud_detection.framework.json.Jackson;
@@ -46,7 +46,7 @@ public class DetectionService implements DetectionApi {
 
     @Autowired Jackson jackson;
 
-    @Autowired Alertor alertor;
+    @Autowired Alerter alertor;
 
     @PreDestroy
     public void shutdown() {

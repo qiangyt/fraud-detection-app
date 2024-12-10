@@ -27,7 +27,7 @@ import qiangyt.fraud_detection.sdk.DetectionResult;
 @lombok.extern.slf4j.Slf4j
 @Service
 @Primary
-public class SqsAlerter extends SqsBaseQueue<DetectionResult> implements Alertor {
+public class SqsAlerter extends SqsBaseQueue<DetectionResult> implements Alerter {
 
     @Override
     public void send(DetectionResult result) {
