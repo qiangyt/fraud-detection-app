@@ -17,9 +17,6 @@
  */
 package qiangyt.fraud_detection;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-
 import qiangyt.fraud_detection.app.config.SqsProps;
 import qiangyt.fraud_detection.client.v1.client.rest.AppClient;
 import qiangyt.fraud_detection.framework.aws.AwsProps;
@@ -50,16 +47,6 @@ public abstract class AbstractIT {
     static final SqsProps sqsProps = new SqsProps(); 
     static {
         sqsProps.setTimeout(2); // decreases the polling timeout
-    }
-
-    @BeforeEach 
-    @AfterEach
-    public void aroundTest() {
-        var detectQueueUrl = sqsProps.getDetectQueueUrl();
-        clearQueue(detectQueueUrl);
-
-        var alertQueueUrl = sqsProps.getAlertQueueUrl();;
-        clearQueue(alertQueueUrl);
     }
 
     static int i = 0;

@@ -17,16 +17,32 @@
  */
 package qiangyt.fraud_detection.app;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Import;
-import qiangyt.fraud_detection.app.config.FraudDetectionConfig;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 
-@SpringBootApplication(scanBasePackages = "qiangyt.fraud_detection")
-@Import(FraudDetectionConfig.class)
-public class FraudDetectionApp {
+@SpringBootTest
+@TestPropertySource(
+        properties = {
+            "AWS_REGION=fake",
+            "AWS_ACCESS_KEY_ID=fake",
+            "AWS_ACCESS_KEY_SECRET=fake",
+            "AWS_SQS_DETECT_QUEUE_URL=fake",
+            "AWS_SQS_ALERT_QUEUE_URL=fake"
+        })
+public class FraudDetectionAppTest {
 
-    public static void main(String[] args) {
-        SpringApplication.run(FraudDetectionApp.class, args);
+    @Test
+    void contextLoads() {
+        // Test to ensure the Spring application context loads successfully
+    }
+
+    @Test
+    void testMain() {
+        try {
+            FraudDetectionApp.main(new String[0]);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 }

@@ -81,4 +81,24 @@ public class GroupedAlerterTest {
 
         verify(newAlerter).send(result);
     }
+
+    @Test
+    public void testSendWithException() {
+        var entity =
+                DetectionReqEntity.builder()
+                        .accountId("account-id")
+                        .amount(123)
+                        .memo("memo")
+                        .id("entity-id")
+                        .receivedAt(new Date())
+                        .build();
+        var result = DetectionResult.from(entity, FraudCategory.SUSPICIOUS_ACCOUNT);
+
+        doThrow(new RuntimeException("Test exception")).when(alerter1).send(result);
+
+        groupedAlerter.send(result);
+
+        verify(alerter1).send(result);
+        verify(alerter2).send(result);
+    }
 }

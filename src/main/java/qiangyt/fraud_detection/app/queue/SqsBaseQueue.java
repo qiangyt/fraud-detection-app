@@ -48,9 +48,5 @@ public abstract class SqsBaseQueue<T> {
         var sqsReq = sqsReqBuilder.build();
 
         getClient().sendMessage(sqsReq);
-
-        if (log.isDebugEnabled()) {
-            log.debug("message sent to SQS: " + getJackson().str(sqsReq));
-        }
     }
 }
