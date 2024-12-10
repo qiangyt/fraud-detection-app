@@ -17,13 +17,16 @@
  */
 package qiangyt.fraud_detection.app.controller;
 
-import static org.mockito.Mockito.any;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -93,5 +96,40 @@ public class DetectionSqsControllerTest {
     void testStop() {
         target.stop();
         verify(sqsPollingThreadPool, times(1)).shutdown();
+    }
+
+    @Test
+    void testPoll() {
+        var called = new AtomicBoolean(false);
+
+        target =
+                new DetectionSqsController() {
+                    @Override
+                    void pollOne() {
+                        try {
+                            Thread.sleep(300);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
+                        called.set(true);
+                    }
+                };
+        target.setSqsPollingThreadPool(Executors.newFixedThreadPool(1));
+
+        // Start polling in a separate thread to avoid blocking the test
+        var pollingThread = new Thread(() -> target.poll());
+        pollingThread.start();
+
+        // Allow some time for the poll method to execute
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
+        // Stop polling
+        target.stop();
+
+        assertTrue(called.get());
     }
 }
