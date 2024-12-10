@@ -33,6 +33,7 @@ import qiangyt.fraud_detection.sdk.FraudCategory;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
 import software.amazon.awssdk.services.cloudwatch.model.PutMetricDataRequest;
 
+/** Unit tests for {@link CloudWatchMetricAlerter}. */
 public class CloudWatchMetricAlerterTest {
 
     @Mock CloudWatchClient client;
@@ -41,14 +42,24 @@ public class CloudWatchMetricAlerterTest {
 
     @InjectMocks CloudWatchMetricAlerter alerter;
 
+    /** Sets up the test environment before each test. */
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
         alerter.init();
     }
 
+    /**
+     * Tests the {@link CloudWatchMetricAlerter#send(DetectionResult)} method.
+     *
+     * <p>This test verifies that the send method correctly sends a metric to CloudWatch. It creates
+     * a DetectionReqEntity and a DetectionResult, then calls the send method. It captures the
+     * PutMetricDataRequest sent to the CloudWatchClient and verifies that the namespace, metric
+     * name, value, and dimensions are correctly set.
+     */
     @Test
     public void testSend() {
+        // Create a DetectionReqEntity
         var entity =
                 DetectionReqEntity.builder()
                         .accountId("account-id")
@@ -57,13 +68,17 @@ public class CloudWatchMetricAlerterTest {
                         .id("entity-id")
                         .receivedAt(new Date())
                         .build();
+        // Create a DetectionResult from the entity
         var result = DetectionResult.from(entity, FraudCategory.SUSPICIOUS_ACCOUNT);
 
+        // Call the send method
         alerter.send(result);
 
+        // Capture the PutMetricDataRequest sent to the CloudWatchClient
         var captor = ArgumentCaptor.forClass(PutMetricDataRequest.class);
         verify(client).putMetricData(captor.capture());
 
+        // Verify the captured request
         var req = captor.getValue();
         assertEquals("fraud", req.namespace());
         assertEquals(1, req.metricData().size());
@@ -74,8 +89,16 @@ public class CloudWatchMetricAlerterTest {
         assertEquals(result.getId(), metric.dimensions().get(0).value());
     }
 
+    /**
+     * Tests the {@link CloudWatchMetricAlerter#init()} method.
+     *
+     * <p>This test verifies that the init method correctly registers the alerter with the group. It
+     * calls the init method and then verifies that the registerAlerter method on the group was
+     * called with the alerter instance.
+     */
     @Test
     public void testInit() {
+        // Verify that the alerter is registered with the group
         verify(group).registerAlerter(alerter);
     }
 }

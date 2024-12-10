@@ -23,42 +23,61 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import io.swagger.v3.oas.models.OpenAPI;
 import org.junit.jupiter.api.Test;
 
+/** Unit tests for {@link FraudDetectionConfig}. */
 public class FraudDetectionConfigTest {
 
+    /**
+     * Tests the {@link FraudDetectionConfig#openApiInfo()} method. Ensures that the OpenAPI object
+     * is correctly configured.
+     */
     @Test
     public void testOpenApiInfo() {
         var t = new FraudDetectionConfig();
 
         OpenAPI openAPI = t.openApiInfo();
-        assertNotNull(openAPI);
-        assertEquals("Fraud Detection API", openAPI.getInfo().getTitle());
-        assertEquals("1.0", openAPI.getInfo().getVersion());
+        assertNotNull(openAPI); // Check that the OpenAPI object is not null
+        assertEquals("Fraud Detection API", openAPI.getInfo().getTitle()); // Verify the title
+        assertEquals("1.0", openAPI.getInfo().getVersion()); // Verify the version
     }
 
+    /**
+     * Tests the {@link FraudDetectionConfig#detectionTaskExecutor(DetectionTaskProps)} method.
+     * Ensures that the task executor is correctly configured.
+     */
     @Test
     public void testDetectionTaskExecutor() {
         var t = new FraudDetectionConfig();
         var props = new DetectionTaskProps();
 
         var executor = t.detectionTaskExecutor(props);
-        assertNotNull(executor);
-        assertEquals(Runtime.getRuntime().availableProcessors(), executor.getCorePoolSize());
-        assertEquals(Runtime.getRuntime().availableProcessors(), executor.getMaxPoolSize());
-        assertEquals(props.getQueueCapacity(), executor.getQueueCapacity());
-        assertEquals("detectionTask-", executor.getThreadNamePrefix());
+        assertNotNull(executor); // Check that the executor is not null
+        assertEquals(
+                Runtime.getRuntime().availableProcessors(),
+                executor.getCorePoolSize()); // Verify core pool size
+        assertEquals(
+                Runtime.getRuntime().availableProcessors(),
+                executor.getMaxPoolSize()); // Verify max pool size
+        assertEquals(
+                props.getQueueCapacity(), executor.getQueueCapacity()); // Verify queue capacity
+        assertEquals("detectionTask-", executor.getThreadNamePrefix()); // Verify thread name prefix
         // assertEquals(fraudDetectionConfig.getDetectionTaskProps().getAwaitTerminationSeconds(),
         // executor.getAwaitTerminationSeconds());
     }
 
+    /**
+     * Tests the {@link FraudDetectionConfig#sqsPollingThreadPool(SqsProps)} method. Ensures that
+     * the SQS polling thread pool is correctly configured.
+     */
     @Test
     public void testSqsPollingThreadPool() {
         var t = new FraudDetectionConfig();
         var props = new SqsProps();
 
         var executorService = t.sqsPollingThreadPool(props);
-        assertNotNull(executorService);
+        assertNotNull(executorService); // Check that the executor service is not null
         assertEquals(
                 props.getThreadPoolSize(),
-                ((java.util.concurrent.ThreadPoolExecutor) executorService).getCorePoolSize());
+                ((java.util.concurrent.ThreadPoolExecutor) executorService)
+                        .getCorePoolSize()); // Verify thread pool size
     }
 }

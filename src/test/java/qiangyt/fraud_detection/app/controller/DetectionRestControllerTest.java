@@ -33,7 +33,7 @@ import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 import qiangyt.fraud_detection.sdk.DetectionResult;
 
 /**
- * @author
+ * Test class for {@link DetectionRestController}. It contains test cases for the REST endpoints.
  */
 @ContextConfiguration(classes = {DetectionRestController.class})
 @WebMvcTest(DetectionRestController.class)
@@ -43,24 +43,38 @@ public class DetectionRestControllerTest extends AbstractRestTest {
 
     @MockitoBean Jackson jackson;
 
+    /**
+     * Test case for the submit endpoint. It verifies that a detection request can be submitted
+     * successfully.
+     */
     @Test
     void test_submit() {
+        // Create a detection request
         var req = DetectionReq.builder().accountId("a").amount(3).build();
         var entity = req.toEntity();
 
+        // Mock the service to return the entity when submit is called
         when(this.service.submit(any())).thenReturn(entity);
 
+        // Perform a POST request and expect an OK response
         postThenExpectOk(req, entity, "/rest/detection");
     }
 
+    /**
+     * Test case for the detect endpoint. It verifies that a detection result can be retrieved
+     * successfully.
+     */
     @Test
     void test_detect() {
+        // Generate a short UUID for the detection request entity
         String id = UuidHelper.shortUuid();
         var entity = DetectionReqEntity.builder().id(id).build();
         var result = DetectionResult.builder().entity(entity).build();
 
+        // Mock the service to return the result when detect is called
         when(this.service.detect(any())).thenReturn(result);
 
+        // Perform a GET request and expect an OK response
         getThenExpectOk(entity, result, "/rest/detection");
     }
 }

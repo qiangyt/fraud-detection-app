@@ -31,12 +31,14 @@ import qiangyt.fraud_detection.app.engine.ChainedDetectionEngine;
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 import qiangyt.fraud_detection.sdk.FraudCategory;
 
+/** Unit tests for {@link SuspiciousAccountRule}. */
 public class SuspiciousAccountRuleTest {
 
     @Mock private ChainedDetectionEngine chain;
 
     @InjectMocks private SuspiciousAccountRule rule;
 
+    /** Sets up the test environment before each test. */
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -46,27 +48,33 @@ public class SuspiciousAccountRuleTest {
         rule.setProps(props);
     }
 
+    /** Tests the initialization of the rule. */
     @Test
     public void testInit() {
         rule.init();
+        // Verify that the rule is added to the chain once
         verify(chain, times(1)).addRule(rule);
     }
 
+    /** Tests the detection method when no fraud is detected. */
     @Test
     public void testApply_NoFraud() {
         var entity = new DetectionReqEntity();
         entity.setAccountId("account789");
 
         var result = rule.detect(entity);
+        // Assert that the result is no fraud
         assertEquals(FraudCategory.NONE, result);
     }
 
+    /** Tests the detection method when a suspicious account fraud is detected. */
     @Test
     public void testApply_SuspiciousAccountFraud() {
         var entity = new DetectionReqEntity();
         entity.setAccountId("fbiden");
 
         var result = rule.detect(entity);
+        // Assert that the result is suspicious account fraud
         assertEquals(FraudCategory.SUSPICIOUS_ACCOUNT, result);
     }
 }

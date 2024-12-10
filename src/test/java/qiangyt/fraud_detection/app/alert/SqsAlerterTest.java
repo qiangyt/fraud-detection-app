@@ -35,6 +35,7 @@ import qiangyt.fraud_detection.sdk.FraudCategory;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 
+/** Unit tests for the {@link SqsAlerter} class. */
 public class SqsAlerterTest {
 
     @Mock SqsProps props;
@@ -47,6 +48,7 @@ public class SqsAlerterTest {
 
     @InjectMocks SqsAlerter alerter;
 
+    /** Sets up the test environment before each test. */
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -54,8 +56,10 @@ public class SqsAlerterTest {
         alerter.init();
     }
 
+    /** Tests the {@link SqsAlerter#send(DetectionResult)} method. */
     @Test
     public void testSend() {
+        // Create a DetectionReqEntity instance
         var entity =
                 DetectionReqEntity.builder()
                         .accountId("account-id")
@@ -64,15 +68,20 @@ public class SqsAlerterTest {
                         .id("entity-id")
                         .receivedAt(new Date())
                         .build();
+        // Create a DetectionResult instance
         var result = DetectionResult.from(entity, FraudCategory.SUSPICIOUS_ACCOUNT);
 
+        // Mock the jackson.str method to return a test message
         when(jackson.str(result)).thenReturn("test-message");
 
+        // Call the send method of SqsAlerter
         alerter.send(result);
 
+        // Capture the SendMessageRequest argument
         var captor = ArgumentCaptor.forClass(SendMessageRequest.class);
         verify(client).sendMessage(captor.capture());
 
+        // Verify the captured SendMessageRequest
         var req = captor.getValue();
         assertEquals("test-queue-url", req.queueUrl());
         assertEquals("test-message", req.messageBody());
@@ -80,8 +89,10 @@ public class SqsAlerterTest {
         assertEquals("alert", req.messageGroupId());
     }
 
+    /** Tests the {@link SqsAlerter#init()} method. */
     @Test
     public void testInit() {
+        // Verify that the alerter is registered with the group
         verify(group).registerAlerter(alerter);
     }
 }

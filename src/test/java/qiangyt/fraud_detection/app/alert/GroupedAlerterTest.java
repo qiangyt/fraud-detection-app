@@ -29,6 +29,7 @@ import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 import qiangyt.fraud_detection.sdk.DetectionResult;
 import qiangyt.fraud_detection.sdk.FraudCategory;
 
+/** Unit tests for the GroupedAlerter class. */
 public class GroupedAlerterTest {
 
     @Mock private Alerter alerter1;
@@ -37,15 +38,19 @@ public class GroupedAlerterTest {
 
     @InjectMocks private GroupedAlerter groupedAlerter;
 
+    /** Sets up the test environment by initializing mocks and registering alerters. */
     @BeforeEach
     public void setUp() {
+        // Initialize mocks and register alerters
         MockitoAnnotations.openMocks(this);
         groupedAlerter.registerAlerter(alerter1);
         groupedAlerter.registerAlerter(alerter2);
     }
 
+    /** Tests sending a detection result to all registered alerters. */
     @Test
     public void testSend() {
+        // Create a detection request entity and result
         var entity =
                 DetectionReqEntity.builder()
                         .accountId("account-id")
@@ -56,17 +61,22 @@ public class GroupedAlerterTest {
                         .build();
         var result = DetectionResult.from(entity, FraudCategory.SUSPICIOUS_ACCOUNT);
 
+        // Send the result using the grouped alerter
         groupedAlerter.send(result);
 
+        // Verify that both alerters received the send call
         verify(alerter1).send(result);
         verify(alerter2).send(result);
     }
 
+    /** Tests registering a new alerter and sending a detection result. */
     @Test
     public void testRegisterAlerter() {
+        // Create and register a new alerter
         var newAlerter = mock(Alerter.class);
         groupedAlerter.registerAlerter(newAlerter);
 
+        // Create a detection request entity and result
         var entity =
                 DetectionReqEntity.builder()
                         .accountId("account-id")
@@ -77,13 +87,17 @@ public class GroupedAlerterTest {
                         .build();
         var result = DetectionResult.from(entity, FraudCategory.SUSPICIOUS_ACCOUNT);
 
+        // Send the result using the grouped alerter
         groupedAlerter.send(result);
 
+        // Verify that the new alerter received the send call
         verify(newAlerter).send(result);
     }
 
+    /** Tests sending a detection result when one alerter throws an exception. */
     @Test
     public void testSendWithException() {
+        // Create a detection request entity and result
         var entity =
                 DetectionReqEntity.builder()
                         .accountId("account-id")
@@ -94,10 +108,13 @@ public class GroupedAlerterTest {
                         .build();
         var result = DetectionResult.from(entity, FraudCategory.SUSPICIOUS_ACCOUNT);
 
+        // Simulate an exception being thrown by alerter1
         doThrow(new RuntimeException("Test exception")).when(alerter1).send(result);
 
+        // Send the result using the grouped alerter
         groupedAlerter.send(result);
 
+        // Verify that both alerters received the send call despite the exception
         verify(alerter1).send(result);
         verify(alerter2).send(result);
     }

@@ -28,6 +28,7 @@ import org.mockito.MockitoAnnotations;
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 import qiangyt.fraud_detection.sdk.FraudCategory;
 
+/** Unit tests for {@link ChainedDetectionEngine}. */
 public class ChainedDetectionEngineTest {
 
     @InjectMocks ChainedDetectionEngine detectionEngine;
@@ -36,6 +37,7 @@ public class ChainedDetectionEngineTest {
 
     @Mock DetectionRule rule2;
 
+    /** Sets up the test environment before each test. */
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -43,12 +45,14 @@ public class ChainedDetectionEngineTest {
         detectionEngine.addRule(rule2);
     }
 
+    /** Tests detection when no fraud is detected by any rule. */
     @Test
     public void testDetect_NoFraud() {
         var entity = new DetectionReqEntity();
         entity.setAmount(5000);
         entity.setAccountId("account789");
 
+        // Mocking the detection rules to return no fraud
         when(rule1.detect(entity)).thenReturn(FraudCategory.NONE);
         when(rule2.detect(entity)).thenReturn(FraudCategory.NONE);
 
@@ -56,12 +60,14 @@ public class ChainedDetectionEngineTest {
         assertEquals(FraudCategory.NONE, result);
     }
 
+    /** Tests detection when the first rule detects fraud. */
     @Test
     public void testDetect_FirstRuleFraud() {
         var entity = new DetectionReqEntity();
         entity.setAmount(15000);
         entity.setAccountId("account789");
 
+        // Mocking the detection rules to return fraud for the first rule
         when(rule1.detect(entity)).thenReturn(FraudCategory.BIG_AMOUNT);
         when(rule2.detect(entity)).thenReturn(FraudCategory.NONE);
 
@@ -69,12 +75,14 @@ public class ChainedDetectionEngineTest {
         assertEquals(FraudCategory.BIG_AMOUNT, result);
     }
 
+    /** Tests detection when the second rule detects fraud. */
     @Test
     public void testDetect_SecondRuleFraud() {
         var entity = new DetectionReqEntity();
         entity.setAmount(5000);
         entity.setAccountId("account123");
 
+        // Mocking the detection rules to return fraud for the second rule
         when(rule1.detect(entity)).thenReturn(FraudCategory.NONE);
         when(rule2.detect(entity)).thenReturn(FraudCategory.SUSPICIOUS_ACCOUNT);
 

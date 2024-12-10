@@ -42,6 +42,7 @@ import software.amazon.awssdk.services.sqs.model.Message;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
 
+/** Unit tests for {@link DetectionSqsController}. */
 public class DetectionSqsControllerTest {
 
     @Mock SqsProps props;
@@ -56,13 +57,16 @@ public class DetectionSqsControllerTest {
 
     @Mock ExecutorService sqsPollingThreadPool;
 
+    /** Sets up the test environment before each test. */
     @BeforeEach
     public void setUp() {
+        // Initialize mocks
         MockitoAnnotations.openMocks(this);
 
         target.setJackson(Jackson.DEFAULT);
     }
 
+    /** Tests the pollOne method when a message is received. */
     @Test
     void testPollOne() {
         // Mock the behavior of SqsClient and DetectionApi
@@ -71,38 +75,53 @@ public class DetectionSqsControllerTest {
                 .thenReturn(ReceiveMessageResponse.builder().messages(msg).build());
         when(service.detectThenAlert(any())).thenReturn(null);
 
+        // Call the method under test
         target.pollOne();
 
+        // Verify that the message was deleted
         verify(client, times(1)).deleteMessage(any(DeleteMessageRequest.class));
     }
 
+    /** Tests the pollOne method when no messages are received. */
     @Test
     void testPollOne_noMessages() {
         // Mock the behavior of SqsClient to return no messages
         when(client.receiveMessage((ReceiveMessageRequest) any()))
                 .thenReturn(ReceiveMessageResponse.builder().build());
 
+        // Call the method under test
         target.pollOne();
 
+        // Verify that detectThenAlert was not called
         verify(service, never()).detectThenAlert(any());
     }
 
+    /** Tests the start method. */
     @Test
     void testStart() {
+        // Call the method under test
         target.start();
+
+        // Verify that the polling thread was submitted
         verify(sqsPollingThreadPool, times(1)).submit(any(Runnable.class));
     }
 
+    /** Tests the stop method. */
     @Test
     void testStop() {
+        // Call the method under test
         target.stop();
+
+        // Verify that the polling thread pool was shut down
         verify(sqsPollingThreadPool, times(1)).shutdown();
     }
 
+    /** Tests the poll method. */
     @Test
     void testPoll() {
         var called = new AtomicBoolean(false);
 
+        // Override the pollOne method to simulate a delay
         target =
                 new DetectionSqsController() {
                     @Override
@@ -131,24 +150,32 @@ public class DetectionSqsControllerTest {
         // Stop polling
         target.stop();
 
+        // Verify that pollOne was called
         assertTrue(called.get());
     }
 
+    /** Tests that poll handles IllegalStateException. */
     @Test
     void testPollHandlesIllegalStateException() {
+        // Mock the behavior of SqsClient to throw an IllegalStateException
         when(client.receiveMessage(any(ReceiveMessageRequest.class)))
                 .thenThrow(new IllegalStateException("Connection pool shut down"));
 
+        // Call the method under test
         target.poll();
 
+        // Verify that receiveMessage was called
         verify(client, times(1)).receiveMessage(any(ReceiveMessageRequest.class));
     }
 
+    /** Tests that poll handles other IllegalStateException. */
     @Test
     void testPollHandlesOtherIllegalStateException() throws InterruptedException {
+        // Mock the behavior of SqsClient to throw an IllegalStateException
         when(client.receiveMessage(any(ReceiveMessageRequest.class)))
                 .thenThrow(new IllegalStateException("Some other error"));
 
+        // Start polling in a separate thread to avoid blocking the test
         var thread =
                 new Thread(
                         () -> {
@@ -156,11 +183,13 @@ public class DetectionSqsControllerTest {
                         });
         thread.start();
 
+        // Allow some time for the poll method to execute
         Thread.sleep(200);
         target.getPolling().set(false);
         thread.interrupt();
         thread.join();
 
+        // Verify that receiveMessage was called at least once
         verify(client, atLeastOnce()).receiveMessage(any(ReceiveMessageRequest.class));
     }
 }

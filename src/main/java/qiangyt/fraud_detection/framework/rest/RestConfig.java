@@ -31,6 +31,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import qiangyt.fraud_detection.framework.errs.ErrorAdvice;
 import qiangyt.fraud_detection.framework.json.Jackson;
 
+/**
+ * Configuration class for RESTful web services. It enables Web MVC, imports error handling advice,
+ * and configures CORS and message converters.
+ */
 @lombok.Getter
 @lombok.Setter
 @EnableWebMvc
@@ -39,16 +43,31 @@ public class RestConfig implements WebMvcConfigurer {
 
     @Autowired Jackson jackson;
 
+    /**
+     * Creates a bean for handling API client errors.
+     *
+     * @return an instance of ApiClientErrorHandler
+     */
     @Bean
     public ApiClientErrorHandler clientErrorHandler() {
         return new ApiClientErrorHandler(getJackson());
     }
 
+    /**
+     * Extends the list of HTTP message converters with a custom Jackson converter.
+     *
+     * @param converters the list of configured converters to extend
+     */
     @Override
     public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
         getJackson().replaceConverter(converters);
     }
 
+    /**
+     * Creates a bean for configuring CORS (Cross-Origin Resource Sharing) settings.
+     *
+     * @return an instance of CorsFilter with the configured CORS settings
+     */
     @Bean
     public CorsFilter corsFilter() {
         var s = new UrlBasedCorsConfigurationSource();
