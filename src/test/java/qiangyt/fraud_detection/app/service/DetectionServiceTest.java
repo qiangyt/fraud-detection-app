@@ -110,6 +110,27 @@ public class DetectionServiceTest {
         verify(alertor, times(1)).send(detectionResult);
     }
 
+    /**
+     * Tests the {@link DetectionService#detectThenAlert(DetectionReqEntity)} method when no fraud
+     * is detected.
+     */
+    @Test
+    public void testDetectThenAlert_NoFraud() throws Exception {
+        var entity = new DetectionReqEntity();
+        var category = FraudCategory.NONE;
+
+        when(engine.detect(any(DetectionReqEntity.class))).thenReturn(category);
+        doNothing().when(alertor).send(any(DetectionResult.class));
+
+        // Detects no fraud and verifies the result
+        var futureResult = service.detectThenAlert(entity);
+        var detectionResult = futureResult.join();
+
+        assertEquals(category, detectionResult.getCategory());
+        assertEquals(entity, detectionResult.getEntity());
+        verify(alertor, times(0)).send(detectionResult);
+    }
+
     /** Tests the {@link DetectionService#detect(DetectionReqEntity)} method. */
     @Test
     public void testDetect() {
