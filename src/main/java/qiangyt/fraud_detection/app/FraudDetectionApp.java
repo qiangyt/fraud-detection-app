@@ -22,6 +22,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
 import qiangyt.fraud_detection.app.config.FraudDetectionConfig;
 
+/**
+ * The main entry point for the Fraud Detection application. This class initializes and runs the
+ * Spring Boot application.
+ */
 @SpringBootApplication(scanBasePackages = "qiangyt.fraud_detection")
 @Import(FraudDetectionConfig.class)
 public class FraudDetectionApp {

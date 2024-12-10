@@ -19,7 +19,13 @@ package qiangyt.fraud_detection.app.queue;
 
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 
+/** Interface representing a queue for handling detection requests. */
 public interface DetectionRequestQueue {
 
+    /**
+     * Sends a detection request to the queue.
+     *
+     * @param req the detection request entity to be sent
+     */
     void send(DetectionReqEntity req);
 }

@@ -24,6 +24,11 @@ import qiangyt.fraud_detection.framework.misc.StringHelper;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.*;
 
+/**
+ * Abstract base class for SQS queues.
+ *
+ * @param <T> the type of the data to be sent to the queue
+ */
 @lombok.Getter
 @lombok.Setter
 @lombok.extern.slf4j.Slf4j
@@ -35,6 +40,14 @@ public abstract class SqsBaseQueue<T> {
 
     @Autowired Jackson jackson;
 
+    /**
+     * Sends a message to the specified SQS queue.
+     *
+     * @param queueUrl the URL of the SQS queue
+     * @param data the data to be sent
+     * @param deduplicationId the deduplication ID for the message (optional)
+     * @param messageGroupId the message group ID for the message (optional)
+     */
     protected void send(String queueUrl, T data, String deduplicationId, String messageGroupId) {
         var msg = getJackson().str(data);
 

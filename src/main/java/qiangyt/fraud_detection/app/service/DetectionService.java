@@ -32,6 +32,7 @@ import qiangyt.fraud_detection.sdk.DetectionReq;
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 import qiangyt.fraud_detection.sdk.DetectionResult;
 
+/** Service for handling fraud detection requests. */
 @Service
 @lombok.Getter
 @lombok.Setter
@@ -48,6 +49,7 @@ public class DetectionService implements DetectionApi {
 
     @Autowired Alerter alertor;
 
+    /** Shuts down the task executor. */
     @PreDestroy
     public void shutdown() {
         log.info("Shut down task executor: begin");
@@ -55,6 +57,12 @@ public class DetectionService implements DetectionApi {
         log.info("Shut down task executor: done");
     }
 
+    /**
+     * Submits a detection request.
+     *
+     * @param req the detection request
+     * @return the detection request entity
+     */
     @Override
     public @NotNull DetectionReqEntity submit(@NotNull DetectionReq req) {
         var entity = req.toEntity();
@@ -62,6 +70,12 @@ public class DetectionService implements DetectionApi {
         return entity;
     }
 
+    /**
+     * Detects fraud and sends an alert if fraud is detected.
+     *
+     * @param entity the detection request entity
+     * @return a CompletableFuture containing the detection result
+     */
     public @NotNull CompletableFuture<DetectionResult> detectThenAlert(
             @NotNull DetectionReqEntity entity) {
         // uses dedicated task pool to execute engine
@@ -79,6 +93,12 @@ public class DetectionService implements DetectionApi {
                 });
     }
 
+    /**
+     * Detects fraud based on the given detection request entity.
+     *
+     * @param entity the detection request entity
+     * @return the detection result
+     */
     @Override
     public DetectionResult detect(DetectionReqEntity entity) {
         var category = getEngine().detect(entity);

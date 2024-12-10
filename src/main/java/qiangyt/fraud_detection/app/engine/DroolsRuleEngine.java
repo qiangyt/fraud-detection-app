@@ -21,12 +21,24 @@ import org.springframework.stereotype.Service;
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 import qiangyt.fraud_detection.sdk.FraudCategory;
 
+/**
+ * DroolsRuleEngine is a service that implements the DetectionEngine interface. It uses Drools rules
+ * to detect fraud based on the provided DetectionReqEntity.
+ *
+ * <p>NOTE: not implemented yet
+ */
 @lombok.Getter
 @lombok.Setter
 @Service
 @lombok.extern.slf4j.Slf4j
 public class DroolsRuleEngine implements DetectionEngine {
 
+    /**
+     * Detects fraud by applying Drools rules to the given DetectionReqEntity.
+     *
+     * @param entity the detection request entity containing the data to be analyzed
+     * @return the detected fraud category
+     */
     @Override
     public FraudCategory detect(DetectionReqEntity entity) {
         // TODO: apply drools rules

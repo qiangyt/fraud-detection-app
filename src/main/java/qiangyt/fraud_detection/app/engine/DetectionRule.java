@@ -20,8 +20,15 @@ package qiangyt.fraud_detection.app.engine;
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 import qiangyt.fraud_detection.sdk.FraudCategory;
 
+/** Functional interface representing a detection rule for fraud detection. */
 @FunctionalInterface
 public interface DetectionRule {
 
+    /**
+     * Detects the fraud category based on the given detection request entity.
+     *
+     * @param entity the detection request entity containing the data to be analyzed
+     * @return the detected fraud category
+     */
     FraudCategory detect(DetectionReqEntity entity);
 }

@@ -24,6 +24,7 @@ import qiangyt.fraud_detection.framework.json.Jackson;
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 import software.amazon.awssdk.services.sqs.SqsClient;
 
+/** Service for handling SQS detection queue operations. */
 @lombok.Getter
 @lombok.Setter
 @lombok.extern.slf4j.Slf4j
@@ -37,6 +38,11 @@ public class SqsDetectionQueue extends SqsBaseQueue<DetectionReqEntity>
 
     @Autowired Jackson jackson;
 
+    /**
+     * Sends a detection request entity to the SQS detection queue.
+     *
+     * @param req the detection request entity to be sent
+     */
     @Override
     public void send(DetectionReqEntity req) {
         send(getProps().getDetectQueueUrl(), req, "", "");
