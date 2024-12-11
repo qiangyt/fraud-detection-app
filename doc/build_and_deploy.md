@@ -115,13 +115,11 @@
    ```
 
    This script will deploy:
+
    - Secret (generated in the previous step): [./k8s/eks/fraud-detection-secret.yaml](./k8s/eks/fraud-detection-secret.yaml)
    - Deployment: [./k8s/eks/fraud-detection-deployment.yaml](./k8s/eks/fraud-detection-deployment.yaml)
    - Service: [./k8s/eks/fraud-detection-service.yaml](./k8s/eks/fraud-detection-service.yaml)
    - HPA: [./k8s/eks/fraud-detection-hpa.yaml](./k8s/eks/fraud-detection-hpa.yaml)
-   
-   Then refer to [Test fraud-detection-app](./test.md) to test and verify in AWS Cloud Shell.
 
-
-
+   Then refer to [Test fraud-detection-app](./ut_and_it.md) to test and verify in AWS Cloud Shell.
 
