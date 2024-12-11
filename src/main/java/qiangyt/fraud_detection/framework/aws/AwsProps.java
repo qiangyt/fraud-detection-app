@@ -18,11 +18,13 @@
 package qiangyt.fraud_detection.framework.aws;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import lombok.Getter;
+import lombok.Setter;
 
-@lombok.Getter
-@lombok.Setter
 /** Configuration properties for AWS. */
 @ConfigurationProperties("aws")
+@Getter
+@Setter
 public class AwsProps {
 
     /** The AWS region. */

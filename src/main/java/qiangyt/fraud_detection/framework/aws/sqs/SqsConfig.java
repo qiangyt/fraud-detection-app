@@ -17,6 +17,9 @@
  */
 package qiangyt.fraud_detection.framework.aws.sqs;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,10 +30,10 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.sqs.SqsClient;
 
 /** Configuration class for setting up AWS SQS client. */
-@lombok.Getter
-@lombok.Setter
-@lombok.extern.slf4j.Slf4j
 @Configuration
+@Getter
+@Setter
+@Slf4j
 public class SqsConfig {
 
     @Autowired private AwsProps props;

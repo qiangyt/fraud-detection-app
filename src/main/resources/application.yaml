@@ -31,16 +31,13 @@ management:
   endpoints:
     enabled-by-default: true # Enable all management endpoints by default
     web.exposure.include: "*" # Expose all management endpoints over web
-  endpoint:
-    env.show-values: ALWAYS # Always show environment values
-    configprops.show-values: ALWAYS # Always show configuration properties values
   info:
-    build.enabled: true # Enable build info endpoint
-    env.enabled: true # Enable environment info endpoint
-    git.enabled: true # Enable git info endpoint
-    java.enabled: true # Enable Java info endpoint
-    os.enabled: true # Enable OS info endpoint
-    process.enabled: true # Enable process info endpoint
+    build.enabled: false # Disable build info endpoint
+    env.enabled: false # Disable environment info endpoint
+    git.enabled: false # Disable git info endpoint
+    java.enabled: false # Disable Java info endpoint
+    os.enabled: false # Disable OS info endpoint
+    process.enabled: false # Disable process info endpoint
 
 spring:
   application.name: fraud_detection # Name of the Spring application
@@ -48,20 +45,11 @@ spring:
   main:
     allow-circular-references: true # Allow circular references in Spring beans
     lazy-initialization: false # Disable lazy initialization
-    keep-alive: true # Ensure JVM is kept alive, even if all threads are virtual threads
-  mvc.throw-exception-if-no-handler-found: true # Throw exception if no handler is found for a request
-  servlet.session.persistent: false # Disable persistent sessions
+    kotlin.support.enabled: false # Disable Kotlin support
+  data:
+    rest:
+      base-path: /api/data # Base path for data REST endpoints
 
 springdoc:
-  pre-loading-enabled: true # Enable pre-loading of SpringDoc
-  writer-with-order-by-keys: true # Order keys in the writer
-  writer-with-default-pretty-printer: true # Enable default pretty printer for the writer
-  disable-i18n: true # Disable internationalization
-  show-spring-cloud-functions: false # Disable showing Spring Cloud functions
-  enable-groovy: false # Disable Groovy support
-  enable-spring-security: false # Disable Spring Security support
-  enable-kotlin: false # Disable Kotlin support
-  enable-hateoas: false # Disable HATEOAS support
-  enable-data-rest: false # Disable Spring Data REST support
-  api-docs.version: openapi_3_1 # Version of the OpenAPI documentation
-
+  api-docs:
+    path: /v3/api-docs # Path for OpenAPI documentation

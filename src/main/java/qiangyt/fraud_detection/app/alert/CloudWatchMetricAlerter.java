@@ -27,10 +27,10 @@ import software.amazon.awssdk.services.cloudwatch.model.MetricDatum;
 import software.amazon.awssdk.services.cloudwatch.model.PutMetricDataRequest;
 import software.amazon.awssdk.services.cloudwatch.model.StandardUnit;
 
-/** Alerter implementation that sends metrics to AWS CloudWatch. */
-@lombok.extern.slf4j.Slf4j
-@lombok.Getter
-@lombok.Setter
+import lombok.extern.slf4j.Slf4j;
+@Slf4j
+@Getter
+@Setter
 @Service
 public class CloudWatchMetricAlerter implements Alerter {
 

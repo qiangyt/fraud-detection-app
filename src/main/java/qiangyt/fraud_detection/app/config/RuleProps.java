@@ -20,13 +20,13 @@ package qiangyt.fraud_detection.app.config;
 import java.util.Set;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@lombok.Getter
-@lombok.Setter
+@Getter
+@Setter
 
 /**
  * Configuration properties for fraud detection rules.
  *
- * <p>Hard-coded suspicious accounts here, just to simplifes the demo
+ * <p>Hard-coded suspicious accounts here, just to simplifies the demo
  */
 @ConfigurationProperties(prefix = "app.rules")
 public class RuleProps {

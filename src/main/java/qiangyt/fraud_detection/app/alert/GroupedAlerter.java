@@ -22,14 +22,8 @@ import java.util.List;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import qiangyt.fraud_detection.sdk.DetectionResult;
+import lombok.Getter; import lombok.Setter; import lombok.extern.slf4j.Slf4j;
 
-@lombok.Getter
-@lombok.Setter
-@lombok.extern.slf4j.Slf4j
-/**
- * GroupedAlerter is a service that manages a list of alerters and sends alerts to all registered
- * alerters.
- */
 @Service
 @Primary
 public class GroupedAlerter implements Alerter {

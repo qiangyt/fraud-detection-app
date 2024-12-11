@@ -27,7 +27,7 @@ import org.testcontainers.utility.DockerImageName;
 @Testcontainers
 public class TestcontainersIT {
 
-    //DockerImageName localstackImage = DockerImageName.parse("localstack/localstack:3.5.0");
+    DockerImageName localstackImage = DockerImageName.parse("localstack/localstack:3.5.0");
 
     private static final DockerImageName DEFAULT_IMAGE_NAME = DockerImageName.parse("localstack/localstack:3.5.0");
 
