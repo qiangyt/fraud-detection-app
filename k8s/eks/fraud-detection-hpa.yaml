@@ -1,12 +1,12 @@
 apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: fraud-detection-hpa
+  name: fraud-detection
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: fraud-detection-service
+    name: fraud-detection
   minReplicas: 2
   maxReplicas: 10
   metrics:
@@ -15,5 +15,5 @@ spec:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: 80
+          averageUtilization: 70
 

@@ -5,7 +5,8 @@ FROM maven:3.9.7-eclipse-temurin-17-alpine as builder
 
 WORKDIR /opt/fraud-detection
 
-COPY settings.xml ./
+# COPY settings.xml ./
+
 # First, copy the Maven pom.xml file to build without the source code so that modifications to the source code do not invalidate
 # the Maven repository cache inside the container, thereby reducing build time.
 COPY pom.xml ./

@@ -7,7 +7,9 @@ project_dir="$(dirname "$script_dir")"
 source "$script_dir/common.sh"
 
 
+mvn spotless:apply
+
 rm -rf target
-mvn clean spring-boot:run
+mvn clean verify
 
 cd "$work_dir" || exit 1

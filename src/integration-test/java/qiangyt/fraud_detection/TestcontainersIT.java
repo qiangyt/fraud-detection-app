@@ -18,13 +18,12 @@
 package qiangyt.fraud_detection;
 
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.testcontainers.containers.localstack.LocalStackContainer;
 import org.testcontainers.containers.localstack.LocalStackContainer.Service;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
-//import org.testcontainers.containers.localstack.LocalstackTestImages;
 
+// To be impelemented
 @Testcontainers
 public class TestcontainersIT {
 

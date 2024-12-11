@@ -1,9 +1,14 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fraud-detection-service
+  name: fraud-detection
 spec:
-  replicas: 1
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
   selector:
     matchLabels:
       app: fraud-detection
@@ -49,16 +54,4 @@ spec:
             secretKeyRef:
               name: aws-secret
               key: aws-sqs-alert-queue-url
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: fraud-detection-service
-spec:
-  selector:
-    app: fraud-detection
-  ports:
-    - protocol: TCP
-      port: 8080
-      targetPort: 8080
-  type: LoadBalancer
+

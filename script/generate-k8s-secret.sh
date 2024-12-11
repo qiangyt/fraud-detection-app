@@ -2,12 +2,14 @@
 
 ENV_FILE=".env"
 
-if [ ! -f "$ENV_FILE" ]; then
-  echo "Error: .env file not found!"
-  exit 1
-fi
+work_dir="$(pwd)"
+script_dir="$(dirname "$(readlink -f "$0")")"
+project_dir="$(dirname "$script_dir")"
 
-export $(grep -v '^#' "$ENV_FILE" | xargs)
+source "$script_dir/common.sh"
+
+
+
 
 AWS_REGION_BASE64=$(echo -n "$AWS_REGION" | base64)
 AWS_ACCESS_KEY_ID_BASE64=$(echo -n "$AWS_ACCESS_KEY_ID" | base64)
@@ -16,8 +18,9 @@ AWS_SQS_DETECT_QUEUE_URL_BASE64=$(echo -n "$AWS_SQS_DETECT_QUEUE_URL" | base64)
 AWS_SQS_DETECT_DEAD_LETTER_QUEUE_URL_BASE64=$(echo -n "$AWS_SQS_DETECT_DEAD_LETTER_QUEUE_URL" | base64)
 AWS_SQS_ALERT_QUEUE_URL_BASE64=$(echo -n "$AWS_SQS_ALERT_QUEUE_URL" | base64)
 
+secret_file=$eks_dir/fraud-detection-secret.yaml
 
-cat << EOF > fraud-detection-secret.yaml
+tee $secret_file << EOF
 apiVersion: v1
 kind: Secret
 metadata:
@@ -32,4 +35,4 @@ data:
   aws-sqs-alert-queue-url: $AWS_SQS_ALERT_QUEUE_URL_BASE64
 EOF
 
-echo "Kubernetes Secret YAML file 'fraud-detection-secret.yaml' has been generated successfully!"
+echo "Kubernetes Secret YAML file '$secret_file' is generated successfully!"
