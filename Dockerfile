@@ -34,7 +34,7 @@ COPY --from=builder /opt/fraud-detection/target/fraud-detection-app-*-SNAPSHOT.j
 ENV SPRING_PROFILES_ACTIVE prod
 #ENV CONFIG_LOCATION file:/opt/fraud-detection/config/
 
-ENTRYPOINT []
+ENTRYPOINT ["java", "-Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/opt/fraud-detection/fraud-detection-app.jar"]
 
 # CMD [\
 #     "java", \
