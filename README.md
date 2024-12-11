@@ -9,3 +9,7 @@ A real-time fraud detection demonstration application in Java. Deployable on an 
 - [Code Structure](./doc/code_structure.md)
 - [Unit Tests and Integration Tests (including test coverage report)](./doc/ut_and_it.md)
 - [Resilience Test Report](./doc/resilience_test.md)
+
+## License
+  
+  [GNU GENERAL PUBLIC LICENSE，Version 3](./LICENSE)
