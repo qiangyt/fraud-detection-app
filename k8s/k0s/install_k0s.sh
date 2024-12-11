@@ -51,10 +51,7 @@ main() {
 
   echo "Downloading k0s from URL: $k0sDownloadUrl"
 
-  if ! curl -sSL "$k0sDownloadUrl" >"$k0sInstallPath/$k0sBinary"; then
-    echo "Error: Failed to download k0s from $k0sDownloadUrl" 1>&2
-    exit 1
-  fi
+  curl -sSLf "$k0sDownloadUrl" >"$k0sInstallPath/$k0sBinary"
   chmod 755 -- "$k0sInstallPath/$k0sBinary"
 
   echo "k0s is now executable in $k0sInstallPath"

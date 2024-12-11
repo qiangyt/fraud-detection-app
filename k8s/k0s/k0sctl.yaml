@@ -8,7 +8,7 @@ spec:
   #    enabled: true
   - ssh:
       address: 192.168.4.93
-      user: non-root-user # Changed from root to non-root user
+      user: root
       port: 30022
       keyPath: /home/qiangyt/.ssh/id_rsa
     role: single # a single-node cluster host, the configuration can only contain one host
