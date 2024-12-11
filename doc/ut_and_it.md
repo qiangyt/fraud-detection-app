@@ -3,11 +3,11 @@
    - Regarding the configuration of detection rule values:
   
       For simplicity, the relevant configuration values are hard-coded in `src/main/java/qiangyt/fraud_detection/app/config/RuleProps.java`, including:
-     
+
       - Maximum transaction amount: 100000
-      
+
       - Suspicious accounts: `cgrant` and `fbiden`.
-      
+
       As shown below:
 
       ```java
@@ -37,7 +37,7 @@
    - Integration test case description:
 
      See [../src/integration-test/java/qiangyt/fraud_detection/SubmitIT.java](../src/integration-test/java/qiangyt/fraud_detection/SubmitIT.java).
-     
+
      This case performs the following steps:
 
      1. First, clear both the SQS detection request queue and SQS alert queue to ensure no interference from previous tests. Note: please ensure no other tests are running at this time.
@@ -56,7 +56,7 @@
    Execute [./script/run.sh](./script/run.sh). This script will use the local Java environment to run [./target/fraud-detection-app-*-SNAPSHOT.jar](./target/fraud-detection-app-0.0.1-SNAPSHOT.jar)
 
 ### Running on AWS K8S
-   
+
 
 ### Running on AWS EC2
 
