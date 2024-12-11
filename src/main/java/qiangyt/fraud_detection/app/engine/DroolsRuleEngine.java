@@ -42,6 +42,12 @@ public class DroolsRuleEngine implements DetectionEngine {
     @Override
     public FraudCategory detect(DetectionReqEntity entity) {
         // TODO: apply drools rules
-        return FraudCategory.NONE;
+        // Implement the logic to apply Drools rules here
+        // For example:
+        // KieSession kieSession = kieContainer.newKieSession();
+        // kieSession.insert(entity);
+        // kieSession.fireAllRules();
+        // return (FraudCategory) kieSession.getGlobal("detectedFraudCategory");
+        return FraudCategory.NONE; // Placeholder return statement
     }
 }

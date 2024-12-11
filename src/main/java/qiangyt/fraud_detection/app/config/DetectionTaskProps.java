@@ -29,5 +29,5 @@ public class DetectionTaskProps {
     int queueCapacity = 500;
 
     /** The number of seconds to wait for termination. */
-    int AwaitTerminationSeconds = 60;
+    int awaitTerminationSeconds = 60;
 }

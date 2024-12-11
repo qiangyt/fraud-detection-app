@@ -54,7 +54,7 @@ public class DetectionRestControllerTest extends AbstractRestTest {
         var entity = req.toEntity();
 
         // Mock the service to return the entity when submit is called
-        when(this.service.submit(any())).thenReturn(entity);
+        when(this.service.submit(any(DetectionReq.class))).thenReturn(entity);
 
         // Perform a POST request and expect an OK response
         postThenExpectOk(req, entity, "/rest/detection");
@@ -72,7 +72,7 @@ public class DetectionRestControllerTest extends AbstractRestTest {
         var result = DetectionResult.builder().entity(entity).build();
 
         // Mock the service to return the result when detect is called
-        when(this.service.detect(any())).thenReturn(result);
+        when(this.service.detect(any(DetectionReqEntity.class))).thenReturn(result);
 
         // Perform a GET request and expect an OK response
         getThenExpectOk(entity, result, "/rest/detection");

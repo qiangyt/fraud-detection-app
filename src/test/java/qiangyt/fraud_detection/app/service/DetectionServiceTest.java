@@ -52,9 +52,6 @@ public class DetectionServiceTest {
 
     ThreadPoolTaskExecutor detectionTaskExecutor = new ThreadPoolTaskExecutor();
 
-    {
-    }
-
     @InjectMocks DetectionService service;
 
     /** Sets up the test environment before each test. */
@@ -72,6 +69,7 @@ public class DetectionServiceTest {
     @AfterEach
     public void tearDown() {
         service.shutdown();
+        detectionTaskExecutor.shutdown(); // Added to properly shut down the executor
     }
 
     /** Tests the {@link DetectionService#submit(DetectionReq)} method. */

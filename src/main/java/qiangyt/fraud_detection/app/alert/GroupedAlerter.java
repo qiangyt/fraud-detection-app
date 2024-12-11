@@ -41,7 +41,7 @@ public class GroupedAlerter implements Alerter {
      *
      * @param alerter the alerter to be registered
      */
-    void registerAlerter(Alerter alerter) {
+    public void registerAlerter(Alerter alerter) {
         getAlerters().add(alerter);
     }
 

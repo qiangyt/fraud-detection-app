@@ -42,7 +42,7 @@ public class SqsConfig {
      */
     @Bean
     public Region getRegion() {
-        return Region.of(getProps().getRegion());
+        return Region.of(props.getRegion());
     }
 
     /**

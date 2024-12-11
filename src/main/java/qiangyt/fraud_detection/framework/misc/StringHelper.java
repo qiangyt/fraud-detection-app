@@ -73,6 +73,9 @@ public class StringHelper {
      * @param texts Multiple strings to be concatenated
      */
     public static <T> String join(String delimiter, Collection<T> texts) {
+        if (texts == null) {
+            return null; // Handle null collection
+        }
         return join(delimiter, texts.toArray());
     }
 
@@ -85,6 +88,9 @@ public class StringHelper {
      * @return a concatenated string with the specified delimiter
      */
     public static <T> String join(String delimiter, T[] array) {
+        if (array == null) {
+            return null; // Handle null array
+        }
         // Initialize a StringBuilder with an estimated capacity
         var r = new StringBuilder(array.length * 64);
         var isFirst = true;

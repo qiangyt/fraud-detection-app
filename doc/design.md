@@ -27,7 +27,7 @@
      <img src="./fraud_detection_app_architecture.png" width="800">
    </p>
 
-1. **Thred AWS SQS Queues**: 
+1. **Three AWS SQS Queues**: 
    1. `detection request queue` - a standard SQS queue for ingesting incoming transaction detection requests.
    2. `detection failure queue` - a standard SQS queue for failed detection requests.
    3. `alert queue` - a FIFO SQS queue for detected fraud alerts.

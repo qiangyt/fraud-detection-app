@@ -17,6 +17,7 @@
  */
 package qiangyt.fraud_detection.framework.aws.sqs;
 
+import static org.junit.jupiter.api.Assertions.assertEquals; // Added import for assertEquals
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
@@ -55,7 +56,7 @@ public class SqsConfigTest {
 
         // Assert that the region is not null and matches the expected value
         assertNotNull(region);
-        assert (region.id().equals("us-west-2"));
+        assertEquals("us-west-2", region.id()); // Changed to assertEquals
     }
 
     /** Tests the {@link SqsConfig#createClient(Region)} method. */
