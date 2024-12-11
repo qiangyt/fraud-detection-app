@@ -52,7 +52,7 @@
 
    Generate the minimal configuration file: copy [../.env.example](../.env.example), modify the configuration values, and save it as `../.env` in the root directory.
 
-3. Execute [../script/build.sh](../script/build.sh), which usually takes about 30 seconds. It will compile the Java code and package it into a Jar file: [../target/fraud-detection-app-0.0.1-SNAPSHOT.jar](../target/fraud-detection-app-0.0.1-SNAPSHOT.jar).
+3. Execute [../script/build.sh](../script/build.sh), which usually takes about 30 seconds. It will compile the Java code and package it into a Jar file: `../target/fraud-detection-app-0.0.1-SNAPSHOT.jar`
 
    Note: Since integration tests need to access external nodes like AWS SQS, they may occasionally fail due to network issues. If you encounter failures, ensure external network access is normal and rerun the script.
 
@@ -104,7 +104,7 @@
    script/generate-k8s-secret.sh
    ```
 
-   This script will read the configuration items from [../.env](../.env), base64 encode them, and write them to [../k8s/eks/fraud-detection-secret.yaml](../k8s/eks/fraud-detection-secret.yaml) (to be used later).
+   This script will read the configuration items from `../.env`, base64 encode them, and write them to `../k8s/eks/fraud-detection-secret.yaml` (to be used later).
 
 ### Apply Kubernetes configuration files
 
@@ -116,11 +116,11 @@
 
    This script will deploy:
 
-   - Secret (generated in the previous step): [../k8s/eks/fraud-detection-secret.yaml](../k8s/eks/fraud-detection-secret.yaml)
+   - Secret (generated in the previous step): `../k8s/eks/fraud-detection-secret.yaml`
    - Deployment: [../k8s/eks/fraud-detection-deployment.yaml](../k8s/eks/fraud-detection-deployment.yaml)
    - Service: [../k8s/eks/fraud-detection-service.yaml](../k8s/eks/fraud-detection-service.yaml)
    - HPA: [../k8s/eks/fraud-detection-hpa.yaml](../k8s/eks/fraud-detection-hpa.yaml)
    - CloudWatch Agent DaemonSet
 
-   Then refer to [Test fraud-detection-app](../ut_and_it.md) to test and verify in AWS Cloud Shell.
+   Then refer to [Test fraud-detection-app](./ut_and_it.md) to test and verify in AWS Cloud Shell.
 

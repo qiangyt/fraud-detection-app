@@ -117,3 +117,5 @@ Several design considerations are necessary for a basic real-world fraud detecti
 3. `rule admin` microservice is needed always and also needs an administrative UI to manage the rules including a dashboard.
 
 4. Distributed tracing is essential for a system composed of many microservices
+
+5. Exposes healthy endpoints (readiness etc.) in K8S deployments
