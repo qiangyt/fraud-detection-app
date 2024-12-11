@@ -29,7 +29,7 @@
        - Code coverage report: 
          [./target/jacoco-report/index.html](./target/jacoco-report/index.html)
 
-         Reached 100% coverage:
+         We achieved 100% both line coverage and branch coverage!
          <p align="left">
          <img src="./coverage.png" width="800">
          </p>
@@ -57,9 +57,23 @@
 
 ### Running on AWS K8S
 
+   The app runs when deployed to K8S.
 
-### Running on AWS EC2
+   Please replace all instances of `localhost` in the following sections to test it.
 
+   The service logs transactions and alerts to AWS CloudWatch. We can view the logs using the following command:
+
+   ```bash
+   aws logs get-log-events --log-group-name "<log-group-name>" --log-stream-name "<log-stream-name>"
+   ```
+
+   To delete the deployed Kubernetes resources:
+
+   ```bash
+   kubectl delete -f k8s/
+   ```
+
+   Ensure to also delete all AWS-related resources (such as ECR repositories, SQS queues, and CloudWatch logs and metrics).
 
 ### Verifying Core Logic
 
@@ -75,7 +89,7 @@
 
       ```bash
       curl --request POST \
-           --url http://localhost:8080/rest/detection \
+           --url $SERVICE_URL/rest/detection \
            --header 'content-type: application/json' \
            --data '{"accountId": "integration-test-account-1","amount": 99900000,"memo": "N/A"}'
       ```
@@ -99,38 +113,24 @@
          - CloudWatch Metric
          - SQS Alert Queue
 
-   2. Synchronously submit a detection request
+   2. Synchronously submit a detection request:
 
       ```bash
       curl --request GET \
-           --url http://localhost:8080/rest/detection \
+           --url $SERVICE_URL/rest/detection \
            --header 'content-type: application/json' \
            --data '{"id": "integration-test-2","accountId": "fbiden","amount": 999,"memo": "N/A"}'
       ```
 
-      This API is designed for convenient test verification. It directly returns the detection result instead of triggerring an alert. The return result is as follows:
+      This API is designed for convenient test verification. It directly returns the detection result instead of triggering an alert. The return result is as follows:
 
       ```bash
       {"id":"I4XyQT5GSh2tjbp4Ocf_dQ","entity":{"accountId":"fbiden","amount":999,"memo":"N/A","id":"integration-test-2","receivedAt":null},"fraudulent":true,"category":"SUSPICIOUS_ACCOUNT","message":"the transaction originates from a suspicious account","detectedAt":1733891805866}
       ```
 
+### Futher Test Improvements
 
+  - [localstack](https://localstack.cloud/), a fully functional local AWS cloud stack to develop offline
 
-## Logs
+  - [Testcontainers](https://testcontainers.com/), integration tests and unit tests with real 3rd-party dependencies (including supports the `localstack`)
 
-The service logs transactions and alerts to AWS CloudWatch. You can view the logs using the following command:
-
-```bash
-aws logs get-log-events --log-group-name "<log-group-name>" --log-stream-name "<log-stream-name>"
-```
-
-
-## Cleaning Up Resources
-
-To delete the deployed Kubernetes resources:
-
-```bash
-kubectl delete -f k8s/
-```
-
-Ensure to also delete all AWS-related resources (such as ECR repositories, SQS queues, and CloudWatch logs and metrics).

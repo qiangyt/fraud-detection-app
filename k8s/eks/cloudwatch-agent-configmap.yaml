@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cloudwatch-agent-config
+  namespace: amazon-cloudwatch
+data:
+  # Replace log_group_name with your desired CloudWatch Log Group name.
+  cwagentconfig.json: |
+    {
+      "logs": {
+        "metrics_collected": {
+          "emf": {}
+        },
+        "force_flush_interval": 5,
+        "logs_collected": {
+          "files": {
+            "collect_list": [
+              {
+                "file_path": "/var/log/containers/*.log",
+                "log_group_name": "/aws/eks/app-logs",
+                "log_stream_name": "{instance_id}/{container_id}",
+                "timezone": "UTC"
+              }
+            ]
+          }
+        }
+      }
+    }

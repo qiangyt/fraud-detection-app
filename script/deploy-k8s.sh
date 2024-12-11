@@ -14,6 +14,13 @@ function k8s_apply() {
   echo "Kubernetes $_manifest_file is applied successfully"
 }
 
+# kubectl create namespace amazon-cloudwatch
+# k8s_apply apply -f cloudwatch-agent-configmap.yaml
+# curl https://raw.githubusercontent.com/aws-samples/amazon-cloudwatch-container-insights/latest/k8s/deployment-mode/daemonset/container-insights-monitoring/cloudwatch-agent.yaml -o cloudwatch-agent.yaml
+# kubectl apply -f cloudwatch-agent.yaml
+# kubectl get daemonset -n amazon-cloudwatch
+# kubectl get pods -n amazon-cloudwatch
+# kubectl logs <cloudwatch-agent-pod-name> -n amazon-cloudwatch
 
 k8s_apply fraud-detection-secret.yaml
 k8s_apply fraud-detection-deployment.yaml
