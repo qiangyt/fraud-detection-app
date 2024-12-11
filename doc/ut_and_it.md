@@ -2,7 +2,7 @@
 
    - Regarding the configuration of detection rule values:
   
-      For simplicity, the relevant configuration values are hard-coded in `src/main/java/qiangyt/fraud_detection/app/config/RuleProps.java`, including:
+      For simplicity, the relevant configuration values are hard-coded in [../src/main/java/qiangyt/fraud_detection/app/config/RuleProps.java](../src/main/java/qiangyt/fraud_detection/app/config/RuleProps.java), including:
 
       - Maximum transaction amount: 100000
 
@@ -20,14 +20,14 @@
 
       Modifications require a rebuild to take effect.
 
-   - When executing the build script [./script/build.sh](./script/build.sh), it will run all unit tests and integration tests, and generate a test coverage report, usually taking about 30 seconds.
+   - When executing the build script [../script/build.sh](../script/build.sh), it will run all unit tests and integration tests, and generate a test coverage report, usually taking about 30 seconds.
 
      - Build artifacts:
 
-       - Test execution report: [./target/reports/surefire.html](./target/reports/surefire.html)
+       - Test execution report: `../target/reports/surefire.html`
 
        - Code coverage report: 
-         [./target/jacoco-report/index.html](./target/jacoco-report/index.html)
+         `../target/jacoco-report/index.html`
 
          We achieved 100% both line coverage and branch coverage!
          <p align="left">
@@ -53,7 +53,7 @@
 
 ### Running Locally
 
-   Execute [./script/run.sh](./script/run.sh). This script will use the local Java environment to run [./target/fraud-detection-app-*-SNAPSHOT.jar](./target/fraud-detection-app-0.0.1-SNAPSHOT.jar)
+   Execute [../script/run.sh](../script/run.sh). This script will use the local Java environment to run `../target/fraud-detection-app-*-SNAPSHOT.jar`
 
 ### Running on AWS K8S
 
