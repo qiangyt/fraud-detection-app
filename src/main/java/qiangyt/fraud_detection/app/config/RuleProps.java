@@ -35,5 +35,5 @@ public class RuleProps {
     int maxTransactionAmount = 100000;
 
     /** Set of suspicious account usernames. */
-    Set<String> suspicousAccounts = Set.of("cgrant", "fbiden");
+    Set<String> suspiciousAccounts = Set.of("cgrant", "fbiden");
 }

@@ -50,7 +50,7 @@ public class SuspiciousAccountRule implements DetectionRule {
      */
     @Override
     public FraudCategory detect(DetectionReqEntity entity) {
-        if (getProps().getSuspicousAccounts().contains(entity.getAccountId())) {
+        if (getProps().getSuspiciousAccounts().contains(entity.getAccountId())) {
             return FraudCategory.SUSPICIOUS_ACCOUNT;
         }
         return FraudCategory.NONE;
