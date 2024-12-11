@@ -134,3 +134,4 @@
 
   - [Testcontainers](https://testcontainers.com/), integration tests and unit tests with real 3rd-party dependencies (including supports the `localstack`)
 
+  - [K0S](https://docs.k0sproject.io/stable/), all-inclusive Kubernetes distribution for local K8S testing
