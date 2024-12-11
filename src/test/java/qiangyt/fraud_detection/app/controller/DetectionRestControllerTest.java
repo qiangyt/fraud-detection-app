@@ -1,80 +1,120 @@
-/*
- * fraud-detection-app - fraud detection app
- * Copyright © 2024 Yiting Qiang (qiangyt@wxcount.com)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
 package qiangyt.fraud_detection.app.controller;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import qiangyt.fraud_detection.app.service.DetectionService;
-import qiangyt.fraud_detection.framework.json.Jackson;
-import qiangyt.fraud_detection.framework.misc.UuidHelper;
-import qiangyt.fraud_detection.framework.test.AbstractRestTest;
-import qiangyt.fraud_detection.sdk.DetectionReq;
-import qiangyt.fraud_detection.sdk.DetectionReqEntity;
-import qiangyt.fraud_detection.sdk.DetectionResult;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 
-/**
- * Test class for {@link DetectionRestController}. It contains test cases for the REST endpoints.
- */
-@ContextConfiguration(classes = {DetectionRestController.class})
 @WebMvcTest(DetectionRestController.class)
-public class DetectionRestControllerTest extends AbstractRestTest {
+public class DetectionRestControllerTest {
 
-    @MockitoBean DetectionService service;
+    @Autowired
+    private MockMvc mockMvc;
 
-    @MockitoBean Jackson jackson;
+    @MockBean
+    private DetectionService service;
 
-    /**
-     * Test case for the submit endpoint. It verifies that a detection request can be submitted
-     * successfully.
-     */
-    @Test
-    void test_submit() {
-        // Create a detection request
-        var req = DetectionReq.builder().accountId("a").amount(3).build();
-        var entity = req.toEntity();
-
-        // Mock the service to return the entity when submit is called
-        when(this.service.submit(any(DetectionReq.class))).thenReturn(entity);
-
-        // Perform a POST request and expect an OK response
-        postThenExpectOk(req, entity, "/rest/detection");
+    @BeforeEach
+    public void setUp() {
+        // Initialize any necessary setup here if needed
     }
 
     /**
-     * Test case for the detect endpoint. It verifies that a detection result can be retrieved
-     * successfully.
+     * Test case for submitting a detection request asynchronously.
+     *
+     * <p>Steps:
+     * 1. Create a valid DetectionReq object.
+     * 2. Mock the submit method of DetectionService to return a mock DetectionReqEntity.
+     * 3. Perform a POST request with the DetectionReq object as the body.
+     * 4. Verify that the submit method of DetectionService is called once with the correct argument.
+     * 5. Verify that the response status is OK and the returned entity matches the expected result.
      */
     @Test
-    void test_detect() {
-        // Generate a short UUID for the detection request entity
-        String id = UuidHelper.shortUuid();
-        var entity = DetectionReqEntity.builder().id(id).build();
-        var result = DetectionResult.builder().entity(entity).build();
+    public void testSubmitAsync() throws Exception {
+        DetectionReq req = new DetectionReq();
+        DetectionReqEntity mockEntity = new DetectionReqEntity();
 
-        // Mock the service to return the result when detect is called
-        when(this.service.detect(any(DetectionReqEntity.class))).thenReturn(result);
+        when(service.submit(req)).thenReturn(mockEntity);
 
-        // Perform a GET request and expect an OK response
-        getThenExpectOk(entity, result, "/rest/detection");
+        mockMvc.perform(post("/rest/detection")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"key\":\"value\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(mockEntity.getId()))
+                .andExpect(jsonPath("$.status").value(mockEntity.getStatus()));
+
+        verify(service, times(1)).submit(req);
+    }
+
+    /**
+     * Test case for submitting a detection request synchronously.
+     *
+     * <p>Steps:
+     * 1. Create a valid DetectionReqEntity object.
+     * 2. Mock the detect method of DetectionService to return a mock DetectionResult.
+     * 3. Perform a GET request with the DetectionReqEntity object as the body.
+     * 4. Verify that the detect method of DetectionService is called once with the correct argument.
+     * 5. Verify that the response status is OK and the returned result matches the expected result.
+     */
+    @Test
+    public void testDetectSync() throws Exception {
+        DetectionReqEntity entity = new DetectionReqEntity();
+        DetectionResult mockResult = new DetectionResult();
+
+        when(service.detect(entity)).thenReturn(mockResult);
+
+        mockMvc.perform(get("/rest/detection")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"key\":\"value\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(mockResult.getId()))
+                .andExpect(jsonPath("$.result").value(mockResult.getResult()));
+
+        verify(service, times(1)).detect(entity);
+    }
+
+    /**
+     * Test case for submitting an invalid detection request asynchronously.
+     *
+     * <p>Steps:
+     * 1. Create an invalid DetectionReq object (e.g., missing required fields).
+     * 2. Perform a POST request with the invalid DetectionReq object as the body.
+     * 3. Verify that the response status is BAD_REQUEST and the returned error message matches the expected result.
+     */
+    @Test
+    public void testSubmitAsyncInvalidRequest() throws Exception {
+        DetectionReq req = new DetectionReq(); // Invalid request (e.g., missing required fields)
+
+        mockMvc.perform(post("/rest/detection")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"key\":\"value\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Invalid request"));
+    }
+
+    /**
+     * Test case for submitting an invalid detection request synchronously.
+     *
+     * <p>Steps:
+     * 1. Create an invalid DetectionReqEntity object (e.g., missing required fields).
+     * 2. Perform a GET request with the invalid DetectionReqEntity object as the body.
+     * 3. Verify that the response status is BAD_REQUEST and the returned error message matches the expected result.
+     */
+    @Test
+    public void testDetectSyncInvalidRequest() throws Exception {
+        DetectionReqEntity entity = new DetectionReqEntity(); // Invalid request (e.g., missing required fields)
+
+        mockMvc.perform(get("/rest/detection")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"key\":\"value\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Invalid request"));
     }
 }

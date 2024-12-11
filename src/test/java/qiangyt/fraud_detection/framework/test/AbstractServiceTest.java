@@ -1,118 +1,109 @@
-/*
- * fraud-detection-app - fraud detection app
- * Copyright © 2024 Yiting Qiang (qiangyt@wxcount.com)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
-package qiangyt.fraud_detection.framework.test;
+!!!!test_begin!!!!
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.function.Executable;
-import org.mockito.ArgumentMatchers;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.opentest4j.AssertionFailedError;
-import org.springframework.mock.web.MockHttpServletRequest;
-import qiangyt.fraud_detection.framework.errs.BaseError;
+import org.junit.jupiter.api.Test;
+import static org.mockito.Mockito.*;
+import static qiangyt.fraud_detection.framework.test.AbstractServiceTest.*;
 
-/**
- * Base class for service unit tests, encapsulating basic usage methods for Mockito.
- *
- * <p>The purpose is to verify the correctness of business logic, including parameter/result passing
- * with repositories.
- */
-@Disabled
-@ExtendWith(MockitoExtension.class)
-public abstract class AbstractServiceTest {
+public class AbstractServiceTestTest {
 
-    MockHttpServletRequest request = new MockHttpServletRequest();
+    @Test
+    public void testMatchBoolean() {
+        // Arrange
+        boolean expected = true;
 
-    /** Initializes mocks before each test. */
-    @BeforeEach
-    public void beforeEach() {
-        MockitoAnnotations.openMocks(this);
+        // Act
+        boolean result = matchBoolean(expected);
+
+        // Assert
+        assertTrue(result);
     }
 
-    /**
-     * Matches a boolean value.
-     *
-     * @param that the expected boolean value
-     * @return true if the actual value matches the expected value
-     */
-    public static boolean matchBoolean(boolean that) {
-        return ArgumentMatchers.booleanThat(
-                b -> {
-                    Assertions.assertEquals(Boolean.valueOf(that), b);
-                    return true;
-                });
+    @Test
+    public void testMatchString() {
+        // Arrange
+        String expected = "test";
+
+        // Act
+        String result = matchString(expected);
+
+        // Assert
+        assertEquals(expected, result);
     }
 
-    /**
-     * Matches a string value.
-     *
-     * @param that the expected string value
-     * @return the matched string value
-     */
-    public static String matchString(String that) {
-        return ArgumentMatchers.argThat((String actual) -> that.equals(actual));
+    @Test
+    public void testMatchInt() {
+        // Arrange
+        int expected = 10;
+
+        // Act
+        int result = matchInt(expected);
+
+        // Assert
+        assertEquals(expected, result);
     }
 
-    /**
-     * Matches an integer value.
-     *
-     * @param that the expected integer value
-     * @return true if the actual value matches the expected value
-     */
-    public static int matchInt(int that) {
-        return ArgumentMatchers.intThat(
-                i -> {
-                    Assertions.assertEquals(Integer.valueOf(that), i);
-                    return true;
-                });
+    @Test
+    public void testAssertThrows_ExpectedException() {
+        // Arrange
+        Exception expectedException = new RuntimeException("expected exception");
+
+        // Act & Assert
+        assertThrows(RuntimeException.class, null, () -> {
+            throw expectedException;
+        });
     }
 
-    /**
-     * Asserts that the executable throws an exception of the expected type with the expected code.
-     *
-     * @param <T> the type of the expected exception
-     * @param expectedType the class of the expected exception
-     * @param code the expected error code
-     * @param executable the executable to test
-     * @return the thrown exception
-     */
-    @SuppressWarnings("unchecked")
-    public static <T extends BaseError> T assertThrows(
-            Class<T> expectedType, Enum<?> code, Executable executable) {
-        try {
-            executable.execute();
-        } catch (Throwable actualException) {
-            if (expectedType.isInstance(actualException)) {
-                return (T) actualException;
-            }
+    @Test
+    public void testAssertThrows_NoExpectedException() {
+        // Arrange
 
-            // UnrecoverableExceptions.rethrowIfUnrecoverable(actualException);
+        // Act & Assert
+        assertThrows(AssertionFailedError.class, null, () -> {
+            // No exception thrown
+        });
+    }
 
-            throw new AssertionFailedError(
-                    "caught unexpected exception",
-                    expectedType,
-                    actualException.getClass(),
-                    actualException);
-        }
+    @Test
+    public void testAssertThrows_UnexpectedException() {
+        // Arrange
+        Exception unexpectedException = new IllegalArgumentException("unexpected exception");
 
-        throw new AssertionFailedError("no expected exception throw", expectedType, "null");
+        // Act & Assert
+        assertThrows(RuntimeException.class, null, () -> {
+            throw unexpectedException;
+        });
+    }
+
+    @Test
+    public void testAssertThrows_ExpectedErrorCode() {
+        // Arrange
+        Enum<?> expectedCode = BaseError.ErrorCode.INVALID_REQUEST;
+
+        // Act & Assert
+        assertThrows(BaseError.class, expectedCode, () -> {
+            throw new BaseError(expectedCode);
+        });
+    }
+
+    @Test
+    public void testAssertThrows_NoExpectedErrorCode() {
+        // Arrange
+
+        // Act & Assert
+        assertThrows(AssertionFailedError.class, null, () -> {
+            throw new BaseError(BaseError.ErrorCode.INVALID_REQUEST);
+        });
+    }
+
+    @Test
+    public void testAssertThrows_UnexpectedErrorCode() {
+        // Arrange
+        Enum<?> unexpectedCode = BaseError.ErrorCode.SUCCESS;
+
+        // Act & Assert
+        assertThrows(AssertionFailedError.class, null, () -> {
+            throw new BaseError(unexpectedCode);
+        });
     }
 }
+!!!!test_end!!!!

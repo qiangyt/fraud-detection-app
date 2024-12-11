@@ -1,76 +1,100 @@
-/*
- * fraud-detection-app - fraud detection app
- * Copyright © 2024 Yiting Qiang (qiangyt@wxcount.com)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
-package qiangyt.fraud_detection.app.queue;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import qiangyt.fraud_detection.app.config.SqsProps;
-import qiangyt.fraud_detection.framework.json.Jackson;
-import software.amazon.awssdk.services.sqs.SqsClient;
-import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-/** Unit tests for {@link SqsDetectionDeadLetterQueue}. */
 public class SqsDetectionDeadLetterQueueTest {
 
-    @Mock SqsProps props;
+    private SqsDetectionDeadLetterQueue sqsDetectionDeadLetterQueue;
+    private SqsBaseQueue<String> mockSqsBaseQueue;
 
-    @Mock SqsClient client;
-
-    @Mock Jackson jackson;
-
-    @InjectMocks SqsDetectionDeadLetterQueue sqsDetectionDeadLetterQueue;
-
-    /** Sets up the test environment before each test. */
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.openMocks(this);
+        mockSqsBaseQueue = mock(SqsBaseQueue.class);
+        sqsDetectionDeadLetterQueue = new SqsDetectionDeadLetterQueue();
+        sqsDetectionDeadLetterQueue.setProps(mock(SqsProperties.class));
     }
 
     /**
-     * Tests the {@link SqsDetectionDeadLetterQueue#send(String)} method. Verifies that the correct
-     * queue URL and message body are sent.
+     * Test case to verify that the send method correctly sends a message to the SQS detection queue.
      */
     @Test
-    public void testSendToDeadLetterQueue() {
-        String deadLetterQueueUrl = "http://example.com/dead-letter-queue";
-        String messageBody = "{\"key\":\"value\"}";
+    public void testSendHappyPath() {
+        // Arrange
+        String msg = "test message";
+        when(mockSqsBaseQueue.getProps()).thenReturn(mock(SqsProperties.class));
+        when(mockSqsBaseQueue.getProps().getDetectDeadLetterQueueUrl()).thenReturn("http://example.com/queue");
 
-        // Mock the behavior of props
-        when(props.getDetectDeadLetterQueueUrl()).thenReturn(deadLetterQueueUrl);
-        when(jackson.str(messageBody)).thenReturn(messageBody);
+        // Act
+        sqsDetectionDeadLetterQueue.send(msg);
 
-        // Call the method under test
-        sqsDetectionDeadLetterQueue.send(messageBody);
+        // Assert
+        verify(mockSqsBaseQueue, times(1)).send(eq("http://example.com/queue"), eq(msg), eq(""), eq(""));
+    }
 
-        // Capture the SendMessageRequest argument
-        var captor = ArgumentCaptor.forClass(SendMessageRequest.class);
-        verify(client).sendMessage(captor.capture());
+    /**
+     * Test case to verify that the send method throws an IllegalArgumentException when the message is null.
+     */
+    @Test
+    public void testSendNullMessage() {
+        // Arrange
+        String msg = null;
 
-        // Verify the captured request
-        var capturedRequest = captor.getValue();
-        assertEquals(deadLetterQueueUrl, capturedRequest.queueUrl());
-        assertEquals(messageBody, capturedRequest.messageBody());
+        // Act & Assert
+        assertThrows(IllegalArgumentException.class, () -> sqsDetectionDeadLetterQueue.send(msg));
+    }
+
+    /**
+     * Test case to verify that the send method throws an IllegalArgumentException when the message is empty.
+     */
+    @Test
+    public void testSendEmptyMessage() {
+        // Arrange
+        String msg = "";
+
+        // Act & Assert
+        assertThrows(IllegalArgumentException.class, () -> sqsDetectionDeadLetterQueue.send(msg));
+    }
+
+    /**
+     * Test case to verify that the send method correctly handles a corner case where the queue URL is null.
+     */
+    @Test
+    public void testSendNullQueueUrl() {
+        // Arrange
+        String msg = "test message";
+        when(mockSqsBaseQueue.getProps()).thenReturn(mock(SqsProperties.class));
+        when(mockSqsBaseQueue.getProps().getDetectDeadLetterQueueUrl()).thenReturn(null);
+
+        // Act & Assert
+        assertThrows(NullPointerException.class, () -> sqsDetectionDeadLetterQueue.send(msg));
+    }
+
+    /**
+     * Test case to verify that the send method correctly handles a corner case where the queue URL is empty.
+     */
+    @Test
+    public void testSendEmptyQueueUrl() {
+        // Arrange
+        String msg = "test message";
+        when(mockSqsBaseQueue.getProps()).thenReturn(mock(SqsProperties.class));
+        when(mockSqsBaseQueue.getProps().getDetectDeadLetterQueueUrl()).thenReturn("");
+
+        // Act & Assert
+        assertThrows(NullPointerException.class, () -> sqsDetectionDeadLetterQueue.send(msg));
+    }
+
+    /**
+     * Test case to verify that the send method correctly handles a corner case where the queue URL is invalid.
+     */
+    @Test
+    public void testSendInvalidQueueUrl() {
+        // Arrange
+        String msg = "test message";
+        when(mockSqsBaseQueue.getProps()).thenReturn(mock(SqsProperties.class));
+        when(mockSqsBaseQueue.getProps().getDetectDeadLetterQueueUrl()).thenReturn("invalid://queue");
+
+        // Act & Assert
+        assertThrows(NullPointerException.class, () -> sqsDetectionDeadLetterQueue.send(msg));
     }
 }

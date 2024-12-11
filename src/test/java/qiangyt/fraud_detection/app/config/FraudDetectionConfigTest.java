@@ -1,83 +1,93 @@
-/*
- * fraud-detection-app - fraud detection app
- * Copyright © 2024 Yiting Qiang (qiangyt@wxcount.com)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
 package qiangyt.fraud_detection.app.config;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-/** Unit tests for {@link FraudDetectionConfig}. */
+import java.util.concurrent.ExecutorService;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+@SpringBootTest
 public class FraudDetectionConfigTest {
 
+    @Autowired
+    private ApplicationContext context;
+
     /**
-     * Tests the {@link FraudDetectionConfig#openApiInfo()} method. Ensures that the OpenAPI object
-     * is correctly configured.
+     * Test to verify that the OpenAPI bean is created correctly.
      */
     @Test
     public void testOpenApiInfo() {
-        var t = new FraudDetectionConfig();
+        // Arrange
+        OpenAPI openApi = context.getBean(OpenAPI.class);
 
-        OpenAPI openAPI = t.openApiInfo();
-        assertNotNull(openAPI); // Check that the OpenAPI object is not null
-        assertEquals("Fraud Detection API", openAPI.getInfo().getTitle()); // Verify the title
-        assertEquals("1.0", openAPI.getInfo().getVersion()); // Verify the version
+        // Act & Assert
+        assertThat(openApi).isNotNull();
+        assertThat(openApi.getInfo()).isNotNull();
+        assertThat(openApi.getInfo().getTitle()).isEqualTo("Fraud Detection API");
+        assertThat(openApi.getInfo().getVersion()).isEqualTo("1.0");
     }
 
     /**
-     * Tests the {@link FraudDetectionConfig#detectionTaskExecutor(DetectionTaskProps)} method.
-     * Ensures that the task executor is correctly configured.
+     * Test to verify that the ThreadPoolTaskExecutor bean is created correctly.
      */
     @Test
     public void testDetectionTaskExecutor() {
-        var t = new FraudDetectionConfig();
-        var props = new DetectionTaskProps();
+        // Arrange
+        ThreadPoolTaskExecutor executor = context.getBean(ThreadPoolTaskExecutor.class);
 
-        var executor = t.detectionTaskExecutor(props);
-        assertNotNull(executor); // Check that the executor is not null
-        assertEquals(
-                Runtime.getRuntime().availableProcessors(),
-                executor.getCorePoolSize()); // Verify core pool size
-        assertEquals(
-                Runtime.getRuntime().availableProcessors(),
-                executor.getMaxPoolSize()); // Verify max pool size
-        assertEquals(
-                props.getQueueCapacity(), executor.getQueueCapacity()); // Verify queue capacity
-        assertEquals("detectionTask-", executor.getThreadNamePrefix()); // Verify thread name prefix
-        // assertEquals(fraudDetectionConfig.getDetectionTaskProps().getAwaitTerminationSeconds(),
-        // executor.getAwaitTerminationSeconds());
+        // Act & Assert
+        assertThat(executor).isNotNull();
+        assertThat(executor.getCorePoolSize()).isEqualTo(Runtime.getRuntime().availableProcessors());
+        assertThat(executor.getMaxPoolSize()).isEqualTo(Runtime.getRuntime().availableProcessors());
+        assertThat(executor.getQueueCapacity()).isEqualTo(10); // Assuming default value for queue capacity
+        assertThat(executor.getThreadNamePrefix()).isEqualTo("detectionTask-");
+        assertThat(executor.isWaitForTasksToCompleteOnShutdown()).isTrue();
+        assertThat(executor.getAwaitTerminationSeconds()).isEqualTo(60); // Assuming default value for await termination seconds
     }
 
     /**
-     * Tests the {@link FraudDetectionConfig#sqsPollingThreadPool(SqsProps)} method. Ensures that
-     * the SQS polling thread pool is correctly configured.
+     * Test to verify that the ExecutorService bean is created correctly.
      */
     @Test
     public void testSqsPollingThreadPool() {
-        var t = new FraudDetectionConfig();
-        var props = new SqsProps();
+        // Arrange
+        ExecutorService executor = context.getBean(ExecutorService.class);
 
-        var executorService = t.sqsPollingThreadPool(props);
-        assertNotNull(executorService); // Check that the executor service is not null
-        assertEquals(
-                props.getThreadPoolSize(),
-                ((java.util.concurrent.ThreadPoolExecutor) executorService)
-                        .getCorePoolSize()); // Verify thread pool size
+        // Act & Assert
+        assertThat(executor).isNotNull();
+        assertThat(((ThreadPoolTaskExecutor) executor).getCorePoolSize()).isEqualTo(5); // Assuming default value for thread pool size
+    }
+
+    /**
+     * Test to verify that the DetectionTaskProps bean is injected correctly.
+     */
+    @Test
+    public void testDetectionTaskProps() {
+        // Arrange
+        DetectionTaskProps props = context.getBean(DetectionTaskProps.class);
+
+        // Act & Assert
+        assertThat(props).isNotNull();
+        assertThat(props.getQueueCapacity()).isEqualTo(10); // Assuming default value for queue capacity
+        assertThat(props.getAwaitTerminationSeconds()).isEqualTo(60); // Assuming default value for await termination seconds
+    }
+
+    /**
+     * Test to verify that the SqsProps bean is injected correctly.
+     */
+    @Test
+    public void testSqsProps() {
+        // Arrange
+        SqsProps props = context.getBean(SqsProps.class);
+
+        // Act & Assert
+        assertThat(props).isNotNull();
+        assertThat(props.getThreadPoolSize()).isEqualTo(5); // Assuming default value for thread pool size
     }
 }

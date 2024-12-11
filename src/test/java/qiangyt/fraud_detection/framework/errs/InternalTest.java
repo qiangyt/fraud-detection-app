@@ -1,99 +1,309 @@
-/*
- * fraud-detection-app - fraud detection app
- * Copyright © 2024 Yiting Qiang (qiangyt@wxcount.com)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
 package qiangyt.fraud_detection.framework.errs;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
+import static org.junit.jupiter.api.Assertions.*;
 
-/** Unit tests for the {@link Internal} class. */
 public class InternalTest {
 
-    /** Tests the constructor of {@link Internal} with a formatted message. */
+    /**
+     * Test the constructor with message format and parameters.
+     */
     @Test
-    public void testInternalWithMessageFormat() {
-        // Create an Internal exception with a formatted message
-        var ex = new Internal("Internal error: %s", "error1");
+    public void testConstructorWithMessageFormatAndParameters() {
+        // Arrange
+        String messageFormat = "An error occurred: {0}";
+        Object[] params = {"test"};
 
-        // Verify the status, code, and message
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, ex.getStatus());
-        assertEquals(ErrorCode.NONE, ex.getCode());
-        assertEquals("Internal error: error1", ex.getMessage());
+        // Act
+        Internal internalError = new Internal(messageFormat, params);
+
+        // Assert
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), internalError.getStatus().value());
+        assertEquals("NONE", internalError.getCode());
+        assertEquals("An error occurred: test", internalError.getMessage());
     }
 
-    /** Tests the constructor of {@link Internal} with a simple message. */
+    /**
+     * Test the constructor with message.
+     */
     @Test
-    public void testInternalWithMessage() {
-        // Create an Internal exception with a simple message
-        var ex = new Internal("Internal error");
+    public void testConstructorWithMessage() {
+        // Arrange
+        String message = "An error occurred";
 
-        // Verify the status, code, and message
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, ex.getStatus());
-        assertEquals(ErrorCode.NONE, ex.getCode());
-        assertEquals("Internal error", ex.getMessage());
+        // Act
+        Internal internalError = new Internal(message);
+
+        // Assert
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), internalError.getStatus().value());
+        assertEquals("NONE", internalError.getCode());
+        assertEquals("An error occurred", internalError.getMessage());
     }
 
-    /** Tests the constructor of {@link Internal} with a cause and a formatted message. */
+    /**
+     * Test the constructor with cause, message format, and parameters.
+     */
     @Test
-    public void testInternalWithCauseAndMessageFormat() {
-        // Create a cause exception
-        var cause = new RuntimeException("Root cause");
+    public void testConstructorWithCauseMessageFormatAndParameters() {
+        // Arrange
+        Throwable cause = new RuntimeException("test cause");
+        String messageFormat = "An error occurred: {0}";
+        Object[] params = {"test"};
 
-        // Create an Internal exception with a cause and a formatted message
-        var ex = new Internal(cause, "Internal error: %s", "error1");
+        // Act
+        Internal internalError = new Internal(cause, messageFormat, params);
 
-        // Verify the status, code, message, and cause
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, ex.getStatus());
-        assertEquals(ErrorCode.NONE, ex.getCode());
-        assertEquals("Internal error: error1", ex.getMessage());
-        assertEquals(cause, ex.getCause());
+        // Assert
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), internalError.getStatus().value());
+        assertEquals("NONE", internalError.getCode());
+        assertEquals("An error occurred: test", internalError.getMessage());
+        assertSame(cause, internalError.getCause());
     }
 
-    /** Tests the constructor of {@link Internal} with a cause and a simple message. */
+    /**
+     * Test the constructor with cause and message.
+     */
     @Test
-    public void testInternalWithCauseAndMessage() {
-        // Create a cause exception
-        var cause = new RuntimeException("Root cause");
+    public void testConstructorWithCauseAndMessage() {
+        // Arrange
+        Throwable cause = new RuntimeException("test cause");
+        String message = "An error occurred";
 
-        // Create an Internal exception with a cause and a simple message
-        var ex = new Internal(cause, "Internal error");
+        // Act
+        Internal internalError = new Internal(cause, message);
 
-        // Verify the status, code, message, and cause
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, ex.getStatus());
-        assertEquals(ErrorCode.NONE, ex.getCode());
-        assertEquals("Internal error", ex.getMessage());
-        assertEquals(cause, ex.getCause());
+        // Assert
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), internalError.getStatus().value());
+        assertEquals("NONE", internalError.getCode());
+        assertEquals(message, internalError.getMessage());
+        assertSame(cause, internalError.getCause());
     }
 
-    /** Tests the constructor of {@link Internal} with only a cause. */
+    /**
+     * Test the constructor with cause.
+     */
     @Test
-    public void testInternalWithCause() {
-        // Create a cause exception
-        var cause = new RuntimeException("Root cause");
+    public void testConstructorWithCause() {
+        // Arrange
+        Throwable cause = new RuntimeException("test cause");
 
-        // Create an Internal exception with only a cause
-        var ex = new Internal(cause);
+        // Act
+        Internal internalError = new Internal(cause);
 
-        // Verify the status, code, message, and cause
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, ex.getStatus());
-        assertEquals(ErrorCode.NONE, ex.getCode());
-        assertEquals("Internal Server Error", ex.getMessage());
-        assertEquals(cause, ex.getCause());
+        // Assert
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), internalError.getStatus().value());
+        assertEquals("NONE", internalError.getCode());
+        assertNull(internalError.getMessage());
+        assertSame(cause, internalError.getCause());
+    }
+
+    /**
+     * Test the toResponse method with valid parameters.
+     */
+    @Test
+    public void testToResponseWithValidParameters() {
+        // Arrange
+        Internal internalError = new Internal("An error occurred");
+        String path = "/test";
+
+        // Act
+        ErrorResponse response = internalError.toResponse(path);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), response.getStatus());
+        assertEquals("INTERNAL_SERVER_ERROR", response.getError());
+        assertEquals("NONE", response.getCode());
+        assertEquals("", response.getMessage());
+    }
+
+    /**
+     * Test the toResponse method with null path.
+     */
+    @Test
+    public void testToResponseWithNullPath() {
+        // Arrange
+        Internal internalError = new Internal("An error occurred");
+        String path = null;
+
+        // Act & Assert
+        assertThrows(NullPointerException.class, () -> internalError.toResponse(path));
+    }
+
+    /**
+     * Test the toResponse method with empty path.
+     */
+    @Test
+    public void testToResponseWithEmptyPath() {
+        // Arrange
+        Internal internalError = new Internal("An error occurred");
+        String path = "";
+
+        // Act
+        ErrorResponse response = internalError.toResponse(path);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), response.getStatus());
+        assertEquals("INTERNAL_SERVER_ERROR", response.getError());
+        assertEquals("NONE", response.getCode());
+        assertEquals("", response.getMessage());
+    }
+
+    /**
+     * Test the toResponse method with null timestamp.
+     */
+    @Test
+    public void testToResponseWithNullTimestamp() {
+        // Arrange
+        Internal internalError = new Internal("An error occurred");
+        ErrorResponse.builder().timestamp(null);
+
+        // Act & Assert
+        assertThrows(NullPointerException.class, () -> internalError.toResponse("/test"));
+    }
+
+    /**
+     * Test the toResponse method with null status.
+     */
+    @Test
+    public void testToResponseWithNullStatus() {
+        // Arrange
+        Internal internalError = new Internal("An error occurred");
+        ErrorResponse.builder().status(null);
+
+        // Act & Assert
+        assertThrows(NullPointerException.class, () -> internalError.toResponse("/test"));
+    }
+
+    /**
+     * Test the toResponse method with null error.
+     */
+    @Test
+    public void testToResponseWithNullError() {
+        // Arrange
+        Internal internalError = new Internal("An error occurred");
+        ErrorResponse.builder().error(null);
+
+        // Act & Assert
+        assertThrows(NullPointerException.class, () -> internalError.toResponse("/test"));
+    }
+
+    /**
+     * Test the toResponse method with null code.
+     */
+    @Test
+    public void testToResponseWithNullCode() {
+        // Arrange
+        Internal internalError = new Internal("An error occurred");
+        ErrorResponse.builder().code(null);
+
+        // Act & Assert
+        assertThrows(NullPointerException.class, () -> internalError.toResponse("/test"));
+    }
+
+    /**
+     * Test the toResponse method with null message.
+     */
+    @Test
+    public void testToResponseWithNullMessage() {
+        // Arrange
+        Internal internalError = new Internal("An error occurred");
+        ErrorResponse.builder().message(null);
+
+        // Act & Assert
+        assertThrows(NullPointerException.class, () -> internalError.toResponse("/test"));
+    }
+
+    /**
+     * Test the toResponse method with custom status and error.
+     */
+    @Test
+    public void testToResponseWithCustomStatusAndError() {
+        // Arrange
+        Internal internalError = new Internal("An error occurred");
+        String path = "/test";
+        int customStatus = 404;
+        String customError = "Not Found";
+
+        // Act
+        ErrorResponse response = internalError.toResponse(path, customStatus, customError);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(customStatus, response.getStatus());
+        assertEquals(customError, response.getError());
+        assertEquals("NONE", response.getCode());
+        assertEquals("", response.getMessage());
+    }
+
+    /**
+     * Test the toResponse method with custom status and error code.
+     */
+    @Test
+    public void testToResponseWithCustomStatusAndErrorCode() {
+        // Arrange
+        Internal internalError = new Internal("An error occurred");
+        String path = "/test";
+        int customStatus = 404;
+        String customError = "Not Found";
+        String customCode = "ERR_404";
+
+        // Act
+        ErrorResponse response = internalError.toResponse(path, customStatus, customError, customCode);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(customStatus, response.getStatus());
+        assertEquals(customError, response.getError());
+        assertEquals(customCode, response.getCode());
+        assertEquals("", response.getMessage());
+    }
+
+    /**
+     * Test the toResponse method with custom status and error message.
+     */
+    @Test
+    public void testToResponseWithCustomStatusAndErrorMessage() {
+        // Arrange
+        Internal internalError = new Internal("An error occurred");
+        String path = "/test";
+        int customStatus = 404;
+        String customError = "Not Found";
+        String customMessage = "Resource not found";
+
+        // Act
+        ErrorResponse response = internalError.toResponse(path, customStatus, customError, null, customMessage);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(customStatus, response.getStatus());
+        assertEquals(customError, response.getError());
+        assertEquals("NONE", response.getCode());
+        assertEquals(customMessage, response.getMessage());
+    }
+
+    /**
+     * Test the toResponse method with custom status and error code and message.
+     */
+    @Test
+    public void testToResponseWithCustomStatusAndErrorCodeAndMessage() {
+        // Arrange
+        Internal internalError = new Internal("An error occurred");
+        String path = "/test";
+        int customStatus = 404;
+        String customError = "Not Found";
+        String customCode = "ERR_404";
+        String customMessage = "Resource not found";
+
+        // Act
+        ErrorResponse response = internalError.toResponse(path, customStatus, customError, customCode, customMessage);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(customStatus, response.getStatus());
+        assertEquals(customError, response.getError());
+        assertEquals(customCode, response.getCode());
+        assertEquals(customMessage, response.getMessage());
     }
 }

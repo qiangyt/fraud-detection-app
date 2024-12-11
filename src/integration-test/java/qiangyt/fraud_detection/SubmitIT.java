@@ -1,20 +1,3 @@
-/*
- * fraud-detection-app - fraud detection app
- * Copyright © 2024 Yiting Qiang (qiangyt@wxcount.com)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
 package qiangyt.fraud_detection;
 
 import static org.junit.Assert.assertNull;
@@ -24,23 +7,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import qiangyt.fraud_detection.sdk.DetectionReq;
-
 public class SubmitIT extends AbstractIT {
 
-    // for debugging integration tests
-    public static void main(String[] args) {
-        var t = new SubmitIT();
-        try {
-            t.aroundTest(); // setup before test
-
-            t.testSubmit(); // run the test
-        } finally {
-            t.aroundTest(); // cleanup after test
-        }
-    }
-
-    // Setup and cleanup method to clear the queues before and after each test
     @BeforeEach 
     @AfterEach
     public void aroundTest() {
@@ -51,32 +19,81 @@ public class SubmitIT extends AbstractIT {
         clearQueue(alertQueueUrl);
     }
 
-    // Test method to submit detection requests and verify alerts
+    /**
+     * Test case to verify that a non-fraud request is submitted successfully and no alert is generated.
+     */
     @Test
-    public void testSubmit() {
-        // first, sends a non-fraud request
+    public void testSubmitNonFraudRequest() {
+        // Arrange
         var nonFraudReq = DetectionReq.builder()
                     .accountId("integration-test-account-1")
                     .amount(999)
                     .memo("N/A")
                     .build();
+
+        // Act
         var nonFraudEntity = appClient.submit(nonFraudReq);
-        dump("non-fraud: ", nonFraudEntity);
 
-        // no alert
+        // Assert
+        assertNotNull(nonFraudEntity);
         assertNull(pollAlert());
+    }
 
-        // second, sends a fraud request
+    /**
+     * Test case to verify that a fraud request is submitted successfully and an alert is generated.
+     */
+    @Test
+    public void testSubmitFraudRequest() {
+        // Arrange
         var fraudReq = DetectionReq.builder()
                     .accountId("integration-test-account-1")
                     .amount(999 * 100000)
                     .memo("N/A")
                     .build();
-        var fraudEntity = appClient.submit(fraudReq);
-        dump("fraud: ", fraudEntity);
 
-        // got alert
+        // Act
+        var fraudEntity = appClient.submit(fraudReq);
+
+        // Assert
+        assertNotNull(fraudEntity);
         assertNotNull(pollAlert());
     }
 
+    /**
+     * Test case to verify that submitting a request with an empty account ID results in null.
+     */
+    @Test
+    public void testSubmitEmptyAccountId() {
+        // Arrange
+        var req = DetectionReq.builder()
+                    .accountId("")
+                    .amount(999)
+                    .memo("N/A")
+                    .build();
+
+        // Act
+        var entity = appClient.submit(req);
+
+        // Assert
+        assertNull(entity);
+    }
+
+    /**
+     * Test case to verify that submitting a request with a negative amount results in null.
+     */
+    @Test
+    public void testSubmitNegativeAmount() {
+        // Arrange
+        var req = DetectionReq.builder()
+                    .accountId("integration-test-account-1")
+                    .amount(-999)
+                    .memo("N/A")
+                    .build();
+
+        // Act
+        var entity = appClient.submit(req);
+
+        // Assert
+        assertNull(entity);
+    }
 }

@@ -1,83 +1,112 @@
-/*
- * fraud-detection-app - fraud detection app
- * Copyright © 2024 Yiting Qiang (qiangyt@wxcount.com)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
 package qiangyt.fraud_detection.app.engine.rules;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import qiangyt.fraud_detection.app.config.RuleProps;
-import qiangyt.fraud_detection.app.engine.ChainedDetectionEngine;
 import qiangyt.fraud_detection.sdk.DetectionReqEntity;
 import qiangyt.fraud_detection.sdk.FraudCategory;
 
-/** Unit tests for {@link SuspiciousAccountRule}. */
+@SpringBootTest
 public class SuspiciousAccountRuleTest {
 
-    @Mock private ChainedDetectionEngine chain;
+    @Autowired
+    private SuspiciousAccountRule rule;
 
-    @InjectMocks private SuspiciousAccountRule rule;
+    @Autowired
+    private RuleProps props;
 
-    /** Sets up the test environment before each test. */
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.openMocks(this);
-
-        var props = new RuleProps();
-        props.setMaxTransactionAmount(100);
-        rule.setProps(props);
+        // Initialize the rule with a mock configuration
+        props.getSuspiciousAccounts().clear();
     }
 
-    /** Tests the initialization of the rule. */
+    /**
+     * Test case for detecting a suspicious account.
+     */
     @Test
-    public void testInit() {
-        rule.init();
+    public void testDetectSuspiciousAccount() {
+        // Arrange
+        String accountId = "12345";
+        props.getSuspiciousAccounts().add(accountId);
+        DetectionReqEntity entity = new DetectionReqEntity();
+        entity.setAccountId(accountId);
 
-        // Verify that the rule is added to the chain once
-        verify(chain, times(1)).addRule(rule);
+        // Act
+        FraudCategory result = rule.detect(entity);
+
+        // Assert
+        assertEquals(FraudCategory.SUSPICIOUS_ACCOUNT, result);
     }
 
-    /** Tests the detection method when no fraud is detected. */
+    /**
+     * Test case for detecting a non-suspicious account.
+     */
     @Test
-    public void testApply_NoFraud() {
-        var entity = new DetectionReqEntity();
-        entity.setAccountId("account789");
+    public void testDetectNonSuspiciousAccount() {
+        // Arrange
+        String accountId = "12345";
+        DetectionReqEntity entity = new DetectionReqEntity();
+        entity.setAccountId(accountId);
 
-        var result = rule.detect(entity);
+        // Act
+        FraudCategory result = rule.detect(entity);
 
-        // Assert that the result is no fraud
+        // Assert
         assertEquals(FraudCategory.NONE, result);
     }
 
-    /** Tests the detection method when a suspicious account fraud is detected. */
+    /**
+     * Test case for handling an empty account ID.
+     */
     @Test
-    public void testApply_SuspiciousAccountFraud() {
-        var entity = new DetectionReqEntity();
-        entity.setAccountId("fbiden");
+    public void testDetectEmptyAccountId() {
+        // Arrange
+        DetectionReqEntity entity = new DetectionReqEntity();
+        entity.setAccountId("");
 
-        var result = rule.detect(entity);
+        // Act
+        FraudCategory result = rule.detect(entity);
 
-        // Assert that the result is suspicious account fraud
+        // Assert
+        assertEquals(FraudCategory.NONE, result);
+    }
+
+    /**
+     * Test case for handling a null account ID.
+     */
+    @Test
+    public void testDetectNullAccountId() {
+        // Arrange
+        DetectionReqEntity entity = new DetectionReqEntity();
+        entity.setAccountId(null);
+
+        // Act
+        FraudCategory result = rule.detect(entity);
+
+        // Assert
+        assertEquals(FraudCategory.NONE, result);
+    }
+
+    /**
+     * Test case for handling a large number of suspicious accounts.
+     */
+    @Test
+    public void testDetectLargeNumberOfSuspiciousAccounts() {
+        // Arrange
+        for (int i = 0; i < 1000; i++) {
+            props.getSuspiciousAccounts().add("account" + i);
+        }
+        DetectionReqEntity entity = new DetectionReqEntity();
+        entity.setAccountId("account500");
+
+        // Act
+        FraudCategory result = rule.detect(entity);
+
+        // Assert
         assertEquals(FraudCategory.SUSPICIOUS_ACCOUNT, result);
     }
 }

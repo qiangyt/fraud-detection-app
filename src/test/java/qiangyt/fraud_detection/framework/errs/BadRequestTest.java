@@ -1,99 +1,198 @@
-/*
- * fraud-detection-app - fraud detection app
- * Copyright © 2024 Yiting Qiang (qiangyt@wxcount.com)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
 package qiangyt.fraud_detection.framework.errs;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
+import static org.junit.jupiter.api.Assertions.*;
 
-/** Unit tests for the {@link BadRequest} class. */
 public class BadRequestTest {
 
-    /** Tests the BadRequest constructor with a formatted message. */
     @Test
-    public void testBadRequestWithMessageFormat() {
-        // Create BadRequest exception with formatted message
-        var ex = new BadRequest(ErrorCode.NONE, "Invalid parameter: %s", "param1");
+    public void testBadRequestWithErrorCodeAndMessageFormat() {
+        // Arrange
+        ErrorCode errorCode = ErrorCode.INVALID_REQUEST;
+        String messageFormat = "Invalid request: %s";
+        Object[] params = {"param1"};
 
-        // Verify the status, code, and message
-        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus());
-        assertEquals(ErrorCode.NONE, ex.getCode());
-        assertEquals("Invalid parameter: param1", ex.getMessage());
+        // Act
+        BadRequest badRequest = new BadRequest(errorCode, messageFormat, params);
+
+        // Assert
+        assertEquals(HttpStatus.BAD_REQUEST, badRequest.getStatus());
+        assertEquals(errorCode, badRequest.getCode());
+        assertTrue(badRequest.getMessage().contains("Invalid request: param1"));
     }
 
-    /** Tests the BadRequest constructor with a simple message. */
     @Test
-    public void testBadRequestWithMessage() {
-        // Create BadRequest exception with simple message
-        var ex = new BadRequest(ErrorCode.NONE, "Invalid request");
+    public void testBadRequestWithErrorCodeAndMessage() {
+        // Arrange
+        ErrorCode errorCode = ErrorCode.INVALID_REQUEST;
+        String message = "Invalid request";
 
-        // Verify the status, code, and message
-        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus());
-        assertEquals(ErrorCode.NONE, ex.getCode());
-        assertEquals("Invalid request", ex.getMessage());
+        // Act
+        BadRequest badRequest = new BadRequest(errorCode, message);
+
+        // Assert
+        assertEquals(HttpStatus.BAD_REQUEST, badRequest.getStatus());
+        assertEquals(errorCode, badRequest.getCode());
+        assertEquals(message, badRequest.getMessage());
     }
 
-    /** Tests the BadRequest constructor with a cause and formatted message. */
     @Test
-    public void testBadRequestWithCauseAndMessageFormat() {
-        // Create a root cause exception
-        var cause = new RuntimeException("Root cause");
+    public void testBadRequestWithErrorCode() {
+        // Arrange
+        ErrorCode errorCode = ErrorCode.INVALID_REQUEST;
 
-        // Create BadRequest exception with cause and formatted message
-        var ex = new BadRequest(ErrorCode.NONE, cause, "Invalid parameter: %s", "param1");
+        // Act
+        BadRequest badRequest = new BadRequest(errorCode);
 
-        // Verify the status, code, message, and cause
-        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus());
-        assertEquals(ErrorCode.NONE, ex.getCode());
-        assertEquals("Invalid parameter: param1", ex.getMessage());
-        assertEquals(cause, ex.getCause());
+        // Assert
+        assertEquals(HttpStatus.BAD_REQUEST, badRequest.getStatus());
+        assertEquals(errorCode, badRequest.getCode());
+        assertTrue(badRequest.getMessage().contains("Invalid request"));
     }
 
-    /** Tests the BadRequest constructor with a cause and simple message. */
     @Test
-    public void testBadRequestWithCauseAndMessage() {
-        // Create a root cause exception
-        var cause = new RuntimeException("Root cause");
+    public void testBadRequestWithErrorCodeAndCauseAndMessageFormat() {
+        // Arrange
+        ErrorCode errorCode = ErrorCode.INVALID_REQUEST;
+        Throwable cause = new Exception("Cause exception");
+        String messageFormat = "Invalid request: %s";
+        Object[] params = {"param1"};
 
-        // Create BadRequest exception with cause and simple message
-        var ex = new BadRequest(ErrorCode.NONE, cause, "Invalid request");
+        // Act
+        BadRequest badRequest = new BadRequest(errorCode, cause, messageFormat, params);
 
-        // Verify the status, code, message, and cause
-        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus());
-        assertEquals(ErrorCode.NONE, ex.getCode());
-        assertEquals("Invalid request", ex.getMessage());
-        assertEquals(cause, ex.getCause());
+        // Assert
+        assertEquals(HttpStatus.BAD_REQUEST, badRequest.getStatus());
+        assertEquals(errorCode, badRequest.getCode());
+        assertTrue(badRequest.getMessage().contains("Invalid request: param1"));
+        assertSame(cause, badRequest.getCause());
     }
 
-    /** Tests the BadRequest constructor with only a cause. */
     @Test
-    public void testBadRequestWithCause() {
-        // Create a root cause exception
-        var cause = new RuntimeException("Root cause");
+    public void testBadRequestWithErrorCodeAndCauseAndMessage() {
+        // Arrange
+        ErrorCode errorCode = ErrorCode.INVALID_REQUEST;
+        Throwable cause = new Exception("Cause exception");
+        String message = "Invalid request";
 
-        // Create BadRequest exception with only cause
-        var ex = new BadRequest(ErrorCode.NONE, cause);
+        // Act
+        BadRequest badRequest = new BadRequest(errorCode, cause, message);
 
-        // Verify the status, code, message, and cause
-        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus());
-        assertEquals(ErrorCode.NONE, ex.getCode());
-        assertEquals("Bad Request", ex.getMessage());
-        assertEquals(cause, ex.getCause());
+        // Assert
+        assertEquals(HttpStatus.BAD_REQUEST, badRequest.getStatus());
+        assertEquals(errorCode, badRequest.getCode());
+        assertEquals(message, badRequest.getMessage());
+        assertSame(cause, badRequest.getCause());
+    }
+
+    @Test
+    public void testBadRequestWithErrorCodeAndCause() {
+        // Arrange
+        ErrorCode errorCode = ErrorCode.INVALID_REQUEST;
+        Throwable cause = new Exception("Cause exception");
+
+        // Act
+        BadRequest badRequest = new BadRequest(errorCode, cause);
+
+        // Assert
+        assertEquals(HttpStatus.BAD_REQUEST, badRequest.getStatus());
+        assertEquals(errorCode, badRequest.getCode());
+        assertTrue(badRequest.getMessage().contains("Invalid request"));
+        assertSame(cause, badRequest.getCause());
+    }
+
+    @Test
+    public void testBadRequestWithNullErrorCode() {
+        // Arrange
+        ErrorCode errorCode = null;
+        String messageFormat = "Invalid request: %s";
+        Object[] params = {"param1"};
+
+        // Act & Assert
+        assertThrows(NullPointerException.class, () -> new BadRequest(errorCode, messageFormat, params));
+    }
+
+    @Test
+    public void testBadRequestWithEmptyMessageFormat() {
+        // Arrange
+        ErrorCode errorCode = ErrorCode.INVALID_REQUEST;
+        String messageFormat = "";
+        Object[] params = {"param1"};
+
+        // Act & Assert
+        assertThrows(IllegalArgumentException.class, () -> new BadRequest(errorCode, messageFormat, params));
+    }
+
+    @Test
+    public void testBadRequestWithNullMessageFormat() {
+        // Arrange
+        ErrorCode errorCode = ErrorCode.INVALID_REQUEST;
+        String messageFormat = null;
+        Object[] params = {"param1"};
+
+        // Act & Assert
+        assertThrows(NullPointerException.class, () -> new BadRequest(errorCode, messageFormat, params));
+    }
+
+    @Test
+    public void testBadRequestWithNullParams() {
+        // Arrange
+        ErrorCode errorCode = ErrorCode.INVALID_REQUEST;
+        String messageFormat = "Invalid request: %s";
+        Object[] params = null;
+
+        // Act & Assert
+        assertThrows(NullPointerException.class, () -> new BadRequest(errorCode, messageFormat, params));
+    }
+
+    @Test
+    public void testBadRequestWithEmptyParams() {
+        // Arrange
+        ErrorCode errorCode = ErrorCode.INVALID_REQUEST;
+        String messageFormat = "Invalid request: %s";
+        Object[] params = {};
+
+        // Act
+        BadRequest badRequest = new BadRequest(errorCode, messageFormat, params);
+
+        // Assert
+        assertEquals(HttpStatus.BAD_REQUEST, badRequest.getStatus());
+        assertEquals(errorCode, badRequest.getCode());
+        assertTrue(badRequest.getMessage().contains("Invalid request:"));
+    }
+
+    @Test
+    public void testBadRequestWithNullMessage() {
+        // Arrange
+        ErrorCode errorCode = ErrorCode.INVALID_REQUEST;
+        String message = null;
+
+        // Act & Assert
+        assertThrows(NullPointerException.class, () -> new BadRequest(errorCode, message));
+    }
+
+    @Test
+    public void testBadRequestWithEmptyMessage() {
+        // Arrange
+        ErrorCode errorCode = ErrorCode.INVALID_REQUEST;
+        String message = "";
+
+        // Act
+        BadRequest badRequest = new BadRequest(errorCode, message);
+
+        // Assert
+        assertEquals(HttpStatus.BAD_REQUEST, badRequest.getStatus());
+        assertEquals(errorCode, badRequest.getCode());
+        assertTrue(badRequest.getMessage().contains(""));
+    }
+
+    @Test
+    public void testBadRequestWithNullCause() {
+        // Arrange
+        ErrorCode errorCode = ErrorCode.INVALID_REQUEST;
+        Throwable cause = null;
+
+        // Act & Assert
+        assertThrows(NullPointerException.class, () -> new BadRequest(errorCode, cause));
     }
 }

@@ -1,99 +1,303 @@
-/*
- * fraud-detection-app - fraud detection app
- * Copyright © 2024 Yiting Qiang (qiangyt@wxcount.com)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
 package qiangyt.fraud_detection.framework.errs;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
+import static org.junit.jupiter.api.Assertions.*;
 
-/** Unit tests for the {@link NotAcceptable} exception class. */
 public class NotAcceptableTest {
 
-    /** Test the NotAcceptable exception with a formatted message. */
+    /**
+     * Test the constructor with a formatted message.
+     */
     @Test
-    public void testNotAcceptableWithMessageFormat() {
-        // Create exception with formatted message
-        var ex = new NotAcceptable("Invalid parameter: %s", "param1");
+    public void testConstructorWithFormattedMessage() {
+        // Arrange
+        String messageFormat = "Error: {0} is not acceptable.";
+        Object[] params = {"data"};
 
-        // Verify the status, code, and message
-        assertEquals(HttpStatus.NOT_ACCEPTABLE, ex.getStatus());
-        assertEquals(ErrorCode.NONE, ex.getCode());
-        assertEquals("Invalid parameter: param1", ex.getMessage());
+        // Act
+        NotAcceptable error = new NotAcceptable(messageFormat, params);
+
+        // Assert
+        assertEquals(HttpStatus.NOT_ACCEPTABLE, error.getStatus());
+        assertEquals("Error: data is not acceptable.", error.getMessage());
     }
 
-    /** Test the NotAcceptable exception with a simple message. */
+    /**
+     * Test the constructor with a message.
+     */
     @Test
-    public void testNotAcceptableWithMessage() {
-        // Create exception with simple message
-        var ex = new NotAcceptable("Invalid request");
+    public void testConstructorWithMessage() {
+        // Arrange
+        String message = "Data is not acceptable.";
 
-        // Verify the status, code, and message
-        assertEquals(HttpStatus.NOT_ACCEPTABLE, ex.getStatus());
-        assertEquals(ErrorCode.NONE, ex.getCode());
-        assertEquals("Invalid request", ex.getMessage());
+        // Act
+        NotAcceptable error = new NotAcceptable(message);
+
+        // Assert
+        assertEquals(HttpStatus.NOT_ACCEPTABLE, error.getStatus());
+        assertEquals("Data is not acceptable.", error.getMessage());
     }
 
-    /** Test the NotAcceptable exception with a cause and formatted message. */
+    /**
+     * Test the constructor with no message.
+     */
     @Test
-    public void testNotAcceptableWithCauseAndMessageFormat() {
-        // Create a cause exception
-        var cause = new RuntimeException("Root cause");
+    public void testConstructorWithNoMessage() {
+        // Arrange
 
-        // Create exception with cause and formatted message
-        var ex = new NotAcceptable(cause, "Invalid parameter: %s", "param1");
+        // Act
+        NotAcceptable error = new NotAcceptable();
 
-        // Verify the status, code, message, and cause
-        assertEquals(HttpStatus.NOT_ACCEPTABLE, ex.getStatus());
-        assertEquals(ErrorCode.NONE, ex.getCode());
-        assertEquals("Invalid parameter: param1", ex.getMessage());
-        assertEquals(cause, ex.getCause());
+        // Assert
+        assertEquals(HttpStatus.NOT_ACCEPTABLE, error.getStatus());
+        assertNull(error.getMessage());
     }
 
-    /** Test the NotAcceptable exception with a cause and simple message. */
+    /**
+     * Test the constructor with a cause and a formatted message.
+     */
     @Test
-    public void testNotAcceptableWithCauseAndMessage() {
-        // Create a cause exception
-        var cause = new RuntimeException("Root cause");
+    public void testConstructorWithCauseAndFormattedMessage() {
+        // Arrange
+        Throwable cause = new RuntimeException("Caused by runtime exception");
+        String messageFormat = "Error: {0} is not acceptable.";
+        Object[] params = {"data"};
 
-        // Create exception with cause and simple message
-        var ex = new NotAcceptable(cause, "Invalid request");
+        // Act
+        NotAcceptable error = new NotAcceptable(cause, messageFormat, params);
 
-        // Verify the status, code, message, and cause
-        assertEquals(HttpStatus.NOT_ACCEPTABLE, ex.getStatus());
-        assertEquals(ErrorCode.NONE, ex.getCode());
-        assertEquals("Invalid request", ex.getMessage());
-        assertEquals(cause, ex.getCause());
+        // Assert
+        assertEquals(HttpStatus.NOT_ACCEPTABLE, error.getStatus());
+        assertEquals("Error: data is not acceptable.", error.getMessage());
+        assertNotNull(error.getCause());
     }
 
-    /** Test the NotAcceptable exception with only a cause. */
+    /**
+     * Test the constructor with a cause and a message.
+     */
     @Test
-    public void testNotAcceptableWithCause() {
-        // Create a cause exception
-        var cause = new RuntimeException("Root cause");
+    public void testConstructorWithCauseAndMessage() {
+        // Arrange
+        Throwable cause = new RuntimeException("Caused by runtime exception");
+        String message = "Data is not acceptable.";
 
-        // Create exception with cause
-        var ex = new NotAcceptable(cause);
+        // Act
+        NotAcceptable error = new NotAcceptable(cause, message);
 
-        // Verify the status, code, message, and cause
-        assertEquals(HttpStatus.NOT_ACCEPTABLE, ex.getStatus());
-        assertEquals(ErrorCode.NONE, ex.getCode());
-        assertEquals("Not Acceptable", ex.getMessage());
-        assertEquals(cause, ex.getCause());
+        // Assert
+        assertEquals(HttpStatus.NOT_ACCEPTABLE, error.getStatus());
+        assertEquals("Data is not acceptable.", error.getMessage());
+        assertNotNull(error.getCause());
+    }
+
+    /**
+     * Test the constructor with a cause.
+     */
+    @Test
+    public void testConstructorWithCause() {
+        // Arrange
+        Throwable cause = new RuntimeException("Caused by runtime exception");
+
+        // Act
+        NotAcceptable error = new NotAcceptable(cause);
+
+        // Assert
+        assertEquals(HttpStatus.NOT_ACCEPTABLE, error.getStatus());
+        assertNull(error.getMessage());
+        assertNotNull(error.getCause());
+    }
+
+    /**
+     * Test the constructor with a null cause and a formatted message.
+     */
+    @Test
+    public void testConstructorWithNullCauseAndFormattedMessage() {
+        // Arrange
+        Throwable cause = null;
+        String messageFormat = "Error: {0} is not acceptable.";
+        Object[] params = {"data"};
+
+        // Act
+        NotAcceptable error = new NotAcceptable(cause, messageFormat, params);
+
+        // Assert
+        assertEquals(HttpStatus.NOT_ACCEPTABLE, error.getStatus());
+        assertEquals("Error: data is not acceptable.", error.getMessage());
+        assertNull(error.getCause());
+    }
+
+    /**
+     * Test the constructor with a null cause and a message.
+     */
+    @Test
+    public void testConstructorWithNullCauseAndMessage() {
+        // Arrange
+        Throwable cause = null;
+        String message = "Data is not acceptable.";
+
+        // Act
+        NotAcceptable error = new NotAcceptable(cause, message);
+
+        // Assert
+        assertEquals(HttpStatus.NOT_ACCEPTABLE, error.getStatus());
+        assertEquals("Data is not acceptable.", error.getMessage());
+        assertNull(error.getCause());
+    }
+
+    /**
+     * Test the constructor with a null cause.
+     */
+    @Test
+    public void testConstructorWithNullCause() {
+        // Arrange
+        Throwable cause = null;
+
+        // Act
+        NotAcceptable error = new NotAcceptable(cause);
+
+        // Assert
+        assertEquals(HttpStatus.NOT_ACCEPTABLE, error.getStatus());
+        assertNull(error.getMessage());
+        assertNull(error.getCause());
+    }
+
+    /**
+     * Test the constructor with an empty formatted message.
+     */
+    @Test
+    public void testConstructorWithEmptyFormattedMessage() {
+        // Arrange
+        String messageFormat = "";
+        Object[] params = {"data"};
+
+        // Act
+        NotAcceptable error = new NotAcceptable(messageFormat, params);
+
+        // Assert
+        assertEquals(HttpStatus.NOT_ACCEPTABLE, error.getStatus());
+        assertNull(error.getMessage());
+    }
+
+    /**
+     * Test the constructor with an empty message.
+     */
+    @Test
+    public void testConstructorWithEmptyMessage() {
+        // Arrange
+        String message = "";
+
+        // Act
+        NotAcceptable error = new NotAcceptable(message);
+
+        // Assert
+        assertEquals(HttpStatus.NOT_ACCEPTABLE, error.getStatus());
+        assertNull(error.getMessage());
+    }
+
+    /**
+     * Test the constructor with a null formatted message.
+     */
+    @Test
+    public void testConstructorWithNullFormattedMessage() {
+        // Arrange
+        String messageFormat = null;
+        Object[] params = {"data"};
+
+        // Act
+        NotAcceptable error = new NotAcceptable(messageFormat, params);
+
+        // Assert
+        assertEquals(HttpStatus.NOT_ACCEPTABLE, error.getStatus());
+        assertNull(error.getMessage());
+    }
+
+    /**
+     * Test the constructor with a null message.
+     */
+    @Test
+    public void testConstructorWithNullMessage() {
+        // Arrange
+        String message = null;
+
+        // Act
+        NotAcceptable error = new NotAcceptable(message);
+
+        // Assert
+        assertEquals(HttpStatus.NOT_ACCEPTABLE, error.getStatus());
+        assertNull(error.getMessage());
+    }
+
+    /**
+     * Test the constructor with a cause and an empty formatted message.
+     */
+    @Test
+    public void testConstructorWithCauseAndEmptyFormattedMessage() {
+        // Arrange
+        Throwable cause = new RuntimeException("Caused by runtime exception");
+        String messageFormat = "";
+        Object[] params = {"data"};
+
+        // Act
+        NotAcceptable error = new NotAcceptable(cause, messageFormat, params);
+
+        // Assert
+        assertEquals(HttpStatus.NOT_ACCEPTABLE, error.getStatus());
+        assertNull(error.getMessage());
+        assertNotNull(error.getCause());
+    }
+
+    /**
+     * Test the constructor with a cause and an empty message.
+     */
+    @Test
+    public void testConstructorWithCauseAndEmptyMessage() {
+        // Arrange
+        Throwable cause = new RuntimeException("Caused by runtime exception");
+        String message = "";
+
+        // Act
+        NotAcceptable error = new NotAcceptable(cause, message);
+
+        // Assert
+        assertEquals(HttpStatus.NOT_ACCEPTABLE, error.getStatus());
+        assertNull(error.getMessage());
+        assertNotNull(error.getCause());
+    }
+
+    /**
+     * Test the constructor with a cause and a null formatted message.
+     */
+    @Test
+    public void testConstructorWithCauseAndNullFormattedMessage() {
+        // Arrange
+        Throwable cause = new RuntimeException("Caused by runtime exception");
+        String messageFormat = null;
+        Object[] params = {"data"};
+
+        // Act
+        NotAcceptable error = new NotAcceptable(cause, messageFormat, params);
+
+        // Assert
+        assertEquals(HttpStatus.NOT_ACCEPTABLE, error.getStatus());
+        assertNull(error.getMessage());
+        assertNotNull(error.getCause());
+    }
+
+    /**
+     * Test the constructor with a cause and a null message.
+     */
+    @Test
+    public void testConstructorWithCauseAndNullMessage() {
+        // Arrange
+        Throwable cause = new RuntimeException("Caused by runtime exception");
+        String message = null;
+
+        // Act
+        NotAcceptable error = new NotAcceptable(cause, message);
+
+        // Assert
+        assertEquals(HttpStatus.NOT_ACCEPTABLE, error.getStatus());
+        assertNull(error.getMessage());
+        assertNotNull(error.getCause());
     }
 }

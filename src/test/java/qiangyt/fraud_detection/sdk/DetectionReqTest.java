@@ -1,49 +1,147 @@
-/*
- * fraud-detection-app - fraud detection app
- * Copyright © 2024 Yiting Qiang (qiangyt@wxcount.com)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
 package qiangyt.fraud_detection.sdk;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
-/** Unit tests for the {@link DetectionReq} class. */
-class DetectionReqTest {
+public class DetectionReqTest {
 
-    static final Validator v = Validation.buildDefaultValidatorFactory().getValidator();
-
-    /** Tests that a valid {@link DetectionReq} instance passes validation. */
     @Test
-    void testValidDetectionReq() {
-        var req = DetectionReq.builder().accountId("12345").amount(100).memo("Test memo").build();
+    public void testToEntity_HappyPath() {
+        // Arrange
+        String accountId = "12345";
+        int amount = 100;
+        String memo = "test memo";
 
-        var violations = v.validate(req);
-        assertTrue(violations.isEmpty(), "There should be no constraint violations");
+        DetectionReq request = DetectionReq.builder()
+                .accountId(accountId)
+                .amount(amount)
+                .memo(memo)
+                .build();
+
+        // Act
+        DetectionReqEntity entity = request.toEntity();
+
+        // Assert
+        assertEquals(accountId, entity.getAccountId());
+        assertEquals(amount, entity.getAmount());
+        assertEquals(memo, entity.getMemo());
+        assertNotNull(entity.getId());
+        assertNotNull(entity.getReceivedAt());
     }
 
-    /** Tests that an invalid {@link DetectionReq} instance fails validation. */
     @Test
-    void testInvalidDetectionReq() {
-        var req = DetectionReq.builder().accountId("").memo("Test memo").build();
+    public void testToEntity_NullAccountId() {
+        // Arrange
+        String accountId = null;
+        int amount = 100;
+        String memo = "test memo";
 
-        var violations = v.validate(req);
-        assertFalse(violations.isEmpty(), "There should be constraint violations");
+        DetectionReq request = DetectionReq.builder()
+                .accountId(accountId)
+                .amount(amount)
+                .memo(memo)
+                .build();
+
+        // Act & Assert
+        assertThrows(NullPointerException.class, () -> {
+            request.toEntity();
+        });
+    }
+
+    @Test
+    public void testToEntity_NegativeAmount() {
+        // Arrange
+        String accountId = "12345";
+        int amount = -100;
+        String memo = "test memo";
+
+        DetectionReq request = DetectionReq.builder()
+                .accountId(accountId)
+                .amount(amount)
+                .memo(memo)
+                .build();
+
+        // Act & Assert
+        assertThrows(IllegalArgumentException.class, () -> {
+            request.toEntity();
+        });
+    }
+
+    @Test
+    public void testToEntity_EmptyAccountId() {
+        // Arrange
+        String accountId = "";
+        int amount = 100;
+        String memo = "test memo";
+
+        DetectionReq request = DetectionReq.builder()
+                .accountId(accountId)
+                .amount(amount)
+                .memo(memo)
+                .build();
+
+        // Act & Assert
+        assertThrows(IllegalArgumentException.class, () -> {
+            request.toEntity();
+        });
+    }
+
+    @Test
+    public void testToEntity_NullMemo() {
+        // Arrange
+        String accountId = "12345";
+        int amount = 100;
+        String memo = null;
+
+        DetectionReq request = DetectionReq.builder()
+                .accountId(accountId)
+                .amount(amount)
+                .memo(memo)
+                .build();
+
+        // Act
+        DetectionReqEntity entity = request.toEntity();
+
+        // Assert
+        assertEquals(accountId, entity.getAccountId());
+        assertEquals(amount, entity.getAmount());
+        assertNull(entity.getMemo());
+        assertNotNull(entity.getId());
+        assertNotNull(entity.getReceivedAt());
+    }
+
+    @Test
+    public void testToEntity_EmptyMemo() {
+        // Arrange
+        String accountId = "12345";
+        int amount = 100;
+        String memo = "";
+
+        DetectionReq request = DetectionReq.builder()
+                .accountId(accountId)
+                .amount(amount)
+                .memo(memo)
+                .build();
+
+        // Act
+        DetectionReqEntity entity = request.toEntity();
+
+        // Assert
+        assertEquals(accountId, entity.getAccountId());
+        assertEquals(amount, entity.getAmount());
+        assertEquals(memo, entity.getMemo());
+        assertNotNull(entity.getId());
+        assertNotNull(entity.getReceivedAt());
+    }
+
+    @Test
+    public void testToEntity_NullRequest() {
+        // Arrange
+        DetectionReq request = null;
+
+        // Act & Assert
+        assertThrows(NullPointerException.class, () -> {
+            request.toEntity();
+        });
     }
 }

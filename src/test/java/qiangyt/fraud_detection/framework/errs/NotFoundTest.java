@@ -1,111 +1,235 @@
-/*
- * fraud-detection-app - fraud detection app
- * Copyright © 2024 Yiting Qiang (qiangyt@wxcount.com)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
 package qiangyt.fraud_detection.framework.errs;
 
+import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
+public class NotFoundTest {
 
-/** Unit tests for the {@link NotFound} exception class. */
-class NotFoundTest {
-
-    /** Tests the NotFound exception with a formatted message. */
+    /**
+     * Test the constructor with error code, message format, and parameters.
+     */
     @Test
-    void testNotFoundWithMessageFormat() {
-        // Create NotFound exception with formatted message
-        var ex = new NotFound(ErrorCode.PATH_NOT_FOUND, "Resource %s not found", "User");
+    public void testConstructorWithErrorCodeMessageFormatAndParams() {
+        ErrorCode errorCode = ErrorCode.NOT_FOUND_001;
+        String messageFormat = "Resource not found: {0}";
+        Object[] params = {"user"};
 
-        // Verify the status, code, and message
-        assertEquals(HttpStatus.NOT_FOUND, ex.getStatus());
-        assertEquals(ErrorCode.PATH_NOT_FOUND, ex.getCode());
-        assertEquals("Resource User not found", ex.getMessage());
+        NotFound exception = new NotFound(errorCode, messageFormat, params);
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals(errorCode, exception.getCode());
+        assertEquals("Resource not found: user", exception.getMessage());
     }
 
-    /** Tests the NotFound exception with a simple message. */
+    /**
+     * Test the constructor with error code and message.
+     */
     @Test
-    void testNotFoundWithMessage() {
-        // Create NotFound exception with simple message
-        var ex = new NotFound(ErrorCode.PATH_NOT_FOUND, "Resource not found");
+    public void testConstructorWithErrorCodeAndMessage() {
+        ErrorCode errorCode = ErrorCode.NOT_FOUND_002;
+        String message = "User not found";
 
-        // Verify the status, code, and message
-        assertEquals(HttpStatus.NOT_FOUND, ex.getStatus());
-        assertEquals(ErrorCode.PATH_NOT_FOUND, ex.getCode());
-        assertEquals("Resource not found", ex.getMessage());
+        NotFound exception = new NotFound(errorCode, message);
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals(errorCode, exception.getCode());
+        assertEquals("User not found", exception.getMessage());
     }
 
-    /** Tests the NotFound exception with only an error code. */
+    /**
+     * Test the constructor with error code.
+     */
     @Test
-    void testNotFoundWithCodeOnly() {
-        // Create NotFound exception with only error code
-        var ex = new NotFound(ErrorCode.PATH_NOT_FOUND);
+    public void testConstructorWithErrorCode() {
+        ErrorCode errorCode = ErrorCode.NOT_FOUND_003;
 
-        // Verify the status, code, and default message
-        assertEquals(HttpStatus.NOT_FOUND, ex.getStatus());
-        assertEquals(ErrorCode.PATH_NOT_FOUND, ex.getCode());
-        assertEquals(HttpStatus.NOT_FOUND.getReasonPhrase(), ex.getMessage());
+        NotFound exception = new NotFound(errorCode);
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals(errorCode, exception.getCode());
+        assertNull(exception.getMessage());
     }
 
-    /** Tests the NotFound exception with a cause and a formatted message. */
+    /**
+     * Test the constructor with error code, cause, message format, and parameters.
+     */
     @Test
-    void testNotFoundWithCauseAndMessageFormat() {
-        // Create a cause exception
-        var cause = new RuntimeException("Underlying cause");
+    public void testConstructorWithErrorCodeCauseMessageFormatAndParams() {
+        ErrorCode errorCode = ErrorCode.NOT_FOUND_004;
+        String messageFormat = "Resource not found: {0}";
+        Object[] params = {"user"};
+        Throwable cause = new RuntimeException("Internal error");
 
-        // Create NotFound exception with cause and formatted message
-        var ex = new NotFound(ErrorCode.PATH_NOT_FOUND, cause, "Resource %s not found", "User");
+        NotFound exception = new NotFound(errorCode, cause, messageFormat, params);
 
-        // Verify the status, code, message, and cause
-        assertEquals(HttpStatus.NOT_FOUND, ex.getStatus());
-        assertEquals(ErrorCode.PATH_NOT_FOUND, ex.getCode());
-        assertEquals("Resource User not found", ex.getMessage());
-        assertEquals(cause, ex.getCause());
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals(errorCode, exception.getCode());
+        assertEquals("Resource not found: user", exception.getMessage());
+        assertSame(cause, exception.getCause());
     }
 
-    /** Tests the NotFound exception with a cause and a simple message. */
+    /**
+     * Test the constructor with error code, cause, and message.
+     */
     @Test
-    void testNotFoundWithCauseAndMessage() {
-        // Create a cause exception
-        var cause = new RuntimeException("Underlying cause");
+    public void testConstructorWithErrorCodeCauseAndMessage() {
+        ErrorCode errorCode = ErrorCode.NOT_FOUND_005;
+        String message = "User not found";
+        Throwable cause = new RuntimeException("Internal error");
 
-        // Create NotFound exception with cause and simple message
-        var ex = new NotFound(ErrorCode.PATH_NOT_FOUND, cause, "Resource not found");
+        NotFound exception = new NotFound(errorCode, cause, message);
 
-        // Verify the status, code, message, and cause
-        assertEquals(HttpStatus.NOT_FOUND, ex.getStatus());
-        assertEquals(ErrorCode.PATH_NOT_FOUND, ex.getCode());
-        assertEquals("Resource not found", ex.getMessage());
-        assertEquals(cause, ex.getCause());
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals(errorCode, exception.getCode());
+        assertEquals("User not found", exception.getMessage());
+        assertSame(cause, exception.getCause());
     }
 
-    /** Tests the NotFound exception with only a cause. */
+    /**
+     * Test the constructor with error code and cause.
+     */
     @Test
-    void testNotFoundWithCauseOnly() {
-        // Create a cause exception
-        var cause = new RuntimeException("Underlying cause");
+    public void testConstructorWithErrorCodeAndCause() {
+        ErrorCode errorCode = ErrorCode.NOT_FOUND_006;
+        Throwable cause = new RuntimeException("Internal error");
 
-        // Create NotFound exception with only cause
-        var ex = new NotFound(ErrorCode.PATH_NOT_FOUND, cause);
+        NotFound exception = new NotFound(errorCode, cause);
 
-        // Verify the status, code, default message, and cause
-        assertEquals(HttpStatus.NOT_FOUND, ex.getStatus());
-        assertEquals(ErrorCode.PATH_NOT_FOUND, ex.getCode());
-        assertEquals(HttpStatus.NOT_FOUND.getReasonPhrase(), ex.getMessage());
-        assertEquals(cause, ex.getCause());
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals(errorCode, exception.getCode());
+        assertNull(exception.getMessage());
+        assertSame(cause, exception.getCause());
+    }
+
+    /**
+     * Test the constructor with null error code, message format, and parameters.
+     */
+    @Test
+    public void testConstructorWithNullErrorCodeMessageFormatAndParams() {
+        String messageFormat = "Resource not found: {0}";
+        Object[] params = {"user"};
+
+        NotFound exception = new NotFound(null, messageFormat, params);
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertNull(exception.getCode());
+        assertEquals("Resource not found: user", exception.getMessage());
+    }
+
+    /**
+     * Test the constructor with null error code and message.
+     */
+    @Test
+    public void testConstructorWithNullErrorCodeAndMessage() {
+        String message = "User not found";
+
+        NotFound exception = new NotFound(null, message);
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertNull(exception.getCode());
+        assertEquals("User not found", exception.getMessage());
+    }
+
+    /**
+     * Test the constructor with null error code and cause.
+     */
+    @Test
+    public void testConstructorWithNullErrorCodeAndCause() {
+        Throwable cause = new RuntimeException("Internal error");
+
+        NotFound exception = new NotFound(null, cause);
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertNull(exception.getCode());
+        assertNull(exception.getMessage());
+        assertSame(cause, exception.getCause());
+    }
+
+    /**
+     * Test the constructor with null error code, message format, and parameters.
+     */
+    @Test
+    public void testConstructorWithNullErrorCodeMessageFormatAndParams2() {
+        String messageFormat = "Resource not found: {0}";
+        Object[] params = {"user"};
+
+        NotFound exception = new NotFound(null, cause, messageFormat, params);
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertNull(exception.getCode());
+        assertEquals("Resource not found: user", exception.getMessage());
+        assertSame(cause, exception.getCause());
+    }
+
+    /**
+     * Test the constructor with null error code, cause, and message.
+     */
+    @Test
+    public void testConstructorWithNullErrorCodeCauseAndMessage2() {
+        String message = "User not found";
+        Throwable cause = new RuntimeException("Internal error");
+
+        NotFound exception = new NotFound(null, cause, message);
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertNull(exception.getCode());
+        assertEquals("User not found", exception.getMessage());
+        assertSame(cause, exception.getCause());
+    }
+
+    /**
+     * Test the constructor with null error code and message format.
+     */
+    @Test
+    public void testConstructorWithNullErrorCodeAndMessageFormat() {
+        String messageFormat = "Resource not found: {0}";
+
+        NotFound exception = new NotFound(null, messageFormat);
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertNull(exception.getCode());
+        assertEquals("Resource not found: null", exception.getMessage());
+    }
+
+    /**
+     * Test the constructor with null error code and parameters.
+     */
+    @Test
+    public void testConstructorWithNullErrorCodeAndParameters() {
+        Object[] params = {"user"};
+
+        NotFound exception = new NotFound(null, params);
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertNull(exception.getCode());
+        assertEquals("Resource not found: user", exception.getMessage());
+    }
+
+    /**
+     * Test the constructor with null error code and message format.
+     */
+    @Test
+    public void testConstructorWithNullErrorCodeAndMessageFormat2() {
+        String messageFormat = "Resource not found: {0}";
+
+        NotFound exception = new NotFound(null, cause, messageFormat);
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertNull(exception.getCode());
+        assertEquals("Resource not found: null", exception.getMessage());
+    }
+
+    /**
+     * Test the constructor with null error code and parameters.
+     */
+    @Test
+    public void testConstructorWithNullErrorCodeAndParameters2() {
+        Object[] params = {"user"};
+
+        NotFound exception = new NotFound(null, cause, params);
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertNull(exception.getCode());
+        assertEquals("Resource not found: user", exception.getMessage());
     }
 }

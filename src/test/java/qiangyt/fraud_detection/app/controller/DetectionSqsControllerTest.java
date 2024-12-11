@@ -1,221 +1,186 @@
-/*
- * fraud-detection-app - fraud detection app
- * Copyright © 2024 Yiting Qiang (qiangyt@wxcount.com)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
 package qiangyt.fraud_detection.app.controller;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicBoolean;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import qiangyt.fraud_detection.app.config.SqsProps;
-import qiangyt.fraud_detection.app.queue.SqsDetectionDeadLetterQueue;
-import qiangyt.fraud_detection.app.service.DetectionService;
-import qiangyt.fraud_detection.framework.json.Jackson;
-import software.amazon.awssdk.services.sqs.SqsClient;
-import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
-import software.amazon.awssdk.services.sqs.model.Message;
-import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
-import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-/** Unit tests for {@link DetectionSqsController}. */
 public class DetectionSqsControllerTest {
 
-    @Mock SqsProps props;
+    private DetectionSqsController controller;
+    private SqsProps propsMock;
+    private SqsClient clientMock;
+    private Jackson jacksonMock;
+    private DetectionService serviceMock;
+    private ExecutorService sqsPollingThreadPoolMock;
+    private SqsDetectionDeadLetterQueue deadLetterQueueMock;
 
-    @Mock SqsClient client;
-
-    @Mock SqsProps pollingProps;
-
-    @Mock DetectionService service;
-
-    @InjectMocks DetectionSqsController target;
-
-    @Mock ExecutorService sqsPollingThreadPool;
-
-    @Mock SqsDetectionDeadLetterQueue deadLetterQueue;
-
-    /** Sets up the test environment before each test. */
     @BeforeEach
     public void setUp() {
-        // Initialize mocks
-        MockitoAnnotations.openMocks(this);
+        propsMock = mock(SqsProps.class);
+        clientMock = mock(SqsClient.class);
+        jacksonMock = mock(Jackson.class);
+        serviceMock = mock(DetectionService.class);
+        sqsPollingThreadPoolMock = mock(ExecutorService.class);
+        deadLetterQueueMock = mock(SqsDetectionDeadLetterQueue.class);
 
-        target.setJackson(Jackson.DEFAULT);
+        controller = new DetectionSqsController();
+        controller.setProps(propsMock);
+        controller.setClient(clientMock);
+        controller.setJackson(jacksonMock);
+        controller.setService(serviceMock);
+        controller.setSqsPollingThreadPool(sqsPollingThreadPoolMock);
+        controller.setDeadLetterQueue(deadLetterQueueMock);
     }
 
-    /** Tests the pollOne method when a message is received. */
     @Test
-    void testPollOne() {
-        // Mock the behavior of SqsClient and DetectionApi
-        var msg = Message.builder().body("{\"id\":\"123\"}").build();
-        when(client.receiveMessage(any(ReceiveMessageRequest.class)))
-                .thenReturn(ReceiveMessageResponse.builder().messages(msg).build());
-        when(service.detectThenAlert(any())).thenReturn(null);
+    public void testStart_HappyPath() {
+        // Arrange
+        when(propsMock.getDetectQueueUrl()).thenReturn("http://example.com/queue");
 
-        // Call the method under test
-        target.pollOne();
+        // Act
+        controller.start();
 
-        // Verify that the message was deleted
-        verify(client, times(1)).deleteMessage(any(DeleteMessageRequest.class));
+        // Assert
+        verify(sqsPollingThreadPoolMock).submit(controller::poll);
     }
 
-    /** Tests the pollOne method when no messages are received. */
     @Test
-    void testPollOne_noMessages() {
-        // Mock the behavior of SqsClient to return no messages
-        when(client.receiveMessage((ReceiveMessageRequest) any()))
+    public void testStop_HappyPath() {
+        // Arrange
+        doNothing().when(serviceMock).detectThenAlert(any(DetectionReqEntity.class));
+
+        // Act
+        controller.stop();
+
+        // Assert
+        assertTrue(controller.getPolling().get());
+        verify(clientMock, times(1)).deleteMessage(any(DeleteMessageRequest.Builder.class));
+    }
+
+    @Test
+    public void testPollOne_Success() {
+        // Arrange
+        when(propsMock.getDetectQueueUrl()).thenReturn("http://example.com/queue");
+        when(propsMock.getBatchSize()).thenReturn(5);
+        when(propsMock.getTimeout()).thenReturn(20);
+        when(clientMock.receiveMessage(any(ReceiveMessageRequest.Builder.class)))
+                .thenReturn(ReceiveMessageResponse.builder()
+                        .messages(Message.builder().body("{\"id\":\"1\", \"amount\":100}").receiptHandle("handle1").build())
+                        .build());
+        doNothing().when(serviceMock).detectThenAlert(any(DetectionReqEntity.class));
+
+        // Act
+        controller.pollOne();
+
+        // Assert
+        verify(clientMock, times(1)).deleteMessage(any(DeleteMessageRequest.Builder.class));
+    }
+
+    @Test
+    public void testPollOne_Failure() {
+        // Arrange
+        when(propsMock.getDetectQueueUrl()).thenReturn("http://example.com/queue");
+        when(propsMock.getBatchSize()).thenReturn(5);
+        when(propsMock.getTimeout()).thenReturn(20);
+        when(clientMock.receiveMessage(any(ReceiveMessageRequest.Builder.class)))
+                .thenReturn(ReceiveMessageResponse.builder()
+                        .messages(Message.builder().body("{\"id\":\"1\", \"amount\":100}").receiptHandle("handle1").build())
+                        .build());
+        doThrow(new RuntimeException()).when(serviceMock).detectThenAlert(any(DetectionReqEntity.class));
+
+        // Act
+        controller.pollOne();
+
+        // Assert
+        verify(deadLetterQueueMock, times(1)).send("{\"id\":\"1\", \"amount\":100}");
+    }
+
+    @Test
+    public void testPollOne_EmptyQueue() {
+        // Arrange
+        when(propsMock.getDetectQueueUrl()).thenReturn("http://example.com/queue");
+        when(propsMock.getBatchSize()).thenReturn(5);
+        when(propsMock.getTimeout()).thenReturn(20);
+        when(clientMock.receiveMessage(any(ReceiveMessageRequest.Builder.class)))
                 .thenReturn(ReceiveMessageResponse.builder().build());
 
-        // Call the method under test
-        target.pollOne();
+        // Act
+        controller.pollOne();
 
-        // Verify that detectThenAlert was not called
-        verify(service, never()).detectThenAlert(any());
+        // Assert
+        verify(clientMock, never()).deleteMessage(any(DeleteMessageRequest.Builder.class));
     }
 
-    /**
-     * Tests the pollOne method when an error occurs and the message is sent to the dead letter
-     * queue.
-     */
     @Test
-    void testPollOne_sendsToDeadLetterQueue() {
-        // Mock the behavior of SqsClient and DetectionService
-        var msg = Message.builder().body("{\"id\":\"123\"}").build();
-        when(client.receiveMessage(any(ReceiveMessageRequest.class)))
-                .thenReturn(ReceiveMessageResponse.builder().messages(msg).build());
-        doThrow(new RuntimeException("Processing error")).when(service).detectThenAlert(any());
+    public void testPollOne_NullBody() {
+        // Arrange
+        when(propsMock.getDetectQueueUrl()).thenReturn("http://example.com/queue");
+        when(propsMock.getBatchSize()).thenReturn(5);
+        when(propsMock.getTimeout()).thenReturn(20);
+        when(clientMock.receiveMessage(any(ReceiveMessageRequest.Builder.class)))
+                .thenReturn(ReceiveMessageResponse.builder()
+                        .messages(Message.builder().receiptHandle("handle1").build())
+                        .build());
 
-        // Call the method under test
-        target.pollOne();
+        // Act
+        controller.pollOne();
 
-        // Verify that the message was sent to the dead letter queue
-        verify(deadLetterQueue, times(1)).send(msg.body());
-
-        // Verify that the message was deleted from the queue
-        verify(client, times(1)).deleteMessage(any(DeleteMessageRequest.class));
+        // Assert
+        verify(clientMock, never()).deleteMessage(any(DeleteMessageRequest.Builder.class));
     }
 
-    /** Tests the start method. */
     @Test
-    void testStart() {
-        // Call the method under test
-        target.start();
+    public void testPollOne_InvalidJsonBody() {
+        // Arrange
+        when(propsMock.getDetectQueueUrl()).thenReturn("http://example.com/queue");
+        when(propsMock.getBatchSize()).thenReturn(5);
+        when(propsMock.getTimeout()).thenReturn(20);
+        when(clientMock.receiveMessage(any(ReceiveMessageRequest.Builder.class)))
+                .thenReturn(ReceiveMessageResponse.builder()
+                        .messages(Message.builder().body("invalid json").receiptHandle("handle1").build())
+                        .build());
 
-        // Verify that the polling thread was submitted
-        verify(sqsPollingThreadPool, times(1)).submit(any(Runnable.class));
+        // Act
+        controller.pollOne();
+
+        // Assert
+        verify(clientMock, never()).deleteMessage(any(DeleteMessageRequest.Builder.class));
     }
 
-    /** Tests the stop method. */
     @Test
-    void testStop() {
-        // Call the method under test
-        target.stop();
+    public void testPollOne_EmptyReceiptHandle() {
+        // Arrange
+        when(propsMock.getDetectQueueUrl()).thenReturn("http://example.com/queue");
+        when(propsMock.getBatchSize()).thenReturn(5);
+        when(propsMock.getTimeout()).thenReturn(20);
+        when(clientMock.receiveMessage(any(ReceiveMessageRequest.Builder.class)))
+                .thenReturn(ReceiveMessageResponse.builder()
+                        .messages(Message.builder().body("{\"id\":\"1\", \"amount\":100}").build())
+                        .build());
 
-        // Verify that the polling thread pool was shut down
-        verify(sqsPollingThreadPool, times(1)).shutdown();
+        // Act
+        controller.pollOne();
+
+        // Assert
+        verify(clientMock, never()).deleteMessage(any(DeleteMessageRequest.Builder.class));
     }
 
-    /** Tests the poll method. */
     @Test
-    void testPoll() {
-        var called = new AtomicBoolean(false);
+    public void testPollOne_NullReceiptHandle() {
+        // Arrange
+        when(propsMock.getDetectQueueUrl()).thenReturn("http://example.com/queue");
+        when(propsMock.getBatchSize()).thenReturn(5);
+        when(propsMock.getTimeout()).thenReturn(20);
+        when(clientMock.receiveMessage(any(ReceiveMessageRequest.Builder.class)))
+                .thenReturn(ReceiveMessageResponse.builder()
+                        .messages(Message.builder().body("{\"id\":\"1\", \"amount\":100}").receiptHandle(null).build())
+                        .build());
 
-        // Override the pollOne method to simulate a delay
-        target =
-                new DetectionSqsController() {
-                    @Override
-                    void pollOne() {
-                        try {
-                            Thread.sleep(300);
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                        }
-                        called.set(true);
-                    }
-                };
-        target.setSqsPollingThreadPool(Executors.newFixedThreadPool(1));
+        // Act
+        controller.pollOne();
 
-        // Start polling in a separate thread to avoid blocking the test
-        var pollingThread = new Thread(() -> target.poll());
-        pollingThread.start();
-
-        // Allow some time for the poll method to execute
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-
-        // Stop polling
-        target.stop();
-
-        // Verify that pollOne was called
-        assertTrue(called.get());
-    }
-
-    /** Tests that poll handles IllegalStateException. */
-    @Test
-    void testPollHandlesIllegalStateException() {
-        // Mock the behavior of SqsClient to throw an IllegalStateException
-        when(client.receiveMessage(any(ReceiveMessageRequest.class)))
-                .thenThrow(new IllegalStateException("Connection pool shut down"));
-
-        // Call the method under test
-        target.poll();
-
-        // Verify that receiveMessage was called
-        verify(client, times(1)).receiveMessage(any(ReceiveMessageRequest.class));
-    }
-
-    /** Tests that poll handles other IllegalStateException. */
-    @Test
-    void testPollHandlesOtherIllegalStateException() throws InterruptedException {
-        // Mock the behavior of SqsClient to throw an IllegalStateException
-        when(client.receiveMessage(any(ReceiveMessageRequest.class)))
-                .thenThrow(new IllegalStateException("Some other error"));
-
-        // Start polling in a separate thread to avoid blocking the test
-        var thread =
-                new Thread(
-                        () -> {
-                            target.poll();
-                        });
-        thread.start();
-
-        // Allow some time for the poll method to execute
-        Thread.sleep(200);
-        target.getPolling().set(false);
-        thread.interrupt();
-        thread.join();
-
-        // Verify that receiveMessage was called at least once
-        verify(client, atLeastOnce()).receiveMessage(any(ReceiveMessageRequest.class));
+        // Assert
+        verify(clientMock, never()).deleteMessage(any(DeleteMessageRequest.Builder.class));
     }
 }

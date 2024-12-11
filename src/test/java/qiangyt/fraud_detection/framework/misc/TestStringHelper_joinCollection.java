@@ -18,6 +18,7 @@
 package qiangyt.fraud_detection.framework.misc;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,12 +30,16 @@ public class TestStringHelper_joinCollection {
 
     private List<String> singleElementList;
     private List<String> multipleElementsList;
+    private List<Integer> intList;
+    private List<Object> mixedList;
 
     /** Sets up the test data before each test. */
     @BeforeEach
     public void setUp() {
         singleElementList = Arrays.asList("single");
         multipleElementsList = Arrays.asList("first", "second", "third");
+        intList = Arrays.asList(1, 2, 3);
+        mixedList = Arrays.asList("first", 2, null, "fourth");
     }
 
     /** Tests joining a single-element list with an empty delimiter. */
@@ -91,8 +96,21 @@ public class TestStringHelper_joinCollection {
     /** Tests joining a list of non-string elements with a delimiter. */
     @Test
     public void join_NonStringElementsWithDelimiter_ReturnsConcatenatedString() {
-        List<Integer> intList = Arrays.asList(1, 2, 3);
         String result = StringHelper.join(" ", intList);
         assertEquals("1 2 3", result);
+    }
+
+    /** Tests joining a list with mixed types and an empty delimiter. */
+    @Test
+    public void join_MixedTypesWithEmptyDelimiter_ReturnsConcatenatedString() {
+        String result = StringHelper.join("", mixedList);
+        assertEquals("first2nullfourth", result);
+    }
+
+    /** Tests joining a list with mixed types and a non-empty delimiter. */
+    @Test
+    public void join_MixedTypesWithNonEmptyDelimiter_ReturnsConcatenatedString() {
+        String result = StringHelper.join("-", mixedList);
+        assertEquals("first-2-null-fourth", result);
     }
 }

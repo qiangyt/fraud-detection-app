@@ -1,80 +1,109 @@
-/*
- * fraud-detection-app - fraud detection app
- * Copyright © 2024 Yiting Qiang (qiangyt@wxcount.com)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
 package qiangyt.fraud_detection.app.engine.rules;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import qiangyt.fraud_detection.app.config.RuleProps;
-import qiangyt.fraud_detection.app.engine.ChainedDetectionEngine;
-import qiangyt.fraud_detection.sdk.DetectionReqEntity;
-import qiangyt.fraud_detection.sdk.FraudCategory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 
-/** Unit tests for {@link BigAmountRule}. */
 public class BigAmountRuleTest {
 
-    @Mock private ChainedDetectionEngine chain;
+    private BigAmountRule bigAmountRule;
+    private RuleProps ruleProps;
+    private ChainedDetectionEngine chain;
 
-    @InjectMocks private BigAmountRule rule;
-
-    /** Sets up the test environment before each test. */
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.openMocks(this);
+        ruleProps = mock(RuleProps.class);
+        chain = mock(ChainedDetectionEngine.class);
+        bigAmountRule = new BigAmountRule();
+        bigAmountRule.setProps(ruleProps);
+        bigAmountRule.setChain(chain);
 
-        var props = new RuleProps();
-        props.setMaxTransactionAmount(100);
-        rule.setProps(props);
+        // Initialize the rule to add it to the detection engine chain
+        bigAmountRule.init();
     }
 
-    /** Tests the initialization of the rule. */
     @Test
-    public void testInit() {
-        rule.init();
-        // Verify that the rule is added to the chain once
-        verify(chain, times(1)).addRule(rule);
+    public void testDetect_HappyPath() {
+        // Arrange
+        DetectionReqEntity entity = new DetectionReqEntity();
+        entity.setAmount(1000.0);
+        when(ruleProps.getMaxTransactionAmount()).thenReturn(500.0);
+
+        // Act
+        FraudCategory result = bigAmountRule.detect(entity);
+
+        // Assert
+        assertEquals(FraudCategory.BIG_AMOUNT, result);
     }
 
-    /** Tests the detection of a non-fraudulent transaction. */
     @Test
-    public void testApply_NoFraud() {
-        var entity = new DetectionReqEntity();
-        entity.setAmount(50);
+    public void testDetect_MaxTransactionAmount() {
+        // Arrange
+        DetectionReqEntity entity = new DetectionReqEntity();
+        entity.setAmount(500.0);
+        when(ruleProps.getMaxTransactionAmount()).thenReturn(500.0);
 
-        // Detect and assert that no fraud is detected
-        var result = rule.detect(entity);
+        // Act
+        FraudCategory result = bigAmountRule.detect(entity);
+
+        // Assert
         assertEquals(FraudCategory.NONE, result);
     }
 
-    /** Tests the detection of a fraudulent transaction due to a big amount. */
     @Test
-    public void testApply_BigAmountFraud() {
-        var entity = new DetectionReqEntity();
-        entity.setAmount(150);
+    public void testDetect_NegativeAmount() {
+        // Arrange
+        DetectionReqEntity entity = new DetectionReqEntity();
+        entity.setAmount(-100.0);
+        when(ruleProps.getMaxTransactionAmount()).thenReturn(500.0);
 
-        // Detect and assert that big amount fraud is detected
-        var result = rule.detect(entity);
-        assertEquals(FraudCategory.BIG_AMOUNT, result);
+        // Act
+        FraudCategory result = bigAmountRule.detect(entity);
+
+        // Assert
+        assertEquals(FraudCategory.NONE, result);
+    }
+
+    @Test
+    public void testDetect_ZeroAmount() {
+        // Arrange
+        DetectionReqEntity entity = new DetectionReqEntity();
+        entity.setAmount(0.0);
+        when(ruleProps.getMaxTransactionAmount()).thenReturn(500.0);
+
+        // Act
+        FraudCategory result = bigAmountRule.detect(entity);
+
+        // Assert
+        assertEquals(FraudCategory.NONE, result);
+    }
+
+    @Test
+    public void testDetect_MaxTransactionAmountNegative() {
+        // Arrange
+        DetectionReqEntity entity = new DetectionReqEntity();
+        entity.setAmount(1000.0);
+        when(ruleProps.getMaxTransactionAmount()).thenReturn(-500.0);
+
+        // Act
+        FraudCategory result = bigAmountRule.detect(entity);
+
+        // Assert
+        assertEquals(FraudCategory.NONE, result);
+    }
+
+    @Test
+    public void testDetect_MaxTransactionAmountZero() {
+        // Arrange
+        DetectionReqEntity entity = new DetectionReqEntity();
+        entity.setAmount(1000.0);
+        when(ruleProps.getMaxTransactionAmount()).thenReturn(0.0);
+
+        // Act
+        FraudCategory result = bigAmountRule.detect(entity);
+
+        // Assert
+        assertEquals(FraudCategory.NONE, result);
     }
 }

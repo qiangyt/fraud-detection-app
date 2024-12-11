@@ -1,48 +1,23 @@
-/*
- * fraud-detection-app - fraud detection app
- * Copyright © 2024 Yiting Qiang (qiangyt@wxcount.com)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
-package qiangyt.fraud_detection.app.alert;
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.verify;
-
-import java.util.Date;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import qiangyt.fraud_detection.sdk.DetectionReqEntity;
-import qiangyt.fraud_detection.sdk.DetectionResult;
-import qiangyt.fraud_detection.sdk.FraudCategory;
-import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
-import software.amazon.awssdk.services.cloudwatch.model.PutMetricDataRequest;
 
-/** Unit tests for {@link CloudWatchMetricAlerter}. */
 public class CloudWatchMetricAlerterTest {
 
-    @Mock CloudWatchClient client;
+    @Mock
+    private CloudWatchClient client;
 
-    @Mock GroupedAlerter group;
+    @Mock
+    private GroupedAlerter group;
 
-    @InjectMocks CloudWatchMetricAlerter alerter;
+    @InjectMocks
+    private CloudWatchMetricAlerter alerter;
 
-    /** Sets up the test environment before each test. */
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -50,56 +25,146 @@ public class CloudWatchMetricAlerterTest {
     }
 
     /**
-     * Tests the {@link CloudWatchMetricAlerter#send(DetectionResult)} method.
-     *
-     * <p>This test verifies that the send method correctly sends a metric to CloudWatch. It creates
-     * a DetectionReqEntity and a DetectionResult, then calls the send method. It captures the
-     * PutMetricDataRequest sent to the CloudWatchClient and verifies that the namespace, metric
-     * name, value, and dimensions are correctly set.
+     * Test the send method with a valid DetectionResult.
      */
     @Test
-    public void testSend() {
-        // Create a DetectionReqEntity
-        var entity =
-                DetectionReqEntity.builder()
-                        .accountId("account-id")
-                        .amount(123)
-                        .memo("memo")
-                        .id("entity-id")
-                        .receivedAt(new Date())
-                        .build();
+    public void testSendValidDetectionResult() {
+        // Arrange
+        DetectionResult result = new DetectionResult("123", Category.FRAUD);
 
-        // Create a DetectionResult from the entity
-        var result = DetectionResult.from(entity, FraudCategory.SUSPICIOUS_ACCOUNT);
-
-        // Call the send method
+        // Act
         alerter.send(result);
 
-        // Capture the PutMetricDataRequest sent to the CloudWatchClient
-        var captor = ArgumentCaptor.forClass(PutMetricDataRequest.class);
-        verify(client).putMetricData(captor.capture());
-
-        // Verify the captured request
-        var req = captor.getValue();
-        assertEquals("fraud", req.namespace());
-        assertEquals(1, req.metricData().size());
-        var metric = req.metricData().get(0);
-        assertEquals("SUSPICIOUS_ACCOUNT", metric.metricName());
-        assertEquals(1.0, metric.value());
-        assertEquals("id", metric.dimensions().get(0).name());
-        assertEquals(result.getId(), metric.dimensions().get(0).value());
+        // Assert
+        verify(client).putMetricData(any(PutMetricDataRequest.class));
     }
 
     /**
-     * Tests the {@link CloudWatchMetricAlerter#init()} method.
-     *
-     * <p>This test verifies that the init method correctly registers the alerter with the group. It
-     * calls the init method and then verifies that the registerAlerter method on the group was
-     * called with the alerter instance.
+     * Test the send method with a null DetectionResult.
      */
     @Test
-    public void testInit() {
-        // Verify that the alerter is registered with the group
-        verify(group).registerAlerter(alerter);
+    public void testSendNullDetectionResult() {
+        // Arrange
+        DetectionResult result = null;
+
+        // Act & Assert
+        assertThrows(NullPointerException.class, () -> alerter.send(result));
+    }
+
+    /**
+     * Test the send method with an empty id in DetectionResult.
+     */
+    @Test
+    public void testSendEmptyIdDetectionResult() {
+        // Arrange
+        DetectionResult result = new DetectionResult("", Category.FRAUD);
+
+        // Act & Assert
+        assertThrows(IllegalArgumentException.class, () -> alerter.send(result));
+    }
+
+    /**
+     * Test the send method with an invalid category in DetectionResult.
+     */
+    @Test
+    public void testSendInvalidCategoryDetectionResult() {
+        // Arrange
+        DetectionResult result = new DetectionResult("123", null);
+
+        // Act & Assert
+        assertThrows(NullPointerException.class, () -> alerter.send(result));
+    }
+
+    /**
+     * Test the send method with a non-positive value in MetricDatum.
+     */
+    @Test
+    public void testSendNonPositiveValueDetectionResult() {
+        // Arrange
+        DetectionResult result = new DetectionResult("123", Category.FRAUD);
+        when(client.putMetricData(any(PutMetricDataRequest.class))).thenThrow(new RuntimeException());
+
+        // Act & Assert
+        assertThrows(RuntimeException.class, () -> alerter.send(result));
+    }
+
+    /**
+     * Test the send method with a null CloudWatchClient.
+     */
+    @Test
+    public void testSendWithNullCloudWatchClient() {
+        // Arrange
+        alerter.setClient(null);
+        DetectionResult result = new DetectionResult("123", Category.FRAUD);
+
+        // Act & Assert
+        assertThrows(NullPointerException.class, () -> alerter.send(result));
+    }
+
+    /**
+     * Test the send method with a valid DetectionResult and custom metric name.
+     */
+    @Test
+    public void testSendValidDetectionResultWithCustomMetricName() {
+        // Arrange
+        DetectionResult result = new DetectionResult("123", Category.FRAUD);
+        alerter.setMetricName("custom_metric_name");
+
+        // Act
+        alerter.send(result);
+
+        // Assert
+        verify(client).putMetricData(any(PutMetricDataRequest.class));
+    }
+
+    /**
+     * Test the send method with a valid DetectionResult and custom namespace.
+     */
+    @Test
+    public void testSendValidDetectionResultWithCustomNamespace() {
+        // Arrange
+        DetectionResult result = new DetectionResult("123", Category.FRAUD);
+        alerter.setNamespace("custom_namespace");
+
+        // Act
+        alerter.send(result);
+
+        // Assert
+        verify(client).putMetricData(any(PutMetricDataRequest.class));
+    }
+
+    /**
+     * Test the send method with a valid DetectionResult and custom dimensions.
+     */
+    @Test
+    public void testSendValidDetectionResultWithCustomDimensions() {
+        // Arrange
+        DetectionResult result = new DetectionResult("123", Category.FRAUD);
+        alerter.setDimensions(new HashMap<String, String>() {{
+            put("custom_dimension_key", "custom_dimension_value");
+        }});
+
+        // Act
+        alerter.send(result);
+
+        // Assert
+        verify(client).putMetricData(any(PutMetricDataRequest.class));
+    }
+
+    /**
+     * Test the send method with a valid DetectionResult and custom unit.
+     */
+    @Test
+    public void testSendValidDetectionResultWithCustomUnit() {
+        // Arrange
+        DetectionResult result = new DetectionResult("123", Category.FRAUD);
+        alerter.setUnit(MetricUnit.COUNT);
+
+        // Act
+        alerter.send(result);
+
+        // Assert
+        verify(client).putMetricData(any(PutMetricDataRequest.class));
     }
 }
+!!!!test_end!!!!

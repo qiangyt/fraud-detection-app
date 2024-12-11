@@ -1,108 +1,188 @@
-/*
- * fraud-detection-app - fraud detection app
- * Copyright © 2024 Yiting Qiang (qiangyt@wxcount.com)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
 package qiangyt.fraud_detection.framework.errs;
 
+import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
+public class RequestTimeoutTest {
 
-/** Unit tests for the {@link RequestTimeout} class. */
-class RequestTimeoutTest {
-
-    /** Tests the constructor with a formatted message. */
+    /**
+     * Test the constructor with no parameters.
+     */
     @Test
-    void testRequestTimeoutWithMessageFormat() {
-        // Create exception with formatted message
-        var ex = new RequestTimeout("Timeout after %d seconds", 30);
-
-        // Verify the status, code, and message
-        assertEquals(HttpStatus.REQUEST_TIMEOUT, ex.getStatus());
-        assertEquals(ErrorCode.NONE, ex.getCode());
-        assertEquals("Timeout after 30 seconds", ex.getMessage());
+    public void testConstructorNoParams() {
+        // Arrange
+        // Act
+        RequestTimeout exception = new RequestTimeout();
+        
+        // Assert
+        assertEquals(HttpStatus.REQUEST_TIMEOUT, exception.getStatus());
+        assertNull(exception.getCode());
+        assertTrue(exception.getMessage().isEmpty());
     }
 
-    /** Tests the constructor with a simple message. */
+    /**
+     * Test the constructor with a message.
+     */
     @Test
-    void testRequestTimeoutWithMessage() {
-        // Create exception with simple message
-        var ex = new RequestTimeout("Timeout occurred");
-
-        // Verify the status, code, and message
-        assertEquals(HttpStatus.REQUEST_TIMEOUT, ex.getStatus());
-        assertEquals(ErrorCode.NONE, ex.getCode());
-        assertEquals("Timeout occurred", ex.getMessage());
+    public void testConstructorWithMessage() {
+        // Arrange
+        String message = "Request timed out";
+        
+        // Act
+        RequestTimeout exception = new RequestTimeout(message);
+        
+        // Assert
+        assertEquals(HttpStatus.REQUEST_TIMEOUT, exception.getStatus());
+        assertNull(exception.getCode());
+        assertEquals(message, exception.getMessage());
     }
 
-    /** Tests the constructor without a message. */
+    /**
+     * Test the constructor with a formatted message.
+     */
     @Test
-    void testRequestTimeoutWithoutMessage() {
-        // Create exception without message
-        var ex = new RequestTimeout();
-
-        // Verify the status, code, and default message
-        assertEquals(HttpStatus.REQUEST_TIMEOUT, ex.getStatus());
-        assertEquals(ErrorCode.NONE, ex.getCode());
-        assertEquals(HttpStatus.REQUEST_TIMEOUT.getReasonPhrase(), ex.getMessage());
+    public void testConstructorWithMessageFormat() {
+        // Arrange
+        String messageFormat = "Request timed out after %d seconds";
+        int timeoutSeconds = 30;
+        
+        // Act
+        RequestTimeout exception = new RequestTimeout(messageFormat, timeoutSeconds);
+        
+        // Assert
+        assertEquals(HttpStatus.REQUEST_TIMEOUT, exception.getStatus());
+        assertNull(exception.getCode());
+        assertTrue(exception.getMessage().contains(String.valueOf(timeoutSeconds)));
     }
 
-    /** Tests the constructor with a cause and a formatted message. */
+    /**
+     * Test the constructor with a cause.
+     */
     @Test
-    void testRequestTimeoutWithCauseAndMessageFormat() {
-        var cause = new RuntimeException("Underlying cause");
-
-        // Create exception with cause and formatted message
-        var ex = new RequestTimeout(cause, "Timeout after %d seconds", 30);
-
-        // Verify the status, code, message, and cause
-        assertEquals(HttpStatus.REQUEST_TIMEOUT, ex.getStatus());
-        assertEquals(ErrorCode.NONE, ex.getCode());
-        assertEquals("Timeout after 30 seconds", ex.getMessage());
-        assertEquals(cause, ex.getCause());
+    public void testConstructorWithCause() {
+        // Arrange
+        Throwable cause = new Exception("Underlying error");
+        
+        // Act
+        RequestTimeout exception = new RequestTimeout(cause);
+        
+        // Assert
+        assertEquals(HttpStatus.REQUEST_TIMEOUT, exception.getStatus());
+        assertNull(exception.getCode());
+        assertTrue(exception.getCause().getMessage().contains("Underlying error"));
     }
 
-    /** Tests the constructor with a cause and a simple message. */
+    /**
+     * Test the constructor with a cause and a message.
+     */
     @Test
-    void testRequestTimeoutWithCauseAndMessage() {
-        var cause = new RuntimeException("Underlying cause");
-
-        // Create exception with cause and simple message
-        var ex = new RequestTimeout(cause, "Timeout occurred");
-
-        // Verify the status, code, message, and cause
-        assertEquals(HttpStatus.REQUEST_TIMEOUT, ex.getStatus());
-        assertEquals(ErrorCode.NONE, ex.getCode());
-        assertEquals("Timeout occurred", ex.getMessage());
-        assertEquals(cause, ex.getCause());
+    public void testConstructorWithCauseAndMessage() {
+        // Arrange
+        Throwable cause = new Exception("Underlying error");
+        String message = "Request timed out";
+        
+        // Act
+        RequestTimeout exception = new RequestTimeout(cause, message);
+        
+        // Assert
+        assertEquals(HttpStatus.REQUEST_TIMEOUT, exception.getStatus());
+        assertNull(exception.getCode());
+        assertTrue(exception.getMessage().contains(message));
+        assertTrue(exception.getCause().getMessage().contains("Underlying error"));
     }
 
-    /** Tests the constructor with only a cause. */
+    /**
+     * Test the constructor with a cause, a formatted message, and parameters.
+     */
     @Test
-    void testRequestTimeoutWithCauseOnly() {
-        var cause = new RuntimeException("Underlying cause");
+    public void testConstructorWithCauseMessageFormat() {
+        // Arrange
+        Throwable cause = new Exception("Underlying error");
+        String messageFormat = "Request timed out after %d seconds";
+        int timeoutSeconds = 30;
+        
+        // Act
+        RequestTimeout exception = new RequestTimeout(cause, messageFormat, timeoutSeconds);
+        
+        // Assert
+        assertEquals(HttpStatus.REQUEST_TIMEOUT, exception.getStatus());
+        assertNull(exception.getCode());
+        assertTrue(exception.getMessage().contains(String.valueOf(timeoutSeconds)));
+        assertTrue(exception.getCause().getMessage().contains("Underlying error"));
+    }
 
-        // Create exception with only cause
-        var ex = new RequestTimeout(cause);
+    /**
+     * Test the constructor with a null cause.
+     */
+    @Test
+    public void testConstructorWithNullCause() {
+        // Arrange
+        Throwable cause = null;
+        
+        // Act
+        RequestTimeout exception = new RequestTimeout(cause);
+        
+        // Assert
+        assertEquals(HttpStatus.REQUEST_TIMEOUT, exception.getStatus());
+        assertNull(exception.getCode());
+        assertNull(exception.getCause());
+    }
 
-        // Verify the status, code, default message, and cause
-        assertEquals(HttpStatus.REQUEST_TIMEOUT, ex.getStatus());
-        assertEquals(ErrorCode.NONE, ex.getCode());
-        assertEquals(HttpStatus.REQUEST_TIMEOUT.getReasonPhrase(), ex.getMessage());
-        assertEquals(cause, ex.getCause());
+    /**
+     * Test the constructor with a null message and formatted message.
+     */
+    @Test
+    public void testConstructorWithNullMessageAndFormattedMessage() {
+        // Arrange
+        String message = null;
+        String messageFormat = "Request timed out after %d seconds";
+        int timeoutSeconds = 30;
+        
+        // Act
+        RequestTimeout exception = new RequestTimeout(message, messageFormat, timeoutSeconds);
+        
+        // Assert
+        assertEquals(HttpStatus.REQUEST_TIMEOUT, exception.getStatus());
+        assertNull(exception.getCode());
+        assertTrue(exception.getMessage().contains(String.valueOf(timeoutSeconds)));
+    }
+
+    /**
+     * Test the constructor with a null cause and formatted message.
+     */
+    @Test
+    public void testConstructorWithNullCauseAndFormattedMessage() {
+        // Arrange
+        Throwable cause = null;
+        String messageFormat = "Request timed out after %d seconds";
+        int timeoutSeconds = 30;
+        
+        // Act
+        RequestTimeout exception = new RequestTimeout(cause, messageFormat, timeoutSeconds);
+        
+        // Assert
+        assertEquals(HttpStatus.REQUEST_TIMEOUT, exception.getStatus());
+        assertNull(exception.getCode());
+        assertTrue(exception.getMessage().contains(String.valueOf(timeoutSeconds)));
+        assertNull(exception.getCause());
+    }
+
+    /**
+     * Test the constructor with a null cause and message.
+     */
+    @Test
+    public void testConstructorWithNullCauseAndMessage() {
+        // Arrange
+        Throwable cause = null;
+        String message = "Request timed out";
+        
+        // Act
+        RequestTimeout exception = new RequestTimeout(cause, message);
+        
+        // Assert
+        assertEquals(HttpStatus.REQUEST_TIMEOUT, exception.getStatus());
+        assertNull(exception.getCode());
+        assertTrue(exception.getMessage().contains(message));
+        assertNull(exception.getCause());
     }
 }

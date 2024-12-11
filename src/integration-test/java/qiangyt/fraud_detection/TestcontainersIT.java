@@ -1,41 +1,36 @@
-/*
- * fraud-detection-app - fraud detection app
- * Copyright © 2024 Yiting Qiang (qiangyt@wxcount.com)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
-package qiangyt.fraud_detection;
+!!!!test_begin!!!!
 
-import org.junit.ClassRule;
-import org.testcontainers.containers.localstack.LocalStackContainer;
-import org.testcontainers.containers.localstack.LocalStackContainer.Service;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.DockerImageName;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
-// To be impelemented
-@Testcontainers
-public class TestcontainersIT {
+public class TestcontainersITTest {
 
-    //DockerImageName localstackImage = DockerImageName.parse("localstack/localstack:3.5.0");
+    @BeforeEach
+    public void setUp() {
+        // Initialize the LocalStackContainer before each test
+        TestcontainersIT.localstack.start();
+    }
 
-    private static final DockerImageName DEFAULT_IMAGE_NAME = DockerImageName.parse("localstack/localstack:3.5.0");
+    @Test
+    public void testLocalstackStartedSuccessfully() {
+        // Check if the LocalStack container is running
+        assertTrue(TestcontainersIT.localstack.isRunning());
+    }
 
-    @ClassRule
-    public static LocalStackContainer localstack = new LocalStackContainer(DEFAULT_IMAGE_NAME)
-            .withServices(
-                    Service.SQS,
-                    Service.CLOUDWATCHLOGS,
-                    LocalStackContainer.EnabledService.named("events"));
+    @Test
+    public void testServicesAreAvailable() {
+        // Verify that the required services are available
+        assertTrue(TestcontainersIT.localstack.getService(Service.SQS).isRunning());
+        assertTrue(TestcontainersIT.localstack.getService(Service.CLOUDWATCHLOGS).isRunning());
+        assertTrue(TestcontainersIT.localstack.getService(LocalStackContainer.EnabledService.named("events")).isRunning());
+    }
 
+    @Test
+    public void testLocalstackStoppedAfterTest() {
+        // Stop the LocalStack container after the test
+        TestcontainersIT.localstack.stop();
+        assertFalse(TestcontainersIT.localstack.isRunning());
+    }
 }
+!!!!test_end!!!!

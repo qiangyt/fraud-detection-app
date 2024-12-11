@@ -1,20 +1,3 @@
-/*
- * fraud-detection-app - fraud detection app
- * Copyright © 2024 Yiting Qiang (qiangyt@wxcount.com)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
 package qiangyt.fraud_detection;
 
 import static org.junit.Assert.assertTrue;
@@ -69,4 +52,54 @@ public class DetectIT extends AbstractIT {
         assertTrue(fraudResult.isFraudulent());
     }
 
+    /**
+     * Tests the fraud detection functionality with an empty account ID.
+     */
+    @Test
+    public void testDetectEmptyAccountId() {
+        // sends a request with an empty account ID
+        var req = DetectionReqEntity.builder()
+                    .id("integration-test-3")
+                    .accountId("")
+                    .amount(999)
+                    .memo("N/A")
+                    .build();
+        var result = appClient.detect(req);        
+        dump("empty account ID: ", result);
+
+        // should not be a fraud transaction
+        assertFalse(result.isFraudulent());
+    }
+
+    /**
+     * Tests the fraud detection functionality with an invalid amount.
+     */
+    @Test
+    public void testDetectInvalidAmount() {
+        // sends a request with an invalid amount
+        var req = DetectionReqEntity.builder()
+                    .id("integration-test-4")
+                    .accountId("invalid-account-id")
+                    .amount(-1)
+                    .memo("N/A")
+                    .build();
+        var result = appClient.detect(req);        
+        dump("invalid amount: ", result);
+
+        // should not be a fraud transaction
+        assertFalse(result.isFraudulent());
+    }
+
+    /**
+     * Tests the fraud detection functionality with a null request.
+     */
+    @Test
+    public void testDetectNullRequest() {
+        // sends a null request
+        var result = appClient.detect(null);        
+        dump("null request: ", result);
+
+        // should not be a fraud transaction
+        assertFalse(result.isFraudulent());
+    }
 }

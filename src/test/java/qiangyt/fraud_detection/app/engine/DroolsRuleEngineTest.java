@@ -1,44 +1,76 @@
-/*
- * fraud-detection-app - fraud detection app
- * Copyright © 2024 Yiting Qiang (qiangyt@wxcount.com)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
 package qiangyt.fraud_detection.app.engine;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import qiangyt.fraud_detection.sdk.DetectionReqEntity;
-import qiangyt.fraud_detection.sdk.FraudCategory;
+import static org.junit.jupiter.api.Assertions.*;
 
-/** Unit test for the DroolsRuleEngine class. */
 public class DroolsRuleEngineTest {
 
+    private DroolsRuleEngine droolsRuleEngine;
+
+    @BeforeEach
+    public void setUp() {
+        droolsRuleEngine = new DroolsRuleEngine();
+    }
+
     /**
-     * Tests the detect method of DroolsRuleEngine. Ensures that a DetectionReqEntity with default
-     * values results in FraudCategory.NONE.
+     * Test case to verify the detect method returns NONE when no fraud rules are applied.
      */
     @Test
-    public void testDetect() {
-        DroolsRuleEngine engine = new DroolsRuleEngine();
+    public void testDetect_NoFraudRulesApplied() {
+        // Arrange
         DetectionReqEntity entity = new DetectionReqEntity();
 
-        // Set up entity with test data
-        FraudCategory result = engine.detect(entity);
+        // Act
+        FraudCategory result = droolsRuleEngine.detect(entity);
 
-        // Assert that the result is FraudCategory.NONE
+        // Assert
         assertEquals(FraudCategory.NONE, result);
+    }
+
+    /**
+     * Test case to verify the detect method returns a valid fraud category when fraud rules are applied.
+     */
+    @Test
+    public void testDetect_FraudRulesApplied() {
+        // Arrange
+        DetectionReqEntity entity = new DetectionReqEntity();
+        // Simulate applying fraud rules and setting the detected fraud category
+        droolsRuleEngine.setDetectedFraudCategory(FraudCategory.LOW);
+
+        // Act
+        FraudCategory result = droolsRuleEngine.detect(entity);
+
+        // Assert
+        assertEquals(FraudCategory.LOW, result);
+    }
+
+    /**
+     * Test case to verify the detect method handles null input gracefully.
+     */
+    @Test
+    public void testDetect_NullInput() {
+        // Arrange
+        DetectionReqEntity entity = null;
+
+        // Act & Assert
+        assertThrows(NullPointerException.class, () -> droolsRuleEngine.detect(entity));
+    }
+
+    /**
+     * Test case to verify the detect method handles empty input gracefully.
+     */
+    @Test
+    public void testDetect_EmptyInput() {
+        // Arrange
+        DetectionReqEntity entity = new DetectionReqEntity();
+        // Simulate applying fraud rules and setting the detected fraud category
+        droolsRuleEngine.setDetectedFraudCategory(FraudCategory.MEDIUM);
+
+        // Act
+        FraudCategory result = droolsRuleEngine.detect(entity);
+
+        // Assert
+        assertEquals(FraudCategory.MEDIUM, result);
     }
 }

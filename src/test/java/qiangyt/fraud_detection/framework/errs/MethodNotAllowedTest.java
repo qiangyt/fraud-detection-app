@@ -1,99 +1,233 @@
-/*
- * fraud-detection-app - fraud detection app
- * Copyright © 2024 Yiting Qiang (qiangyt@wxcount.com)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
 package qiangyt.fraud_detection.framework.errs;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
+import static org.junit.jupiter.api.Assertions.*;
 
-/** Unit tests for the {@link MethodNotAllowed} exception. */
 public class MethodNotAllowedTest {
 
-    /** Tests the {@link MethodNotAllowed} constructor with a formatted message. */
+    /**
+     * Test the default constructor.
+     */
     @Test
-    public void testMethodNotAllowedWithMessageFormat() {
-        // Create exception with formatted message
-        var ex = new MethodNotAllowed("Invalid method: %s", "POST");
+    public void testDefaultConstructor() {
+        // Arrange
+        MethodNotAllowed exception = new MethodNotAllowed();
 
-        // Verify status, code, and message
-        assertEquals(HttpStatus.METHOD_NOT_ALLOWED, ex.getStatus());
-        assertEquals(ErrorCode.NONE, ex.getCode());
-        assertEquals("Invalid method: POST", ex.getMessage());
+        // Assert
+        assertEquals(HttpStatus.METHOD_NOT_ALLOWED, exception.getStatus());
+        assertNull(exception.getErrorCode());
+        assertTrue(exception.getMessage().isEmpty());
     }
 
-    /** Tests the {@link MethodNotAllowed} constructor with a simple message. */
+    /**
+     * Test the constructor with a message.
+     */
     @Test
-    public void testMethodNotAllowedWithMessage() {
-        // Create exception with simple message
-        var ex = new MethodNotAllowed("Method not allowed");
+    public void testConstructorWithMessage() {
+        // Arrange
+        String message = "Method not allowed";
+        MethodNotAllowed exception = new MethodNotAllowed(message);
 
-        // Verify status, code, and message
-        assertEquals(HttpStatus.METHOD_NOT_ALLOWED, ex.getStatus());
-        assertEquals(ErrorCode.NONE, ex.getCode());
-        assertEquals("Method not allowed", ex.getMessage());
+        // Assert
+        assertEquals(HttpStatus.METHOD_NOT_ALLOWED, exception.getStatus());
+        assertNull(exception.getErrorCode());
+        assertEquals(message, exception.getMessage());
     }
 
-    /** Tests the {@link MethodNotAllowed} constructor with a cause and formatted message. */
+    /**
+     * Test the constructor with a message format and parameters.
+     */
     @Test
-    public void testMethodNotAllowedWithCauseAndMessageFormat() {
-        // Create cause exception
-        var cause = new RuntimeException("Root cause");
+    public void testConstructorWithMessageFormatAndParameters() {
+        // Arrange
+        String messageFormat = "Method %s not allowed";
+        Object[] params = {"POST"};
+        MethodNotAllowed exception = new MethodNotAllowed(messageFormat, params);
 
-        // Create exception with cause and formatted message
-        var ex = new MethodNotAllowed(cause, "Invalid method: %s", "POST");
-
-        // Verify status, code, message, and cause
-        assertEquals(HttpStatus.METHOD_NOT_ALLOWED, ex.getStatus());
-        assertEquals(ErrorCode.NONE, ex.getCode());
-        assertEquals("Invalid method: POST", ex.getMessage());
-        assertEquals(cause, ex.getCause());
+        // Assert
+        assertEquals(HttpStatus.METHOD_NOT_ALLOWED, exception.getStatus());
+        assertNull(exception.getErrorCode());
+        assertEquals("Method POST not allowed", exception.getMessage());
     }
 
-    /** Tests the {@link MethodNotAllowed} constructor with a cause and simple message. */
+    /**
+     * Test the constructor with a cause.
+     */
     @Test
-    public void testMethodNotAllowedWithCauseAndMessage() {
-        // Create cause exception
-        var cause = new RuntimeException("Root cause");
+    public void testConstructorWithCause() {
+        // Arrange
+        Throwable cause = new RuntimeException("Test cause");
+        MethodNotAllowed exception = new MethodNotAllowed(cause);
 
-        // Create exception with cause and simple message
-        var ex = new MethodNotAllowed(cause, "Method not allowed");
-
-        // Verify status, code, message, and cause
-        assertEquals(HttpStatus.METHOD_NOT_ALLOWED, ex.getStatus());
-        assertEquals(ErrorCode.NONE, ex.getCode());
-        assertEquals("Method not allowed", ex.getMessage());
-        assertEquals(cause, ex.getCause());
+        // Assert
+        assertEquals(HttpStatus.METHOD_NOT_ALLOWED, exception.getStatus());
+        assertNull(exception.getErrorCode());
+        assertTrue(exception.getCause() instanceof RuntimeException);
     }
 
-    /** Tests the {@link MethodNotAllowed} constructor with only a cause. */
+    /**
+     * Test the constructor with a cause and a message.
+     */
     @Test
-    public void testMethodNotAllowedWithCause() {
-        // Create cause exception
-        var cause = new RuntimeException("Root cause");
+    public void testConstructorWithCauseAndMessage() {
+        // Arrange
+        Throwable cause = new RuntimeException("Test cause");
+        String message = "Method not allowed";
+        MethodNotAllowed exception = new MethodNotAllowed(cause, message);
 
-        // Create exception with cause
-        var ex = new MethodNotAllowed(cause);
+        // Assert
+        assertEquals(HttpStatus.METHOD_NOT_ALLOWED, exception.getStatus());
+        assertNull(exception.getErrorCode());
+        assertTrue(exception.getCause() instanceof RuntimeException);
+        assertEquals(message, exception.getMessage());
+    }
 
-        // Verify status, code, message, and cause
-        assertEquals(HttpStatus.METHOD_NOT_ALLOWED, ex.getStatus());
-        assertEquals(ErrorCode.NONE, ex.getCode());
-        assertEquals("Method Not Allowed", ex.getMessage());
-        assertEquals(cause, ex.getCause());
+    /**
+     * Test the constructor with a cause, a message format, and parameters.
+     */
+    @Test
+    public void testConstructorWithCauseMessageFormatAndParameters() {
+        // Arrange
+        Throwable cause = new RuntimeException("Test cause");
+        String messageFormat = "Method %s not allowed";
+        Object[] params = {"POST"};
+        MethodNotAllowed exception = new MethodNotAllowed(cause, messageFormat, params);
+
+        // Assert
+        assertEquals(HttpStatus.METHOD_NOT_ALLOWED, exception.getStatus());
+        assertNull(exception.getErrorCode());
+        assertTrue(exception.getCause() instanceof RuntimeException);
+        assertEquals("Method POST not allowed", exception.getMessage());
+    }
+
+    /**
+     * Test the constructor with a null cause.
+     */
+    @Test
+    public void testConstructorWithNullCause() {
+        // Arrange
+        Throwable cause = null;
+        MethodNotAllowed exception = new MethodNotAllowed(cause);
+
+        // Assert
+        assertEquals(HttpStatus.METHOD_NOT_ALLOWED, exception.getStatus());
+        assertNull(exception.getErrorCode());
+        assertNull(exception.getCause());
+    }
+
+    /**
+     * Test the constructor with a null message.
+     */
+    @Test
+    public void testConstructorWithNullMessage() {
+        // Arrange
+        String message = null;
+        MethodNotAllowed exception = new MethodNotAllowed(message);
+
+        // Assert
+        assertEquals(HttpStatus.METHOD_NOT_ALLOWED, exception.getStatus());
+        assertNull(exception.getErrorCode());
+        assertTrue(exception.getMessage().isEmpty());
+    }
+
+    /**
+     * Test the constructor with a non-empty error code.
+     */
+    @Test
+    public void testConstructorWithNonEmptyErrorCode() {
+        // Arrange
+        String errorCode = "ERR_METHOD_NOT_ALLOWED";
+        MethodNotAllowed exception = new MethodNotAllowed(errorCode);
+
+        // Assert
+        assertEquals(HttpStatus.METHOD_NOT_ALLOWED, exception.getStatus());
+        assertEquals(errorCode, exception.getErrorCode());
+        assertTrue(exception.getMessage().isEmpty());
+    }
+
+    /**
+     * Test the constructor with a non-empty error code and a message.
+     */
+    @Test
+    public void testConstructorWithNonEmptyErrorCodeAndMessage() {
+        // Arrange
+        String errorCode = "ERR_METHOD_NOT_ALLOWED";
+        String message = "Method not allowed";
+        MethodNotAllowed exception = new MethodNotAllowed(errorCode, message);
+
+        // Assert
+        assertEquals(HttpStatus.METHOD_NOT_ALLOWED, exception.getStatus());
+        assertEquals(errorCode, exception.getErrorCode());
+        assertEquals(message, exception.getMessage());
+    }
+
+    /**
+     * Test the constructor with a non-empty error code, a message format, and parameters.
+     */
+    @Test
+    public void testConstructorWithNonEmptyErrorCodeMessageFormatAndParameters() {
+        // Arrange
+        String errorCode = "ERR_METHOD_NOT_ALLOWED";
+        String messageFormat = "Method %s not allowed";
+        Object[] params = {"POST"};
+        MethodNotAllowed exception = new MethodNotAllowed(errorCode, messageFormat, params);
+
+        // Assert
+        assertEquals(HttpStatus.METHOD_NOT_ALLOWED, exception.getStatus());
+        assertEquals(errorCode, exception.getErrorCode());
+        assertEquals("Method POST not allowed", exception.getMessage());
+    }
+
+    /**
+     * Test the constructor with a non-empty error code and a cause.
+     */
+    @Test
+    public void testConstructorWithNonEmptyErrorCodeAndCause() {
+        // Arrange
+        String errorCode = "ERR_METHOD_NOT_ALLOWED";
+        Throwable cause = new RuntimeException("Test cause");
+        MethodNotAllowed exception = new MethodNotAllowed(errorCode, cause);
+
+        // Assert
+        assertEquals(HttpStatus.METHOD_NOT_ALLOWED, exception.getStatus());
+        assertEquals(errorCode, exception.getErrorCode());
+        assertTrue(exception.getCause() instanceof RuntimeException);
+    }
+
+    /**
+     * Test the constructor with a non-empty error code, a message, and a cause.
+     */
+    @Test
+    public void testConstructorWithNonEmptyErrorCodeMessageAndCause() {
+        // Arrange
+        String errorCode = "ERR_METHOD_NOT_ALLOWED";
+        String message = "Method not allowed";
+        Throwable cause = new RuntimeException("Test cause");
+        MethodNotAllowed exception = new MethodNotAllowed(errorCode, message, cause);
+
+        // Assert
+        assertEquals(HttpStatus.METHOD_NOT_ALLOWED, exception.getStatus());
+        assertEquals(errorCode, exception.getErrorCode());
+        assertEquals(message, exception.getMessage());
+        assertTrue(exception.getCause() instanceof RuntimeException);
+    }
+
+    /**
+     * Test the constructor with a non-empty error code, a message format, parameters, and a cause.
+     */
+    @Test
+    public void testConstructorWithNonEmptyErrorCodeMessageFormatParametersAndCause() {
+        // Arrange
+        String errorCode = "ERR_METHOD_NOT_ALLOWED";
+        String messageFormat = "Method %s not allowed";
+        Object[] params = {"POST"};
+        Throwable cause = new RuntimeException("Test cause");
+        MethodNotAllowed exception = new MethodNotAllowed(errorCode, messageFormat, params, cause);
+
+        // Assert
+        assertEquals(HttpStatus.METHOD_NOT_ALLOWED, exception.getStatus());
+        assertEquals(errorCode, exception.getErrorCode());
+        assertEquals("Method POST not allowed", exception.getMessage());
+        assertTrue(exception.getCause() instanceof RuntimeException);
     }
 }
