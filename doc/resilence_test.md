@@ -1,4 +1,4 @@
-# Resilience Test Report
+# Resilience Test Report for fraud-detection-app
 
 1. Execute the following command to verify the configuration and current status of HPA:
 
@@ -6,53 +6,41 @@
    kubectl get hpa
    ```
 
-   ```bash
-   NAME               REFERENCE                    TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
-   fraud-detection    Deployment/fraud-detection   5%/70%    2         10        4          5m
-   ```
-
-   Get the Cluster IP (will be used later):
+   And get the Cluster IP for later usage:
 
    ```bash
    kubectl get svc fraud-detection
    ```
 
-2. Use `kubectl run` to create a load generator to simulate high load and trigger scaling:
+2. Use `kubectl run` to create a load generator to simulate high load and trigger scaling by HPA:
 
    ```bash
-   kubectl run -i --tty load-generator --image=busybox --restart=Never -- /bin/sh
+   kubectl run -i --tty load-generator --image=busybox --restart=Never -- /bin/bash
 
    # Run inside load-generator
    URL="http://<cluster-ip>:8080/rest/detection" # replace the cluster ip
 
-   while true
-   do
-       echo "Sending request to $URL"
-       curl --request POST --url "$URL" --header "content-type: application/json" --data '{"accountId": "integration-test-account-1","amount": 99900000,"memo": "N/A"}'
-       echo ""
-       sleep 1
+   while true    \
+   do            \
+       curl --request POST --url "$URL" --header "content-type: application/json" --data '{"accountId": "resilence-test-account-1","amount": 999,"memo": "N/A"}' \
+       echo ""   \
+       sleep 1   \
    done
    ```
 
-3. Execute the following command to observe the scaling of HPA in real-time:
-   
+3. In new terminal (or AWS Cloud Shell), execute the following command to observe the scaling of HPA in real-time:
+
    ```bash
    kubectl get hpa fraud-detection --watch
    ```
 
-   ```bash
-   NAME               REFERENCE                    TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
-   fraud-detection    Deployment/fraud-detection   80%/70%   2         10        4          5m
-   fraud-detection    Deployment/fraud-detection   90%/70%   2         10        6          6m
-   fraud-detection    Deployment/fraud-detection   70%/70%   2         10        8          7m
-   ```
-
    Observations:
-   - REPLICAS increased from 2 to 8, indicating that HPA scaled the number of Pods based on high load.
-   - TARGETS reached close to the target value (70%).
+   - `REPLICAS` increased from 2 to 8, indicating that HPA scaled the number of Pods based on high load.
+   - `TARGETS` reached close to the target value (70%).
+
    This indicates that HPA detected the load and scaled the Pods.
 
-4. Delete the load-generator to simulate load reduction:
+4. In new terminal (or AWS Cloud Shell), delete the load-generator to simulate load reduction:
 
    ```bash
    kubectl delete pod load-generator
@@ -64,26 +52,13 @@
    kubectl get hpa fraud-detection --watch
    ```
 
-   ```bash
-   NAME               REFERENCE                    TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
-   fraud-detection    Deployment/fraud-detection   20%/70%   2         10        6          10m
-   fraud-detection    Deployment/fraud-detection   15%/70%   2         10        4          12m
-   fraud-detection    Deployment/fraud-detection   10%/70%   2         10        2          15m
-   ```
+   Observations:
+   - `REPLICAS` decreased from 8, indicating that HPA scaled down the number of Pods based on load reduction.
+   - `TARGETS` dropped below the target value (<70%).
 
-   - REPLICAS reduced from 8 to 2, indicating that HPA scaled down the number of Pods based on load reduction.
-   - TARGETS dropped below the target value (<70%).
    This indicates that HPA detected the load reduction and scaled down the Pods.
 
-   Finally:
-
-   ```bash
-   NAME               REFERENCE                    TARGETS  MINPODS   MAXPODS   REPLICAS   AGE
-   fraud-detection    Deployment/fraud-detection   5%/70%   2         10        2          22m
-   ```
-
-   - The number of Pod replicas returned to MINPODS (minimum number).
-   - System load stabilized.
+   Finally, the number of Pod replicas returned to `MINPODS` (2), system load stabilized.
 
 6. Test result summary:
 
