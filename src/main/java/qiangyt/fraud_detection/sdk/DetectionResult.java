@@ -53,6 +53,9 @@ public class DetectionResult {
      * @return a new DetectionResult instance
      */
     public static DetectionResult from(DetectionReqEntity entity, FraudCategory category) {
+        if (entity == null) {
+            return null;
+        }
         return DetectionResult.builder()
                 .id(UuidHelper.shortUuid())
                 .entity(entity)
