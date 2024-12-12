@@ -26,7 +26,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 /**
  * Configuration properties for fraud detection rules.
  *
- * <p>Hard-coded suspicious accounts here, just to simplifes the demo
+ * <p>Hard-coded suspicious accounts here, just to simplifies the demo
  */
 @ConfigurationProperties(prefix = "app.rules")
 public class RuleProps {
